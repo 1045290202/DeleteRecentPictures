@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">删除最新图片</string>
+    <string name="author">来一斤BUG</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="settings">设置</string>
+    <string name="title_activity_settings2">Settings</string>
+    
+    <!-- Preference Titles -->
+    <string name="path_header">查询图片的路径</string>
+    <string name="about_header">关于（长按项目可以复制）</string>
+    
+    <!-- Path Preferences -->
+    <string name="customize_path_title">自定义路径</string>
+    <string name="path_title">选择路径</string>
+    
+    <!-- About Preferences -->
+    <string name="author_title">作者</string>
+    <string name="github_title">在github上访问此项目</string>
+    <string name="github_url">https://github.com/1045290202/DeleteRecentPictures</string>
+
+</resources>

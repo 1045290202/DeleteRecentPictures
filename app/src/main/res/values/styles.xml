@@ -1,0 +1,48 @@
+<resources>
+    
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+        <!--<item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+    
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.MinWidth">
+        <!--<item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+    
+    <style name="PhotoActivityTheme" parent="AppTheme">
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--        <item name="android:windowIsTranslucent">true</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+    
+    <style name="SettingsActivityLightTheme" parent="Theme.MaterialComponents.Light">
+        <item name="windowNoTitle">true</item>
+        <!--        <item name="android:statusBarColor">@color/colorPrimary</item>-->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+    
+    <style name="SettingsActivityDarkTheme" parent="Theme.MaterialComponents">
+                <item name="windowNoTitle">true</item>
+        <!--        <item name="android:statusBarColor">@color/colorPrimary</item>-->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+    
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

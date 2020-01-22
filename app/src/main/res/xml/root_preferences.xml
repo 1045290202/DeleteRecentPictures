@@ -1,0 +1,55 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <PreferenceCategory app:title="@string/path_header">
+        
+        <ListPreference
+                app:defaultValue="sdCard"
+                app:entries="@array/path_entries"
+                app:entryValues="@array/path_values"
+                app:key="path"
+                app:singleLineTitle="true"
+                app:title="@string/path_title"
+                app:useSimpleSummaryProvider="true" />
+        
+        <!--<EditTextPreference
+                app:defaultValue="/"
+                app:key="customizePath"
+                app:title="@string/customize_path_title"
+                app:useSimpleSummaryProvider="true" />-->
+    
+    </PreferenceCategory>
+    
+    <PreferenceCategory app:title="@string/about_header">
+        
+        <Preference
+                app:key="author"
+                app:enableCopying="true"
+                app:singleLineTitle="true"
+                app:summary="@string/author"
+                app:title="@string/author_title" />
+        
+        <Preference
+                app:key="github"
+                app:enableCopying="true"
+                app:singleLineTitle="true"
+                app:summary="@string/github_url"
+                app:title="@string/github_title" />
+    </PreferenceCategory>
+    
+    <!--<PreferenceCategory app:title="@string/sync_header">
+        
+        <SwitchPreferenceCompat
+                app:key="sync"
+                app:title="@string/sync_title" />
+        
+        <SwitchPreferenceCompat
+                app:dependency="sync"
+                app:key="attachment"
+                app:summaryOff="@string/attachment_summary_off"
+                app:summaryOn="@string/attachment_summary_on"
+                app:title="@string/attachment_title" />
+    
+    </PreferenceCategory>-->
+
+</PreferenceScreen>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.sjk.deleterecentpictures">
+    
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <application
+            android:allowBackup="true"
+            android:fullBackupContent="false"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:requestLegacyExternalStorage="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="false"
+            android:theme="@style/AppTheme"
+            tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        
+        <service
+                android:name=".service.QuickSettingOpenService"
+                android:icon="@drawable/ic_delete_forever_black_24dp"
+                android:label="@string/app_name"
+                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        
+        <activity
+                android:name=".SettingsActivity2"
+                android:excludeFromRecents="true" />
+        <activity
+                android:name=".SettingsActivity"
+                android:configChanges="uiMode"
+                android:excludeFromRecents="true" />
+        <activity
+                android:name=".ImageActivity"
+                android:excludeFromRecents="true"
+                android:theme="@style/PhotoActivityTheme" /> <!-- @style/DialogTheme -->
+        <activity
+                android:name=".MainActivity"
+                android:excludeFromRecents="true"
+                android:screenOrientation="user"
+                android:theme="@style/DialogTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
