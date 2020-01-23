@@ -1,6 +1,25 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     
+    <PreferenceCategory app:title="@string/general_settings_header">
+        
+        <!--<EditTextPreference
+                app:defaultValue="512"
+                app:key="thumbnailSize"
+                app:title="@string/thumbnail_size_title"
+                app:summary="主界面缩略图的大小"
+                app:useSimpleSummaryProvider="true" />-->
+        
+        <SeekBarPreference
+                android:max="1024"
+                app:defaultValue="512"
+                app:key="thumbnailSize"
+                app:min="128"
+                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q生效）"
+                app:title="@string/thumbnail_size_title"
+                app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    
     <PreferenceCategory app:title="@string/path_header">
         
         <ListPreference
@@ -23,15 +42,15 @@
     <PreferenceCategory app:title="@string/about_header">
         
         <Preference
-                app:key="author"
                 app:enableCopying="true"
+                app:key="author"
                 app:singleLineTitle="true"
                 app:summary="@string/author"
                 app:title="@string/author_title" />
         
         <Preference
-                app:key="github"
                 app:enableCopying="true"
+                app:key="github"
                 app:singleLineTitle="true"
                 app:summary="@string/github_url"
                 app:title="@string/github_title" />

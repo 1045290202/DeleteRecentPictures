@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +23,12 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.PreferenceViewHolder;
+import androidx.preference.SeekBarPreference;
 
 import com.sjk.deleterecentpictures.utils.CheckApkExist;
+
+import java.lang.reflect.Field;
 
 public class SettingsActivity2 extends AppCompatActivity {
     
@@ -107,6 +113,30 @@ public class SettingsActivity2 extends AppCompatActivity {
                 .registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
 //                    Log.d(TAG, "testOnSharedPreferenceChangedWrong key =" + key);
                     preferenceChanged = true;
+                    /*switch (key) {
+                        case "thumbnailSize": {
+                            int number;
+                            try {
+                                number = Integer.parseInt(sharedPreferences.getString("thumbnailSize", "512"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                sharedPreferences.edit()
+                                        .putString("thumbnailSize", "512")
+                                        .apply();
+                                recreate();
+                                Toast.makeText(this, "出错了：必须输入整数，已还原成默认数值", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                            sharedPreferences.edit()
+                                    .putString("thumbnailSize", "" + number)
+                                    .apply();
+                            
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                    }*/
                 });
     }
     
@@ -124,6 +154,25 @@ public class SettingsActivity2 extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            
+            bindPreferenceEvent();
+        }
+        
+        /**
+         * 绑定Preference事件
+         */
+        void bindPreferenceEvent() {
+            SeekBarPreference thumbnailSizePreference = findPreference("thumbnailSize");
+            if (thumbnailSizePreference != null) {
+                String thumbnailSizePreferenceSummary = thumbnailSizePreference.getSummary().toString();
+                thumbnailSizePreference.setSummary(thumbnailSizePreferenceSummary + "\n当前：" + thumbnailSizePreference.getValue() + "px");
+                
+                thumbnailSizePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    preference.setSummary(thumbnailSizePreferenceSummary + "\n当前：" + newValue + "px");
+//                    Toast.makeText(getContext(), "" + newValue, Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+            }
         }
         
         @Override

@@ -5,7 +5,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +48,12 @@ public class ImageActivity extends AppCompatActivity {
             return;
         }
         
-        if (MainActivity.theLatestImages.size() <= 1) {
+        if (MainActivity.theLatestImages.size() == 0) {
             int l = 10;
             if (MainActivity.imagePaths.size() < 10) {
                 l = MainActivity.imagePaths.size();
             }
-            for (int i = 1; i < l; i++) {
+            for (int i = 0; i < l; i++) {
                 Bitmap bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths.get(i));
                 MainActivity.theLatestImages.add(bitmap);
             }

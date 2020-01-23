@@ -14,11 +14,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
@@ -35,6 +40,8 @@ import com.google.android.material.dialog.MaterialDialogs;
 import com.sjk.deleterecentpictures.utils.FileUtil;
 import com.sjk.deleterecentpictures.utils.ImageScanner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -99,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initView();
+        
         //设置默认偏好
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
+        
+        initView();
         requestWritePermission();
     }
     
@@ -234,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
     private void read() {
         new Thread(
                 () -> {
+                    Message message = new Message();
                     imagePaths = ImageScanner.getImages(getApplicationContext(), getSelection());
                     if (imagePaths.size() == 0) {
-                        Message imageViewMessage = new Message();
-                        imageViewMessage.what = HandlerMsgWhat.ERROR.getIndex();
-                        imageViewMessage.obj = "没有找到图片";
-                        handler.sendMessage(imageViewMessage);
+                        message.what = HandlerMsgWhat.ERROR.getIndex();
+                        message.obj = "没有找到图片";
+                        handler.sendMessage(message);
                         return;
                     }
                     
@@ -251,20 +260,40 @@ public class MainActivity extends AppCompatActivity {
                         handler.sendMessage(textViewMessage);
                         
                         theLatestImages = new ArrayList<>();
-                        
-                        for (int i = 0, l = 1; i < l; i++) {
-                            Bitmap bitmap = BitmapFactory.decodeFile(imagePaths.get(i));
-                            theLatestImages.add(bitmap);
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+                                int thumbnailSize = sp.getInt("thumbnailSize", 512);
+                                theLatestImage = ThumbnailUtils.createImageThumbnail(
+                                        new File(imagePath),
+                                        new Size(thumbnailSize, thumbnailSize),
+                                        new CancellationSignal()
+                                );
+                                /*
+                                * SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+                                String thumbnailSizeStr = sp.getString("thumbnailSize", "512");
+                                int thumbnailSize = Integer.parseInt(thumbnailSizeStr);
+                                theLatestImage = ThumbnailUtils.createImageThumbnail(
+                                        new File(imagePath),
+                                        new Size(thumbnailSize, thumbnailSize),
+                                        new CancellationSignal()
+                                );*/
+                            } else {
+                                theLatestImage = BitmapFactory.decodeFile(imagePaths.get(0));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            message.what = HandlerMsgWhat.ERROR.getIndex();
+                            message.obj = "读取图片失败";
+                            handler.sendMessage(message);
+                            return;
                         }
-                        theLatestImage = theLatestImages.get(0);
                         
-                        Message imageViewMessage = new Message();
-                        imageViewMessage.what = HandlerMsgWhat.REFRESH_IMAGE.getIndex();
-                        imageViewMessage.obj = theLatestImage;
-                        handler.sendMessage(imageViewMessage);
+                        message.what = HandlerMsgWhat.REFRESH_IMAGE.getIndex();
+                        message.obj = theLatestImage;
+                        handler.sendMessage(message);
                         
                     } else {
-                        Message message = new Message();
                         message.what = HandlerMsgWhat.ERROR.getIndex();
                         message.obj = "查找图片失败";
                         handler.sendMessage(message);
