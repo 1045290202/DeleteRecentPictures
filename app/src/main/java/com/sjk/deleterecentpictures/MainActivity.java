@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void buttonClickEventBind() {
-        final Button latestPicturePathButton = findViewById(R.id.latestPicturePathButton);
+        Button latestPicturePathButton = findViewById(R.id.latestPicturePathButton);
         latestPicturePathButton.setOnClickListener(v -> {
             //android:textIsSelectable="true"
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -134,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
                 message.obj = "复制失败";
                 handler.sendMessage(message);
             }
+        });
+        latestPicturePathButton.setOnLongClickListener(v -> {
+            Toast.makeText(this, "当前查找目录下有" + imagePaths.size() + "张图片", Toast.LENGTH_SHORT).show();
+            return true;
         });
         
         Button openImageActivityButton = findViewById(R.id.openImageActivityButton);
@@ -152,9 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle("警告")
                 .setMessage("请确认是否删除\n" + imagePath)
                 .setPositiveButton("确定", (dialog, which) -> onDeleteButtonClick())
-                .setNegativeButton("取消", (dialog, which) -> {
-                
-                })
+                .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
                 .show());
         deleteButton.setOnLongClickListener(v -> {
             onDeleteButtonClick();
