@@ -1,34 +1,25 @@
 package com.sjk.deleterecentpictures;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SeekBarPreference;
 
 import com.sjk.deleterecentpictures.utils.CheckApkExist;
-
-import java.lang.reflect.Field;
 
 public class SettingsActivity2 extends AppCompatActivity {
     
@@ -44,7 +35,7 @@ public class SettingsActivity2 extends AppCompatActivity {
         
         dayNightModeChange(getResources().getConfiguration(), false);
         
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.activity_settings2);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings, new SettingsFragment())

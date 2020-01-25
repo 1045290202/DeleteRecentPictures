@@ -2,13 +2,9 @@ package com.sjk.deleterecentpictures;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,28 +16,23 @@ import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.dialog.MaterialDialogs;
 import com.sjk.deleterecentpictures.utils.FileUtil;
 import com.sjk.deleterecentpictures.utils.ImageScanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     
     public static List<String> imagePaths;
-    private static String imagePath;
+    //    private static String imagePath;
     public static List<Bitmap> theLatestImages;
-    public static Bitmap theLatestImage;
+//    public static Bitmap theLatestImage;
     
     private final static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -60,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
     };
     
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (Objects.requireNonNull(HandlerMsgWhat.getByValue(msg.what))) {
+            switch (Objects.requireNonNull(MainActivityHandlerMsgWhat.getByValue(msg.what))) {
                 case ERROR: {
                     //错
                     String string = msg.obj.toString();
@@ -72,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case REFRESH_TEXT: {
                     //设置文本
-                    String imagePath = msg.obj.toString();
-                    MainActivity.imagePath = imagePath;
+//                    String imagePath = msg.obj.toString();
+//                    MainActivity.imagePath = imagePath;
                     Button latestPicturePathButton = findViewById(R.id.latestPicturePathButton);
-                    latestPicturePathButton.setText(imagePath);
+                    latestPicturePathButton.setText(imagePaths.get(0));
                     break;
                 }
                 case REFRESH_IMAGE: {
@@ -83,16 +74,22 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap bitmap = (Bitmap) msg.obj;
                     ImageView latestPictureImageView = findViewById(R.id.latestPictureImageView);
                     latestPictureImageView.setImageBitmap(bitmap);
-                    latestPictureImageView.setContentDescription(imagePath);
+                    latestPictureImageView.setContentDescription(imagePaths.get(0));
                     break;
                 }
                 case DELETE_IMAGE_SUCCESS: {
-                    Toast.makeText(getApplicationContext(), "删除图片 " + imagePath + " 成功", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(getApplicationContext(), "删除图片 " + imagePaths.get(0) + " 成功", Toast.LENGTH_SHORT).show();
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    boolean closeApp = sp.getBoolean("closeApp", true);
+                    if (closeApp) {
+                        finish();
+                    } else {
+                        read();
+                    }
                     break;
                 }
                 case DELETE_IMAGE_FAIL: {
-                    Toast.makeText(getApplicationContext(), "出错了：删除图片 " + imagePath + " 失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "出错了：删除图片 " + imagePaths.get(0) + " 失败", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 default: {
@@ -119,18 +116,22 @@ public class MainActivity extends AppCompatActivity {
         buttonClickEventBind();
     }
     
+    private void initList() {
+        theLatestImages = new ArrayList<>();
+        imagePaths = new ArrayList<>();
+    }
+    
     private void buttonClickEventBind() {
         Button latestPicturePathButton = findViewById(R.id.latestPicturePathButton);
         latestPicturePathButton.setOnClickListener(v -> {
-            //android:textIsSelectable="true"
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(getResources().getString(R.string.app_name), imagePath);
+            ClipData clip = ClipData.newPlainText(getResources().getString(R.string.app_name), imagePaths.get(0));
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getApplicationContext(), "已复制到剪切板", Toast.LENGTH_SHORT).show();
             } else {
                 Message message = new Message();
-                message.what = HandlerMsgWhat.ERROR.getIndex();
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
                 message.obj = "复制失败";
                 handler.sendMessage(message);
             }
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         Button deleteButton = findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(v -> new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle("警告")
-                .setMessage("请确认是否删除\n" + imagePath)
+                .setMessage("请确认是否删除\n" + imagePaths.get(0))
                 .setPositiveButton("确定", (dialog, which) -> onDeleteButtonClick())
                 .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
                 .show());
@@ -174,27 +175,25 @@ public class MainActivity extends AppCompatActivity {
      * 点击删除按钮触发事件
      */
     private void onDeleteButtonClick() {
-        new Thread(
-                () -> {
-                    Log.d("imagePath", "run: " + imagePath);
-                    if (imagePath != null && !imagePath.equals("")) {
-                        Message message = new Message();
-                        //删除图片并判断
-                        if (FileUtil.deleteFile(imagePath)) {
-                            message.what = HandlerMsgWhat.DELETE_IMAGE_SUCCESS.getIndex();
-                            FileUtil.updateFileFromDatabase(getApplicationContext(), imagePath);
-                        } else {
-                            message.what = HandlerMsgWhat.DELETE_IMAGE_FAIL.getIndex();
-                        }
-                        handler.sendMessage(message);
-                    } else {
-                        Message message = new Message();
-                        message.what = HandlerMsgWhat.ERROR.getIndex();
-                        message.obj = "没有获取到图片路径，删除失败";
-                        handler.sendMessage(message);
-                    }
+        new Thread(() -> {
+//          Log.d("imagePath", "run: " + imagePaths.get(0));
+            if (imagePaths.get(0) != null && !imagePaths.get(0).equals("")) {
+                Message message = new Message();
+                //删除图片并判断
+                if (FileUtil.deleteFile(imagePaths.get(0))) {
+                    message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_SUCCESS.getIndex();
+                    FileUtil.updateFileFromDatabase(getApplicationContext(), imagePaths.get(0));
+                } else {
+                    message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_FAIL.getIndex();
                 }
-        ).run();
+                handler.sendMessage(message);
+            } else {
+                Message message = new Message();
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
+                message.obj = "没有获取到图片路径，删除失败";
+                handler.sendMessage(message);
+            }
+        }).run();
     }
     
     @Override
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 0) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Message message = new Message();
-                message.what = HandlerMsgWhat.ERROR.getIndex();
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
                 message.obj = "没有获取到存储权限，自动退出";
                 handler.sendMessage(message);
                 finish();
@@ -243,64 +242,55 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void read() {
-        new Thread(
-                () -> {
-                    Message message = new Message();
-                    imagePaths = ImageScanner.getImages(getApplicationContext(), getSelection());
-                    if (imagePaths.size() == 0) {
-                        message.what = HandlerMsgWhat.ERROR.getIndex();
-                        message.obj = "没有找到图片";
-                        handler.sendMessage(message);
-                        return;
-                    }
-                    
-                    String imagePath = imagePaths.get(0);
-                    if (imagePath != null) {
-                        Message textViewMessage = new Message();
-                        textViewMessage.what = HandlerMsgWhat.REFRESH_TEXT.getIndex();
-                        textViewMessage.obj = imagePath;
-                        handler.sendMessage(textViewMessage);
-                        
-                        theLatestImages = new ArrayList<>();
-                        try {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-                                int thumbnailSize = sp.getInt("thumbnailSize", 512);
-                                theLatestImage = ThumbnailUtils.createImageThumbnail(
-                                        new File(imagePath),
-                                        new Size(thumbnailSize, thumbnailSize),
-                                        new CancellationSignal()
-                                );
-                                /*
-                                * SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-                                String thumbnailSizeStr = sp.getString("thumbnailSize", "512");
-                                int thumbnailSize = Integer.parseInt(thumbnailSizeStr);
-                                theLatestImage = ThumbnailUtils.createImageThumbnail(
-                                        new File(imagePath),
-                                        new Size(thumbnailSize, thumbnailSize),
-                                        new CancellationSignal()
-                                );*/
-                            } else {
-                                theLatestImage = BitmapFactory.decodeFile(imagePaths.get(0));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            message.what = HandlerMsgWhat.ERROR.getIndex();
-                            message.obj = "读取图片失败";
-                            handler.sendMessage(message);
-                            return;
-                        }
-                        
-                        message.what = HandlerMsgWhat.REFRESH_IMAGE.getIndex();
-                        message.obj = theLatestImage;
-                        handler.sendMessage(message);
-                        
+        new Thread(() -> {
+            initList();
+            Message message = new Message();
+            imagePaths = ImageScanner.getImages(getApplicationContext(), getSelection());
+            if (imagePaths.size() == 0) {
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
+                message.obj = "没有找到图片";
+                handler.sendMessage(message);
+                return;
+            }
+            
+            String imagePath = imagePaths.get(0);
+            if (imagePath != null) {
+                Message textViewMessage = new Message();
+                textViewMessage.what = MainActivityHandlerMsgWhat.REFRESH_TEXT.getIndex();
+//                        textViewMessage.obj = imagePath;
+                handler.sendMessage(textViewMessage);
+                
+                Bitmap bitmap;
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+                        int thumbnailSize = sp.getInt("thumbnailSize", 512);
+                        bitmap = ThumbnailUtils.createImageThumbnail(
+                                new File(imagePath),
+                                new Size(thumbnailSize, thumbnailSize),
+                                new CancellationSignal()
+                        );
                     } else {
-                        message.what = HandlerMsgWhat.ERROR.getIndex();
-                        message.obj = "查找图片失败";
-                        handler.sendMessage(message);
+                        bitmap = BitmapFactory.decodeFile(imagePaths.get(0));
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
+                    message.obj = "读取图片失败";
+                    handler.sendMessage(message);
+                    return;
                 }
+                
+                message.what = MainActivityHandlerMsgWhat.REFRESH_IMAGE.getIndex();
+                message.obj = bitmap;
+                handler.sendMessage(message);
+                
+            } else {
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
+                message.obj = "查找图片失败";
+                handler.sendMessage(message);
+            }
+        }
         ).run();
     }
     
@@ -334,36 +324,38 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
         return BitmapFactory.decodeStream(isBm, null, null);
     }*/
+    
+    enum MainActivityHandlerMsgWhat {
+        //错误
+        ERROR(-1),
+        //刷新文本
+        REFRESH_TEXT(0),
+        //刷新图片
+        REFRESH_IMAGE(1),
+        //删除图片成功
+        DELETE_IMAGE_SUCCESS(2),
+        //删除图片失败
+        DELETE_IMAGE_FAIL(3);
+        
+        private final int index;
+        
+        MainActivityHandlerMsgWhat(int index) {
+            this.index = index;
+        }
+        
+        public int getIndex() {
+            return index;
+        }
+        
+        public static MainActivityHandlerMsgWhat getByValue(int what) {
+            for (MainActivityHandlerMsgWhat handlerMsgWhat : values()) {
+                if (handlerMsgWhat.getIndex() == what) {
+                    return handlerMsgWhat;
+                }
+            }
+            return null;
+        }
+    }
 }
 
-enum HandlerMsgWhat {
-    //错误
-    ERROR(-1),
-    //刷新文本
-    REFRESH_TEXT(0),
-    //刷新图片
-    REFRESH_IMAGE(1),
-    //删除图片成功
-    DELETE_IMAGE_SUCCESS(2),
-    //删除图片失败
-    DELETE_IMAGE_FAIL(3);
-    
-    private final int index;
-    
-    HandlerMsgWhat(int index) {
-        this.index = index;
-    }
-    
-    public int getIndex() {
-        return index;
-    }
-    
-    public static HandlerMsgWhat getByValue(int what) {
-        for (HandlerMsgWhat handlerMsgWhat : values()) {
-            if (handlerMsgWhat.getIndex() == what) {
-                return handlerMsgWhat;
-            }
-        }
-        return null;
-    }
-}
+

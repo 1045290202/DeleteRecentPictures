@@ -13,6 +13,7 @@
     
     <!-- General Settings Preferences -->
     <string name="thumbnail_size_title">缩略图大小</string>
+    <string name="close_app_title">删除图片后是否关闭本应用</string>
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>

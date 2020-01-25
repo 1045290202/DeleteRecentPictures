@@ -3,12 +3,11 @@
     
     <PreferenceCategory app:title="@string/general_settings_header">
         
-        <!--<EditTextPreference
-                app:defaultValue="512"
-                app:key="thumbnailSize"
-                app:title="@string/thumbnail_size_title"
-                app:summary="主界面缩略图的大小"
-                app:useSimpleSummaryProvider="true" />-->
+        <SwitchPreference
+                app:defaultValue="true"
+                app:key="closeApp"
+                app:summary="如不关闭可以继续删除图片"
+                app:title="@string/close_app_title" />
         
         <SeekBarPreference
                 android:max="1024"

@@ -1,5 +1,6 @@
 package com.sjk.deleterecentpictures;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -7,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,8 +30,33 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ImageActivity extends AppCompatActivity {
+    
+    private static final String TAG = "ImageActivity";
+    
+    private static int maximum = 10;
+    
+    private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter();
+    
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (Objects.requireNonNull(ImageActivityHandlerMsgWhat.getByValue(msg.what))) {
+                case NOTIFY_DATA_SET_CHANGED: {
+                    //刷新数据
+                    Log.d(TAG, "handleMessage: " + "刷新数据");
+                    viewPagerAdapter.notifyDataSetChanged();
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    };
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,24 +78,57 @@ public class ImageActivity extends AppCompatActivity {
             return;
         }
         
-        if (MainActivity.theLatestImages.size() == 0) {
-            int l = 10;
-            if (MainActivity.imagePaths.size() < 10) {
+        /*if (MainActivity.theLatestImages.size() == 0) {
+            int l = 1;
+            if (MainActivity.imagePaths.size() < 1) {
                 l = MainActivity.imagePaths.size();
             }
             for (int i = 0; i < l; i++) {
                 Bitmap bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths.get(i));
                 MainActivity.theLatestImages.add(bitmap);
             }
-        }
+        }*/
         
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter();
         viewPagerAdapter.setImages(MainActivity.theLatestImages);
+        viewPagerAdapter.setImagePaths(MainActivity.imagePaths);
+        viewPagerAdapter.getItemCount();
         viewPagerAdapter.setActivity(this);
         
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(viewPagerAdapter);
-        
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+//                Log.d(TAG, "onPageScrolled: " + position);
+                if (position < maximum) {
+                    createNewImage(position + 1);
+                }
+            }
+            
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (position == 0) {
+                    createNewImage(position);
+                }
+            }
+        });
+    }
+    
+    private void createNewImage(int position) {
+        try {
+            Bitmap bitmap = MainActivity.theLatestImages.get(position);
+        } catch (Exception e) {
+            new Thread(() -> {
+                Bitmap bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths.get(position));
+                MainActivity.theLatestImages.add(bitmap);
+                
+                Message message = new Message();
+                message.what = ImageActivityHandlerMsgWhat.NOTIFY_DATA_SET_CHANGED.getIndex();
+                handler.sendMessage(message);
+            }).run();
+        }
     }
     
     public void setFullScreen() {
@@ -85,59 +148,97 @@ public class ImageActivity extends AppCompatActivity {
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         return resources.getDimensionPixelSize(resourceId);
     }
-}
-
-class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.ViewPagerViewHolder> {
-    private List<Bitmap> images = new ArrayList<>();
-    private Activity context;
     
-    public List<Bitmap> getImages() {
-        return images;
-    }
-    
-    void setImages(List<Bitmap> images) {
-        this.images = images;
-    }
-    
-    public Activity getActivity() {
-        return context;
-    }
-    
-    void setActivity(Activity context) {
-        this.context = context;
-    }
-    
-    @NonNull
-    @Override
-    public ViewPagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewPagerViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_view_pager_item, parent, false));
-    }
-    
-    @Override
-    public void onBindViewHolder(@NonNull ViewPagerViewHolder holder, int position) {
-        holder.photoView.setImageBitmap(images.get(position));
-    }
-    
-    @Override
-    public int getItemCount() {
-        return images.size();
-    }
-    
-    class ViewPagerViewHolder extends RecyclerView.ViewHolder {
-        PhotoView photoView;
+    class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.ViewPagerViewHolder> {
+        public List<ViewPagerViewHolder> viewPagerViewHolders = new ArrayList<>();
         
-        ViewPagerViewHolder(@NonNull View itemView) {
-            super(itemView);
-            photoView = itemView.findViewById(R.id.photoView);
-            photoView.setMaximumScale(10);
-            photoView.setMediumScale(4);
-            photoView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.finish();
+        private List<Bitmap> images = new ArrayList<>();
+        private List<String> imagePaths = new ArrayList<>();
+        private Activity context;
+        
+        public List<Bitmap> getImages() {
+            return images;
+        }
+        
+        void setImages(List<Bitmap> images) {
+            this.images = images;
+        }
+        
+        public List<String> getImagePaths() {
+            return imagePaths;
+        }
+        
+        public void setImagePaths(List<String> imagePaths) {
+            this.imagePaths = imagePaths;
+        }
+        
+        
+        public Activity getActivity() {
+            return context;
+        }
+        
+        void setActivity(Activity context) {
+            this.context = context;
+        }
+        
+        
+        @NonNull
+        @Override
+        public ViewPagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            ViewPagerViewHolder viewPagerViewHolder = new ViewPagerViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.layout_view_pager_item, parent, false));
+            viewPagerViewHolders.add(viewPagerViewHolder);
+            return viewPagerViewHolder;
+        }
+        
+        @Override
+        public void onBindViewHolder(@NonNull ViewPagerViewHolder holder, int position) {
+            if (position < images.size()) {
+                holder.photoView.setImageBitmap(images.get(position));
+            }
+            holder.imagePath = imagePaths.get(position);
+        }
+        
+        @Override
+        public int getItemCount() {
+            return maximum;
+        }
+        
+        class ViewPagerViewHolder extends RecyclerView.ViewHolder {
+            PhotoView photoView;
+            String imagePath;
+            
+            ViewPagerViewHolder(@NonNull View itemView) {
+                super(itemView);
+                photoView = itemView.findViewById(R.id.photoView);
+                photoView.setMaximumScale(10);
+                photoView.setMediumScale(4);
+                photoView.setOnClickListener(v -> context.finish());
+            }
+        }
+    }
+    
+    enum ImageActivityHandlerMsgWhat {
+        //错误
+        NOTIFY_DATA_SET_CHANGED(0);
+        
+        private final int index;
+        
+        ImageActivityHandlerMsgWhat(int index) {
+            this.index = index;
+        }
+        
+        public int getIndex() {
+            return index;
+        }
+        
+        public static ImageActivityHandlerMsgWhat getByValue(int what) {
+            for (ImageActivityHandlerMsgWhat handlerMsgWhat : values()) {
+                if (handlerMsgWhat.getIndex() == what) {
+                    return handlerMsgWhat;
                 }
-            });
+            }
+            return null;
         }
     }
 }
