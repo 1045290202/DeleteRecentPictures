@@ -14,6 +14,7 @@ import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -153,12 +154,20 @@ public class MainActivity extends AppCompatActivity {
         
         //删除按钮
         Button deleteButton = findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(v -> new MaterialAlertDialogBuilder(MainActivity.this)
-                .setTitle("警告")
-                .setMessage("请确认是否删除\n" + imagePaths.get(0))
-                .setPositiveButton("确定", (dialog, which) -> onDeleteButtonClick())
-                .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
-                .show());
+        deleteButton.setOnClickListener(v -> {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            boolean deleteDirectly = sp.getBoolean("deleteDirectly", false);
+            if (deleteDirectly) {
+                onDeleteButtonClick();
+            } else {
+                new MaterialAlertDialogBuilder(MainActivity.this)
+                        .setTitle("警告")
+                        .setMessage("请确认是否删除\n" + imagePaths.get(0))
+                        .setPositiveButton("确定", (dialog, which) -> onDeleteButtonClick())
+                        .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
+                        .show();
+            }
+        });
         deleteButton.setOnLongClickListener(v -> {
             onDeleteButtonClick();
             return true;
@@ -245,7 +254,14 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             initList();
             Message message = new Message();
-            imagePaths = ImageScanner.getImages(getApplicationContext(), getSelection());
+            imagePaths = ImageScanner.getImages(getApplicationContext(), getSelection(), true);
+            if (imagePaths == null) {
+                message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
+                message.obj = "查询路径不合法，请重新设置";
+                handler.sendMessage(message);
+                return;
+            }
+            
             if (imagePaths.size() == 0) {
                 message.what = MainActivityHandlerMsgWhat.ERROR.getIndex();
                 message.obj = "没有找到图片";
@@ -305,7 +321,10 @@ public class MainActivity extends AppCompatActivity {
             selection = null;
         } else if (strings[1].equals(pathType)) {
             selection = ImageScanner.getScreenshotsPath();
+        } else if (strings[2].equals(pathType)) {
+            selection = Environment.getExternalStorageDirectory().getPath() + "/" + sp.getString("customizePath", "");
         }
+        Log.d(TAG, "getSelection: 查询目录" + selection);
         return selection;
     }
     

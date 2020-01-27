@@ -12,12 +12,14 @@
     <string name="about_header">关于（长按项目可以复制）</string>
     
     <!-- General Settings Preferences -->
-    <string name="thumbnail_size_title">缩略图大小</string>
     <string name="close_app_title">删除图片后是否关闭本应用</string>
+    <string name="delete_directly_title">直接删除</string>
+    <string name="thumbnail_size_title">缩略图大小</string>
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>
     <string name="path_title">选择路径</string>
+    <string name="customize_path_description_title">自定义路径说明</string>
     
     <!-- About Preferences -->
     <string name="author_title">作者</string>

@@ -67,7 +67,7 @@
                 
                 <Button
                         android:id="@+id/settingsButton"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:stateListAnimator="@null"
@@ -81,7 +81,7 @@
                     
                     <Button
                             android:id="@+id/cancelButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:stateListAnimator="@null"
@@ -89,7 +89,7 @@
                     
                     <Button
                             android:id="@+id/deleteButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:stateListAnimator="@null"

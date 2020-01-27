@@ -36,7 +36,7 @@ public class ImageActivity extends AppCompatActivity {
     
     private static final String TAG = "ImageActivity";
     
-    private static int maximum = 10;
+    private int maximum = 10;
     
     private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter();
     
@@ -89,6 +89,12 @@ public class ImageActivity extends AppCompatActivity {
             }
         }*/
         
+        if (MainActivity.imagePaths.size() < maximum) {
+            maximum = MainActivity.imagePaths.size();
+        }
+        
+        Log.d(TAG, "init: " + maximum);
+        
         viewPagerAdapter.setImages(MainActivity.theLatestImages);
         viewPagerAdapter.setImagePaths(MainActivity.imagePaths);
         viewPagerAdapter.getItemCount();
@@ -101,7 +107,7 @@ public class ImageActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
 //                Log.d(TAG, "onPageScrolled: " + position);
-                if (position < maximum) {
+                if (position < maximum - 1) {
                     createNewImage(position + 1);
                 }
             }
@@ -114,6 +120,10 @@ public class ImageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    
+    private void buttonClickEventBind() {
+    
     }
     
     private void createNewImage(int position) {

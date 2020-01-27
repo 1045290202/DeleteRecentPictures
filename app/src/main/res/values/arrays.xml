@@ -3,10 +3,12 @@
     <string-array name="path_entries">
         <item>整个外置存储目录</item>
         <item>截图目录</item>
+        <item>自定义</item>
     </string-array>
     
     <string-array name="path_values">
         <item>sdCard</item>
         <item>screenshots</item>
+        <item>customize</item>
     </string-array>
 </resources>

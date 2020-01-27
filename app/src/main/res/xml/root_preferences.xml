@@ -9,6 +9,12 @@
                 app:summary="如不关闭可以继续删除图片"
                 app:title="@string/close_app_title" />
         
+        <SwitchPreference
+                app:defaultValue="false"
+                app:key="deleteDirectly"
+                app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除）"
+                app:title="@string/delete_directly_title" />
+        
         <SeekBarPreference
                 android:max="1024"
                 app:defaultValue="512"
@@ -30,11 +36,16 @@
                 app:title="@string/path_title"
                 app:useSimpleSummaryProvider="true" />
         
-        <!--<EditTextPreference
-                app:defaultValue="/"
+        <EditTextPreference
+                app:dialogMessage="需要省略外置存储目录，如：Pictures/\n也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc"
                 app:key="customizePath"
                 app:title="@string/customize_path_title"
-                app:useSimpleSummaryProvider="true" />-->
+                app:useSimpleSummaryProvider="true" />
+        
+        <Preference
+                app:key="customizePathDescription"
+                app:summary="点击查看"
+                app:title="@string/customize_path_description_title" />
     
     </PreferenceCategory>
     
