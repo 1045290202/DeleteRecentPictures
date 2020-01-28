@@ -29,7 +29,9 @@
         
         <activity
                 android:name=".SettingsActivity2"
-                android:excludeFromRecents="true" />
+                android:excludeFromRecents="true"
+                android:exported="true">
+        </activity>
         <activity
                 android:name=".SettingsActivity"
                 android:configChanges="uiMode"
@@ -42,6 +44,7 @@
         <activity
                 android:name=".MainActivity"
                 android:excludeFromRecents="true"
+                android:exported="true"
                 android:screenOrientation="user"
                 android:theme="@style/DialogTheme">
             <intent-filter>

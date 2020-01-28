@@ -2,15 +2,22 @@ package com.sjk.deleterecentpictures;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -27,14 +34,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.sjk.deleterecentpictures.utils.FileUtil;
 import com.sjk.deleterecentpictures.utils.ImageScanner;
+import com.sjk.deleterecentpictures.utils.ShortcutUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     };
     
     @SuppressLint("HandlerLeak")
-    private final Handler handler = new Handler() {
+    protected final Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             switch (Objects.requireNonNull(MainActivityHandlerMsgWhat.getByValue(msg.what))) {
@@ -136,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 message.obj = "复制失败";
                 handler.sendMessage(message);
             }
+//            createShortcut();
         });
         latestPicturePathButton.setOnLongClickListener(v -> {
             Toast.makeText(this, "当前查找目录下有" + imagePaths.size() + "张图片", Toast.LENGTH_SHORT).show();
@@ -183,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 点击删除按钮触发事件
      */
-    private void onDeleteButtonClick() {
+    protected void onDeleteButtonClick() {
         new Thread(() -> {
 //          Log.d("imagePath", "run: " + imagePaths.get(0));
             if (imagePaths.get(0) != null && !imagePaths.get(0).equals("")) {
@@ -250,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    private void read() {
+    protected void read() {
         new Thread(() -> {
             initList();
             Message message = new Message();
