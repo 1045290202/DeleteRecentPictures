@@ -21,17 +21,33 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp">
             
-            <Button
-                    android:id="@+id/latestPicturePathButton"
-                    style="@style/Theme.MaterialComponents.DayNight"
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:padding="8dp"
-                    android:stateListAnimator="@null"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
+                    android:orientation="horizontal">
+                
+                <Button
+                        android:id="@+id/latestPicturePathButton"
+                        style="@style/Theme.MaterialComponents.DayNight"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:padding="8dp"
+                        android:stateListAnimator="@null"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+                
+                <Button
+                        android:id="@+id/refreshButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/refresh" />
+            </LinearLayout>
             
             <RelativeLayout
                     android:layout_width="wrap_content"

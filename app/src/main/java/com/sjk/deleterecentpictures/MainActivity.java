@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Size;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -154,6 +156,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         
+        Button refreshButton = findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(v -> {
+            Toast.makeText(this, "刷新", Toast.LENGTH_SHORT).show();
+            read();
+        });
+        
         Button openImageActivityButton = findViewById(R.id.openImageActivityButton);
         openImageActivityButton.setOnClickListener(v -> {
             //打开图片查看界面
@@ -182,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         });
         deleteButton.setOnLongClickListener(v -> {
             onDeleteButtonClick();
+            finish();
             return true;
         });
         
@@ -259,6 +268,8 @@ public class MainActivity extends AppCompatActivity {
 //                initView();
                 read();
             }
+        } else {
+            read();
         }
     }
     

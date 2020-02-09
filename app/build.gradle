@@ -7,8 +7,8 @@ android {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 9
-        versionName "1.1.6"
+        versionCode 11
+        versionName "1.1.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,7 +30,7 @@ dependencies {
 //    testImplementation 'junit:junit:4.12'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     //AndPermission
 //    implementation 'com.yanzhenjie:permission:2.0.3'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'

@@ -206,7 +206,7 @@ public class SettingsActivity2 extends AppCompatActivity {
                             "&nbsp;&nbsp;&nbsp;&nbsp;<strong>%</strong>&nbsp;——&nbsp;替代一个或多个字符；<br>" +
                             "&nbsp;&nbsp;&nbsp;&nbsp;<strong>[charlist]</strong>&nbsp;——&nbsp;替代字符列中的任何单一字符；<br>" +
                             "&nbsp;&nbsp;&nbsp;&nbsp;<strong>[^charlist]</strong>或<strong>[!charlist]</strong>&nbsp;——&nbsp;替代不在字符列中的任何单一字符；<br>" +
-                            "如果需要匹配_和%，可以在他们前面添加反斜杠（\\），如果需要输匹配\\，则需要输入\\\\</p>" +
+                            "如果需要匹配_和%，可以在他们前面添加反斜杠（\\），如果需要匹配\\，则需要输入\\\\</p>" +
                             "<a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>"
                     ));
                     alertDialog.setView(view);
@@ -215,7 +215,7 @@ public class SettingsActivity2 extends AppCompatActivity {
                     positiveButton.setOnClickListener(v -> alertDialog.dismiss());
                     
                     alertDialog.show();
-    
+                    
                     break;
                 }
                 default: {

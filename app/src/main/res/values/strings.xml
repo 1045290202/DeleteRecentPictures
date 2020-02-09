@@ -3,6 +3,7 @@
     <string name="author">来一斤BUG</string>
     <string name="delete">删除</string>
     <string name="cancel">取消</string>
+    <string name="refresh">刷新</string>
     <string name="settings">设置</string>
     <string name="title_activity_settings2">Settings</string>
     
