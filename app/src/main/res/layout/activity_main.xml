@@ -9,23 +9,24 @@
         android:paddingBottom="8dp"
         tools:context=".MainActivity"
         tools:ignore="UseCompoundDrawables">
-    
+
     <androidx.core.widget.NestedScrollView
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        
+            android:layout_height="0dp">
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp">
-            
+
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                
+
                 <Button
                         android:id="@+id/latestPicturePathButton"
                         style="@style/Theme.MaterialComponents.DayNight"
@@ -39,7 +40,7 @@
                         android:stateListAnimator="@null"
                         android:textAllCaps="false"
                         android:textSize="14sp" />
-                
+
                 <Button
                         android:id="@+id/refreshButton"
                         style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
@@ -48,12 +49,12 @@
                         android:layout_marginStart="8dp"
                         android:text="@string/refresh" />
             </LinearLayout>
-            
+
             <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal">
-                
+
                 <ImageView
                         android:id="@+id/latestPictureImageView"
                         android:layout_width="wrap_content"
@@ -66,52 +67,52 @@
                         android:scaleType="fitCenter"
                         android:stateListAnimator="@null"
                         tools:ignore="ContentDescription" />
-                
+
                 <Button
                         android:id="@+id/openImageActivityButton"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="260dp"
                         android:maxHeight="260dp" />
-            
+
             </RelativeLayout>
-            
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                
-                <Button
-                        android:id="@+id/settingsButton"
-                        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:stateListAnimator="@null"
-                        android:text="@string/settings" />
-                
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:orientation="horizontal">
-                    
-                    <Button
-                            android:id="@+id/cancelButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:stateListAnimator="@null"
-                            android:text="@string/cancel" />
-                    
-                    <Button
-                            android:id="@+id/deleteButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:stateListAnimator="@null"
-                            android:text="@string/delete" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <Button
+                android:id="@+id/settingsButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                android:text="@string/settings" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+            <Button
+                    android:id="@+id/cancelButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:stateListAnimator="@null"
+                    android:text="@string/cancel" />
+
+            <Button
+                    android:id="@+id/deleteButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:stateListAnimator="@null"
+                    android:text="@string/delete" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

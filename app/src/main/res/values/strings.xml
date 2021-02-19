@@ -16,6 +16,7 @@
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="delete_directly_title">直接删除</string>
     <string name="thumbnail_size_title">缩略图大小</string>
+    <string name="number_of_pictures">图片数量</string>
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>

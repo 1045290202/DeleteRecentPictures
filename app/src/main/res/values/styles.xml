@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>-->
     </style>
-    
+
     <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.MinWidth">
         <!--<item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -16,6 +16,7 @@
     <style name="PhotoActivityTheme" parent="AppTheme">
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:navigationBarColor">#44000000</item>
         <!--        <item name="android:windowIsTranslucent">true</item>-->
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">false</item>
