@@ -59,7 +59,6 @@ class SettingsActivity2 : AppCompatActivity() {
      * @param config config
      */
     private fun dayNightModeChange(config: Configuration, change: Boolean) {
-        val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         val dayNightMode = config.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if (dayNightMode == Configuration.UI_MODE_NIGHT_YES) {

@@ -17,6 +17,7 @@
     <string name="delete_directly_title">直接删除</string>
     <string name="thumbnail_size_title">缩略图大小</string>
     <string name="number_of_pictures">图片数量</string>
+    <string name="scan_type">媒体扫描方式</string>
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>

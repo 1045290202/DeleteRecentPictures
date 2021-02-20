@@ -11,4 +11,14 @@
         <item>screenshots</item>
         <item>customize</item>
     </string-array>
+
+    <string-array name="scan_type_name">
+        <item>使用MediaScannerConnection扫描</item>
+        <item>使用ContentResolver删除记录</item>
+    </string-array>
+
+    <string-array name="scan_type">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

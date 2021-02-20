@@ -1,19 +1,35 @@
 package com.sjk.deleterecentpictures.utils
 
-import android.app.Activity
 import android.content.Context
-import android.database.Cursor
+import android.graphics.Bitmap
+import android.media.MediaScannerConnection
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
+import android.os.CancellationSignal
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
+import androidx.preference.PreferenceManager
 import java.io.File
 import java.util.*
 
 
 object ImageScanner {
     private const val TAG = "ImageScanner"
+    public var imagePaths: MutableList<String?>? = null
+//    public var firstImageThumbnail: Bitmap? = null
+
+    val screenshotsPath: String
+        get() {
+            var path = Environment.getExternalStorageDirectory().path + "/DCIM/Screenshots/"
+            val file = File(path)
+            if (!file.exists()) {
+                path = Environment.getExternalStorageDirectory().path + "/Pictures/Screenshots/"
+            }
+            return path
+        }
 
     /*fun getA(context: Context){
         var filepath: String?
@@ -59,44 +75,86 @@ object ImageScanner {
     /**
      * 获取媒体扫描图片路径
      */
-    fun getImages(context: Context, selection: String?, escape: Boolean): MutableList<String?>? {
+    fun searchImages(context: Context, selection: String?, escape: Boolean) {
         var selection = selection
         if (selection != null) {
             selection = "${MediaStore.Images.Media.DATA} like '$selection%'${if (escape) " escape '\\'" else ""}"
         }
         Log.d(TAG, "getImages: $selection")
-        val imagePaths: MutableList<String?> = ArrayList()
+        imagePaths = ArrayList()
         try {
+
+            val str = PreferenceManager.getDefaultSharedPreferences(context).getString("numberOfPictures", "10")
+            var numberOfPictures: Int = if (str == null || str == "") 10 else str.toInt()
+            if (numberOfPictures == 0) {
+                numberOfPictures = 10
+            }
+
             val cursor = context.contentResolver
                     .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             null,
                             selection,
                             null,
-                            "${MediaStore.Images.Media._ID} DESC") //MediaStore.Images.Media._ID + " DESC"
+                            "${MediaStore.Images.Media.DATE_MODIFIED} DESC") //MediaStore.Images.Media._ID + " DESC" //按照修改日期排序
             if (cursor != null && cursor.moveToFirst()) {
+                var i: Long = 0
                 do {
 //                    imagePaths.add(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 //                        .buildUpon()
 //                        .appendPath(java.lang.String.valueOf(cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID)))).build())
-                    imagePaths.add(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)))
+                    val imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                    /*if (cursor.isFirst) {
+                        firstImageThumbnail = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val sp = PreferenceManager.getDefaultSharedPreferences(context)
+                            val thumbnailSize = sp.getInt("thumbnailSize", 512)
+                            ThumbnailUtils.createImageThumbnail(
+                                    File(imagePath),
+                                    Size(thumbnailSize, thumbnailSize),
+                                    CancellationSignal()
+                            )
+                        } else {
+                            val imageColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                            val id = cursor.getLong(imageColumnIndex)
+                            MediaStore.Images.Thumbnails.getThumbnail(context.contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+                        }
+                    }*/
+                    imagePaths!!.add(imagePath)
+                    i++
+                    if (i > numberOfPictures){
+                        break
+                    }
                 } while (cursor.moveToNext())
                 cursor.close()
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return null
         }
 //        Log.d(TAG, "getImages: $imagePaths");
-        return imagePaths
     }
 
-    val screenshotsPath: String
-        get() {
-            var path = Environment.getExternalStorageDirectory().path + "/DCIM/Screenshots/"
-            val file = File(path)
-            if (!file.exists()) {
-                path = Environment.getExternalStorageDirectory().path + "/Pictures/Screenshots/"
-            }
-            return path
+    fun refreshMediaLibraryByPath(context: Context, filePath: String?, type: Int, cb: (path: String, uri: Uri?) -> Unit) {
+        if (filePath == null) {
+            return
         }
+
+        when (type) {
+            1 -> {
+                MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { path: String, uri: Uri? ->
+                    cb(path, uri)
+                    Log.d(TAG, "媒体库更新成功！")
+                }
+            }
+            2 -> {
+                val where = "${MediaStore.Audio.Media.DATA} like \"$filePath%\""
+                val i = context.contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null)
+                if (i > 0) {
+                    Log.d(TAG, "媒体库更新成功！")
+                }
+                cb(filePath, null)
+            }
+            else -> {
+                Log.e(TAG, "查询类型错误")
+            }
+        }
+    }
 }

@@ -15,21 +15,31 @@
                 app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除）"
                 app:title="@string/delete_directly_title" />
 
-        <SeekBarPreference
-                android:max="1024"
-                app:defaultValue="512"
-                app:key="thumbnailSize"
-                app:min="128"
-                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q及以上生效）"
-                app:title="@string/thumbnail_size_title"
-                app:useSimpleSummaryProvider="true" />
+<!--        <SeekBarPreference-->
+<!--                android:max="1024"-->
+<!--                app:defaultValue="512"-->
+<!--                app:key="thumbnailSize"-->
+<!--                app:min="128"-->
+<!--                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q及以上生效）"-->
+<!--                app:title="@string/thumbnail_size_title"-->
+<!--                app:useSimpleSummaryProvider="true" />-->
 
         <EditTextPreference
                 app:defaultValue="10"
                 app:key="numberOfPictures"
-                app:dialogMessage="默认为10，不填写代表默认值，不建议设置太高，内存顶不住"
+                app:dialogMessage="默认为10，不填写和填0代表默认值，不建议设置太高，内存顶不住"
                 app:summary="单次查看大图的数量"
                 app:title="@string/number_of_pictures" />
+
+        <ListPreference
+                app:defaultValue="1"
+                app:entries="@array/scan_type_name"
+                app:entryValues="@array/scan_type"
+                app:key="scanType"
+                app:singleLineTitle="true"
+                app:title="@string/scan_type"
+                app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"
+                app:useSimpleSummaryProvider="false" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/path_header">

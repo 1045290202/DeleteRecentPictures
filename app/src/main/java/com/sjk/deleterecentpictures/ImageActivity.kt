@@ -1,10 +1,11 @@
 package com.sjk.deleterecentpictures
 
+//import com.sjk.deleterecentpictures.ImageActivity.ImageActivityHandlerMsgWhat
+//import com.zxy.tiny.Tiny
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -12,7 +13,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,23 +20,34 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.github.chrisbanes.photoview.PhotoView
-//import com.sjk.deleterecentpictures.ImageActivity.ImageActivityHandlerMsgWhat
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.sjk.deleterecentpictures.ImageActivity.ViewPagerAdapter.ViewPagerViewHolder
 import java.util.*
 
+
 class ImageActivity : AppCompatActivity() {
     private var maximum = 10
+    private var imagePaths: MutableList<String?>? = null
+    private var theLatestImages: MutableList<Bitmap>? = null
     private val viewPagerAdapter = ViewPagerAdapter()
+
+    companion object {
+        private const val TAG = "ImageActivity"
+    }
 
     @SuppressLint("HandlerLeak")
     private val handler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
-            when (Objects.requireNonNull(ImageActivityHandlerMsgWhat.getByValue(msg.what))) {
+            when (ImageActivityHandlerMsgWhat.getByValue(msg.what)) {
                 ImageActivityHandlerMsgWhat.NOTIFY_DATA_SET_CHANGED -> {
-
                     //刷新数据
                     Log.d(TAG, "handleMessage: " + "刷新数据")
+                    viewPagerAdapter.notifyDataSetChanged()
+                }
+                ImageActivityHandlerMsgWhat.COMPRESSION_FAILED -> {
+                    //刷新数据
+                    Log.d(TAG, "handleMessage: " + "压缩失败，使用原图")
                     viewPagerAdapter.notifyDataSetChanged()
                 }
                 else -> {
@@ -53,12 +64,10 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private fun initMaximumByPreference() {
-        val sp = PreferenceManager.getDefaultSharedPreferences(this)
-        val str = sp.getString("numberOfPictures", "10")
-        val numberOfPictures: Int = if (str == null || str == "") {
-            10
-        } else {
-            str.toInt()
+        val str = PreferenceManager.getDefaultSharedPreferences(this).getString("numberOfPictures", "10")
+        var numberOfPictures: Int = if (str == null || str == "") 10 else str.toInt()
+        if (numberOfPictures == 0) {
+            numberOfPictures = 10
         }
         this.maximum = numberOfPictures
     }
@@ -66,6 +75,9 @@ class ImageActivity : AppCompatActivity() {
     private fun init() {
 //        List<Bitmap> images = new ArrayList<>();
 //        images.add(MainActivity.theLatestImage);
+
+//        Tiny.getInstance().init(application);
+        this.initList()
 
         this.initMaximumByPreference()
 
@@ -91,9 +103,9 @@ class ImageActivity : AppCompatActivity() {
                 maximum = it.size
             }
             Log.d(TAG, "init: $maximum")
-            viewPagerAdapter.images = MainActivity.theLatestImages!!
+            viewPagerAdapter.images = this.theLatestImages!!
             viewPagerAdapter.imagePaths = it
-            viewPagerAdapter.itemCount
+//            viewPagerAdapter.itemCount
             viewPagerAdapter.activity = this
             val viewPager = findViewById<ViewPager2>(R.id.viewPager)
             viewPager.adapter = viewPagerAdapter
@@ -116,21 +128,42 @@ class ImageActivity : AppCompatActivity() {
         }
     }
 
+    private fun initList() {
+        this.theLatestImages = ArrayList()
+        this.imagePaths = ArrayList()
+    }
+
     private fun buttonClickEventBind() {
 
     }
 
     private fun createNewImage(position: Int) {
         try {
-            MainActivity.theLatestImages?.get(position)
+            this.theLatestImages?.get(position)
         } catch (e: Exception) {
             Thread {
-                val bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths?.get(position))
-                MainActivity.theLatestImages?.add(bitmap)
+                val uncompressedBitmap: Bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths?.get(position))
                 val message = Message()
-                message.what = ImageActivityHandlerMsgWhat.NOTIFY_DATA_SET_CHANGED.index
+                this.theLatestImages?.add(position, uncompressedBitmap)
+                message.what = ImageActivityHandlerMsgWhat.COMPRESSION_FAILED.index
                 handler.sendMessage(message)
             }.run()
+
+            // 开始压缩，防止canvas崩溃
+            /*val options = Tiny.BitmapCompressOptions()
+            options.config = Bitmap.Config.RGB_565
+            options.height = 0
+            Tiny.getInstance().source(uncompressedBitmap).asBitmap().withOptions(options).compress { isSucceeded: Boolean, compressedBitmap: Bitmap?, t: Throwable? ->
+                val message = Message()
+                if (!isSucceeded) {
+                    this.theLatestImages?.add(position, uncompressedBitmap)
+                    message.what = ImageActivityHandlerMsgWhat.COMPRESSION_FAILED.index
+                } else {
+                    this.theLatestImages?.add(position, compressedBitmap!!)
+                    message.what = ImageActivityHandlerMsgWhat.NOTIFY_DATA_SET_CHANGED.index
+                }
+                handler.sendMessage(message)
+            }*/
         }
     }
 
@@ -151,6 +184,11 @@ class ImageActivity : AppCompatActivity() {
             window.attributes = lp;
         };
 
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     val navigationBarHeight: Int
@@ -175,7 +213,8 @@ class ImageActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
             if (position < images.size) {
-                holder.photoView.setImageBitmap(images[position])
+                val img: Bitmap = images[position]!!.copy(Bitmap.Config.RGB_565, true)
+                holder.photoView.setImage(ImageSource.bitmap(img))
             }
             holder.imagePath = imagePaths[position]
         }
@@ -185,20 +224,20 @@ class ImageActivity : AppCompatActivity() {
         }
 
         internal inner class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var photoView: PhotoView = itemView.findViewById(R.id.photoView)
+            var photoView: SubsamplingScaleImageView = itemView.findViewById(R.id.photoView)
             var imagePath: String? = null
 
             init {
-                photoView.maximumScale = 10f
-                photoView.mediumScale = 4f
+//                photoView.maximumScale = 10f
+//                photoView.mediumScale = 4f
                 photoView.setOnClickListener { activity!!.finish() }
             }
         }
     }
 
     internal enum class ImageActivityHandlerMsgWhat(val index: Int) {
-        //错误
-        NOTIFY_DATA_SET_CHANGED(0);
+        NOTIFY_DATA_SET_CHANGED(0),
+        COMPRESSION_FAILED(0);
 
         companion object {
             fun getByValue(what: Int): ImageActivityHandlerMsgWhat? {
@@ -211,9 +250,5 @@ class ImageActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    companion object {
-        private const val TAG = "ImageActivity"
     }
 }

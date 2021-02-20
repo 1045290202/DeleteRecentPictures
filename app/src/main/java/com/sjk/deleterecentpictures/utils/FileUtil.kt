@@ -1,9 +1,11 @@
 package com.sjk.deleterecentpictures.utils
 
 import android.content.Context
-import android.provider.MediaStore
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.util.Log
 import java.io.File
+
 
 object FileUtil {
     /**
@@ -29,14 +31,19 @@ object FileUtil {
      * @param context  context
      * @param filepath 被删除文件的文路径
      */
-    fun updateFileFromDatabase(context: Context, filepath: String?) {
-        if (filepath == null){
+    fun updateFileFromDatabase(context: Context, filePath: String?, cb: (path: String, uri: Uri?) -> Unit) {
+        if (filePath == null) {
             return
         }
 
-        val where = MediaStore.Audio.Media.DATA + " like \"" + filepath + "%" + "\""
+        /*val where = "${MediaStore.Audio.Media.DATA} like \"$filePath%\""
         val i = context.contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null)
         if (i > 0) {
+            Log.e("", "媒体库更新成功！")
+        }*/
+
+        MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { path: String, uri: Uri? ->
+            cb(path, uri)
             Log.e("", "媒体库更新成功！")
         }
     }
