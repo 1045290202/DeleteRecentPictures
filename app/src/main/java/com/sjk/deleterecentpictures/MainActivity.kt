@@ -35,6 +35,8 @@ import java.util.*
 
 open class MainActivity : AppCompatActivity() {
 
+    private var isLoaded = false
+
     companion object {
         private const val TAG = "MainActivity"
         var imagePaths: MutableList<String?>? = null
@@ -108,7 +110,11 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        if (this.isLoaded) {
+            return
+        }
         requestWritePermission()
+        isLoaded = true
     }
 
     private fun initList() {
@@ -185,7 +191,15 @@ open class MainActivity : AppCompatActivity() {
         Thread {
 //          Log.d("imagePath", "run: " + imagePaths.get(0));
             val message = Message()
-            imagePaths?.get(0)?.let {
+
+            if (imagePaths!!.size == 0) {
+                message.what = MainActivityHandlerMsgWhat.ERROR.index
+                message.obj = "没有获取到图片路径，删除失败"
+                handler.sendMessage(message)
+                return@Thread
+            }
+
+            imagePaths!![0]?.let {
                 //删除图片并判断
                 if (FileUtil.deleteFile(it)) {
                     message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_SUCCESS.index
@@ -201,11 +215,8 @@ open class MainActivity : AppCompatActivity() {
                     message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_FAIL.index
                     handler.sendMessage(message)
                 }
-                return@Thread
             }
-            message.what = MainActivityHandlerMsgWhat.ERROR.index
-            message.obj = "没有获取到图片路径，删除失败"
-            handler.sendMessage(message)
+
             /*if (imagePaths!![0] != null && imagePaths!![0] != "") {
                 val message = Message()
                 //删除图片并判断
@@ -367,7 +378,7 @@ open class MainActivity : AppCompatActivity() {
                     selection = ImageScanner.screenshotsPath
                 }
                 strings[2] -> {
-                    val externalFilesDir = getExternalFilesDir(null)
+                    val externalFilesDir = Environment.getExternalStorageDirectory()
 
                     selection = if (externalFilesDir != null) {
                         externalFilesDir.path + "/" + sp.getString("customizePath", "")
