@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Html
 import android.text.InputType
 import android.text.method.LinkMovementMethod
@@ -22,9 +23,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import com.sjk.deleterecentpictures.common.BaseActivity
+import com.sjk.deleterecentpictures.common.DataSource
 import com.sjk.deleterecentpictures.utils.CheckApkExist
 
-class SettingsActivity2 : AppCompatActivity() {
+class SettingsActivity2 : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settingsActivity2 = this
@@ -41,7 +44,7 @@ class SettingsActivity2 : AppCompatActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
         bindSharedPreferenceEvent()
     }
-
+    
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -52,7 +55,7 @@ class SettingsActivity2 : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
+    
     /**
      * 设置日夜切换
      *
@@ -79,7 +82,7 @@ class SettingsActivity2 : AppCompatActivity() {
             recreate()
         }
     }
-
+    
     /**
      * 绑定SharedPreference事件
      */
@@ -90,20 +93,20 @@ class SettingsActivity2 : AppCompatActivity() {
                     preferenceChanged = true
                 }
     }
-
+    
     override fun onBackPressed() {
         val intent = Intent()
         intent.putExtra("preferenceChanged", preferenceChanged)
         setResult(Activity.RESULT_OK, intent)
         super.onBackPressed()
     }
-
+    
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             bindPreferenceEvent()
         }
-
+        
         /**
          * 绑定Preference事件
          */
@@ -125,14 +128,25 @@ class SettingsActivity2 : AppCompatActivity() {
                     true
                 }
             }*/
-
+            
             val numberOfPicturesPreference = findPreference<EditTextPreference>("numberOfPictures")
             numberOfPicturesPreference?.apply {
                 setOnBindEditTextListener {
                     it.inputType = InputType.TYPE_CLASS_NUMBER
                 }
             }
-
+            
+            val allFilesPermissionPreference = findPreference<Preference>("allFilesPermission")
+            allFilesPermissionPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference: Preference ->
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                    return@OnPreferenceClickListener true
+                }
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:${DataSource.context!!.packageName}")
+                startActivity(intent)
+                true
+            }
+            
             /*EditTextPreference customizePathPreference = findPreference("customizePath");
             if (customizePathPreference != null) {
 //                MaterialTextView customizePathTextView =
@@ -152,7 +166,7 @@ class SettingsActivity2 : AppCompatActivity() {
                 
             }*/
         }
-
+        
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
 //            Log.d(TAG, "onPreferenceTreeClick: " + "click");
             when (preference.key) {
@@ -174,7 +188,7 @@ class SettingsActivity2 : AppCompatActivity() {
                     val alertDialog = AlertDialog.Builder(context)
                             .setTitle(resources.getString(R.string.customize_path_description_title))
                             .create()
-
+        
                     alertDialog.window?.let {
                         val inflater = it.layoutInflater
                         val view = inflater.inflate(R.layout.layout_customize_path_description, null)
@@ -190,12 +204,12 @@ class SettingsActivity2 : AppCompatActivity() {
                                 "<a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>"
                         )
                         alertDialog.setView(view)
-
+            
                         val positiveButton = view.findViewById<Button>(R.id.positiveButton)
                         positiveButton.setOnClickListener { alertDialog.dismiss() }
                     }
-
-
+        
+        
                     alertDialog.show()
                 }
                 else -> {
@@ -203,12 +217,12 @@ class SettingsActivity2 : AppCompatActivity() {
             }
             return super.onPreferenceTreeClick(preference)
         }
-
+        
         companion object {
             private const val COOLAPK_PACKAGE_NAME = "com.coolapk.market"
         }
     }
-
+    
     companion object {
         private const val TAG = "SettingsActivity2"
         private var preferenceChanged = false

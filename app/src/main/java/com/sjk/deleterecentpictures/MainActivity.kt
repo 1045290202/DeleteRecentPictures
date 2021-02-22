@@ -20,48 +20,49 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.sjk.deleterecentpictures.utils.DensityUtil
+import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.FileUtil
 import com.sjk.deleterecentpictures.utils.ImageScanner
+import com.sjk.deleterecentpictures.utils.TransformUtil
 import java.util.*
 
 
-open class MainActivity : AppCompatActivity() {
-
+open class MainActivity : BaseActivity() {
+    
     private var isLoaded = false
-
+    
     companion object {
         private const val TAG = "MainActivity"
         var imagePaths: MutableList<String?>? = null
-
+        
         //    private static String imagePath;
         var theLatestImages: MutableList<Bitmap>? = null
-
+        
         //    public static Bitmap theLatestImage;
         private val PERMISSIONS_STORAGE = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+        )
     }
-
+    
     @SuppressLint("HandlerLeak")
     protected val handler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (Objects.requireNonNull(MainActivityHandlerMsgWhat.getByValue(msg.what))) {
                 MainActivityHandlerMsgWhat.ERROR -> {
-
+        
                     //错
                     val string = msg.obj.toString()
                     Toast.makeText(applicationContext, "出错了：$string", Toast.LENGTH_SHORT).show()
                 }
                 MainActivityHandlerMsgWhat.REFRESH_TEXT -> {
-
+        
                     //设置文本
 //                    String imagePath = msg.obj.toString();
 //                    MainActivity.imagePath = imagePath;
@@ -69,11 +70,12 @@ open class MainActivity : AppCompatActivity() {
                     latestPicturePathButton.text = imagePaths!![0]
                 }
                 MainActivityHandlerMsgWhat.REFRESH_IMAGE -> {
-
+        
                     //设置图片
 //                    val bitmap = msg.obj as Bitmap
                     val latestPictureImageView = findViewById<SubsamplingScaleImageView>(R.id.latestPictureImageView)
-                    latestPictureImageView.setImage(ImageSource.uri(imagePaths!![0]!!))
+                    val bitmap = TransformUtil.filePath2Bitmap(imagePaths!![0]) ?: return
+                    latestPictureImageView.setImage(ImageSource.bitmap(bitmap))
                     latestPictureImageView.contentDescription = imagePaths!![0]
                 }
                 MainActivityHandlerMsgWhat.DELETE_IMAGE_SUCCESS -> {
@@ -84,30 +86,38 @@ open class MainActivity : AppCompatActivity() {
                         finish()
                         return
                     }
-
+        
                     read()
                 }
                 MainActivityHandlerMsgWhat.DELETE_IMAGE_FAIL -> {
-                    Toast.makeText(applicationContext, "出错了：删除图片 ${imagePaths!![0]} 失败", Toast.LENGTH_SHORT).show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                        Toast.makeText(applicationContext, "删除图片 ${imagePaths!![0]} 失败，请检查是否授予所有文件访问权限", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                        intent.data = Uri.parse("package:$packageName")
+                        startActivityForResult(intent, 1)
+                    }else{
+                        Toast.makeText(applicationContext, "删除图片 ${imagePaths!![0]} 失败", Toast.LENGTH_SHORT).show()
+                        read()
+                    }
                 }
             }
         }
     }
-
+    
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        
         //设置默认偏好
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         initView()
     }
-
+    
     private fun initView() {
         setContentView(R.layout.activity_main)
         buttonClickEventBind()
     }
-
+    
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (this.isLoaded) {
@@ -116,12 +126,12 @@ open class MainActivity : AppCompatActivity() {
         requestWritePermission()
         isLoaded = true
     }
-
+    
     private fun initList() {
         theLatestImages = ArrayList()
         imagePaths = ArrayList()
     }
-
+    
     private fun buttonClickEventBind() {
         val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
         latestPicturePathButton.setOnClickListener {
@@ -148,7 +158,7 @@ open class MainActivity : AppCompatActivity() {
         }
         val cancelButton = findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { finish() }
-
+        
         //删除按钮
         val deleteButton = findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
@@ -183,40 +193,41 @@ open class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, 1)
         }
     }
-
+    
     /**
      * 点击删除按钮触发事件
      */
-    protected fun onDeleteButtonClick() {
+    private fun onDeleteButtonClick() {
         Thread {
 //          Log.d("imagePath", "run: " + imagePaths.get(0));
             val message = Message()
-
+            
             if (imagePaths!!.size == 0) {
                 message.what = MainActivityHandlerMsgWhat.ERROR.index
                 message.obj = "没有获取到图片路径，删除失败"
                 handler.sendMessage(message)
                 return@Thread
             }
-
+            
             imagePaths!![0]?.let {
+                val scanType: String = this.getDataSource().getSP().getString("scanType", "1")!!
+                
                 //删除图片并判断
                 if (FileUtil.deleteFile(it)) {
                     message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_SUCCESS.index
-                    val scanType: String = PreferenceManager.getDefaultSharedPreferences(applicationContext).getString("scanType", "1")!!
 
-                    ImageScanner.refreshMediaLibraryByPath(applicationContext, it, scanType.toInt()) { path: String, uri: Uri? ->
-                        handler.sendMessage(message)
-                    }
 //                    FileUtil.updateFileFromDatabase(applicationContext, imagePaths!![0]) { path: String, uri: Uri? ->
 //                        handler.sendMessage(message)
 //                    }
                 } else {
                     message.what = MainActivityHandlerMsgWhat.DELETE_IMAGE_FAIL.index
+                }
+                
+                ImageScanner.refreshMediaLibraryByPath(applicationContext, it, scanType.toInt()) { path: String, uri: Uri? ->
                     handler.sendMessage(message)
                 }
             }
-
+            
             /*if (imagePaths!![0] != null && imagePaths!![0] != "") {
                 val message = Message()
                 //删除图片并判断
@@ -243,7 +254,7 @@ open class MainActivity : AppCompatActivity() {
             }*/
         }.run()
     }
-
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult: $requestCode $requestCode $data")
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
@@ -258,33 +269,59 @@ open class MainActivity : AppCompatActivity() {
         }*/
         super.onActivityResult(requestCode, resultCode, data)
     }
-
+    
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == 0) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 val message = Message()
                 message.what = MainActivityHandlerMsgWhat.ERROR.index
-                message.obj = "没有获取到存储权限，自动退出"
+                message.obj = "没有获取到读/写权限，自动退出"
                 handler.sendMessage(message)
                 finish()
                 return
             }
         }
+        
+        /*if (requestCode == 1){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()){
+                val message = Message()
+                message.what = MainActivityHandlerMsgWhat.ERROR.index
+                message.obj = "没有获取到读/写权限，自动退出"
+                handler.sendMessage(message)
+                finish()
+                return
+            }
+        }*/
         //        initView();
         read()
     }
-
+    
     private fun requestWritePermission() {
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:$packageName")
+                startActivityForResult(intent, 1)
+            }
+        }
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            PERMISSIONS_STORAGE.iterator().forEach {
+                if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
+                    return
+                }
+            }
+            /*if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
                 return
-            }
+            }*/
 //                initView();
             read()
             return
         }
-
+        
         read()
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -293,7 +330,7 @@ open class MainActivity : AppCompatActivity() {
 //            startActivityForResult(intent, 2)
 //        }
     }
-
+    
     protected fun read() {
         Thread(Runnable {
             initList()
@@ -332,7 +369,7 @@ open class MainActivity : AppCompatActivity() {
                     } else {
                         ImageScanner.firstImageThumbnail
                     }*/
-
+            
                     message.what = MainActivityHandlerMsgWhat.REFRESH_IMAGE.index
 //                    message.obj = ImageScanner.firstImageThumbnail
                     handler.sendMessage(message)
@@ -346,7 +383,7 @@ open class MainActivity : AppCompatActivity() {
                         message.obj = compressedBitmap
                         handler.sendMessage(message)
                     }*/
-
+            
                 } catch (e: Exception) {
                     e.printStackTrace()
                     message.what = MainActivityHandlerMsgWhat.ERROR.index
@@ -361,7 +398,7 @@ open class MainActivity : AppCompatActivity() {
             }
         }).run()
     }
-
+    
     //        Log.d(TAG, "read: " + sp.getString("path", strings[0]));
     private val selection: String?
         get() {
@@ -379,7 +416,7 @@ open class MainActivity : AppCompatActivity() {
                 }
                 strings[2] -> {
                     val externalFilesDir = Environment.getExternalStorageDirectory()
-
+        
                     selection = if (externalFilesDir != null) {
                         externalFilesDir.path + "/" + sp.getString("customizePath", "")
                     } else {
@@ -391,7 +428,7 @@ open class MainActivity : AppCompatActivity() {
             Log.d(TAG, "getSelection: 查询目录$selection")
             return selection
         }
-
+    
     /*public static Bitmap bitmapCompress(Bitmap image) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -414,7 +451,7 @@ open class MainActivity : AppCompatActivity() {
         REFRESH_IMAGE(1),  //删除图片成功
         DELETE_IMAGE_SUCCESS(2),  //删除图片失败
         DELETE_IMAGE_FAIL(3);
-
+        
         companion object {
             fun getByValue(what: Int): MainActivityHandlerMsgWhat? {
                 for (handlerMsgWhat in values()) {
@@ -425,7 +462,7 @@ open class MainActivity : AppCompatActivity() {
                 return null
             }
         }
-
+        
     }
-
+    
 }

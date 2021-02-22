@@ -1,9 +1,5 @@
 package com.sjk.deleterecentpictures.utils
 
-import android.content.Context
-import android.media.MediaScannerConnection
-import android.net.Uri
-import android.util.Log
 import java.io.File
 
 
@@ -18,33 +14,35 @@ object FileUtil {
         if (filePath == null) {
             return false
         }
-
+        
         val file = File(filePath)
         return if (file.isFile && file.exists()) {
             file.delete()
-        } else false
+        } else {
+            false
+        }
     }
-
+    
     /**
      * 通知媒体扫描从数据库里面删除文件信息
      *
      * @param context  context
      * @param filepath 被删除文件的文路径
      */
-    fun updateFileFromDatabase(context: Context, filePath: String?, cb: (path: String, uri: Uri?) -> Unit) {
+    /*fun updateFileFromDatabase(context: Context, filePath: String?, cb: (path: String, uri: Uri?) -> Unit) {
         if (filePath == null) {
             return
         }
 
-        /*val where = "${MediaStore.Audio.Media.DATA} like \"$filePath%\""
+        *//*val where = "${MediaStore.Audio.Media.DATA} like \"$filePath%\""
         val i = context.contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null)
         if (i > 0) {
             Log.e("", "媒体库更新成功！")
-        }*/
+        }*//*
 
         MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { path: String, uri: Uri? ->
             cb(path, uri)
             Log.e("", "媒体库更新成功！")
         }
-    }
+    }*/
 }

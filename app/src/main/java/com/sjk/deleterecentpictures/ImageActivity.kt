@@ -5,7 +5,6 @@ package com.sjk.deleterecentpictures
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -15,21 +14,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.sjk.deleterecentpictures.ImageActivity.ViewPagerAdapter.ViewPagerViewHolder
+import com.sjk.deleterecentpictures.common.BaseActivity
+import com.sjk.deleterecentpictures.utils.TransformUtil
 import java.util.*
 
 
-class ImageActivity : AppCompatActivity() {
+class ImageActivity : BaseActivity() {
     private var maximum = 10
     private var imagePaths: MutableList<String?>? = null
-    private var theLatestImages: MutableList<Bitmap>? = null
+    private var theLatestImages: MutableList<Bitmap?>? = null
     private val viewPagerAdapter = ViewPagerAdapter()
 
     companion object {
@@ -64,12 +63,7 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private fun initMaximumByPreference() {
-        val str = PreferenceManager.getDefaultSharedPreferences(this).getString("numberOfPictures", "10")
-        var numberOfPictures: Int = if (str == null || str == "") 10 else str.toInt()
-        if (numberOfPictures == 0) {
-            numberOfPictures = 10
-        }
-        this.maximum = numberOfPictures
+        this.maximum = this.getDataSource().getNumberOfPictures()
     }
 
     private fun init() {
@@ -142,9 +136,9 @@ class ImageActivity : AppCompatActivity() {
             this.theLatestImages?.get(position)
         } catch (e: Exception) {
             Thread {
-                val uncompressedBitmap: Bitmap = BitmapFactory.decodeFile(MainActivity.imagePaths?.get(position))
+                val bitmap: Bitmap? = TransformUtil.filePath2Bitmap(MainActivity.imagePaths?.get(position))
                 val message = Message()
-                this.theLatestImages?.add(position, uncompressedBitmap)
+                this.theLatestImages?.add(position, bitmap)
                 message.what = ImageActivityHandlerMsgWhat.COMPRESSION_FAILED.index
                 handler.sendMessage(message)
             }.run()

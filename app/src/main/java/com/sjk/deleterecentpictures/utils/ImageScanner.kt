@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import androidx.preference.PreferenceManager
+import com.sjk.deleterecentpictures.common.DataSource
 import java.io.File
 import java.util.*
 
@@ -83,12 +84,7 @@ object ImageScanner {
         Log.d(TAG, "getImages: $selection")
         imagePaths = ArrayList()
         try {
-
-            val str = PreferenceManager.getDefaultSharedPreferences(context).getString("numberOfPictures", "10")
-            var numberOfPictures: Int = if (str == null || str == "") 10 else str.toInt()
-            if (numberOfPictures == 0) {
-                numberOfPictures = 10
-            }
+            val numberOfPictures: Int = DataSource.getNumberOfPictures()
 
             val cursor = context.contentResolver
                     .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,

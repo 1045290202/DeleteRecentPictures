@@ -10,19 +10,23 @@
     <!-- Preference Titles -->
     <string name="general_settings_header">一般设置</string>
     <string name="path_header">查询图片的路径</string>
+    <string name="permission_header">权限设置</string>
     <string name="about_header">关于（长按项目可以复制）</string>
     
     <!-- General Settings Preferences -->
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="delete_directly_title">直接删除</string>
     <string name="thumbnail_size_title">缩略图大小</string>
-    <string name="number_of_pictures">图片数量</string>
-    <string name="scan_type">媒体扫描方式</string>
+    <string name="number_of_pictures_title">图片数量</string>
+    <string name="scan_type_title">媒体扫描方式</string>
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>
     <string name="path_title">选择路径</string>
     <string name="customize_path_description_title">自定义路径说明</string>
+
+    <!-- Permission Preferences -->
+    <string name="all_files_permission_title">所有文件访问权限</string>
     
     <!-- About Preferences -->
     <string name="author_title">作者</string>

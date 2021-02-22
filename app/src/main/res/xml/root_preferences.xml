@@ -29,7 +29,7 @@
                 app:key="numberOfPictures"
                 app:dialogMessage="默认为10，不填写和填0代表默认值，不建议设置太高，内存顶不住"
                 app:summary="单次查看大图的数量"
-                app:title="@string/number_of_pictures" />
+                app:title="@string/number_of_pictures_title" />
 
         <ListPreference
                 app:defaultValue="1"
@@ -37,7 +37,7 @@
                 app:entryValues="@array/scan_type"
                 app:key="scanType"
                 app:singleLineTitle="true"
-                app:title="@string/scan_type"
+                app:title="@string/scan_type_title"
                 app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"
                 app:useSimpleSummaryProvider="false" />
     </PreferenceCategory>
@@ -64,6 +64,15 @@
                 app:summary="点击查看"
                 app:title="@string/customize_path_description_title" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/permission_header">
+
+        <Preference
+                app:key="allFilesPermission"
+                app:singleLineTitle="true"
+                app:summary="仅Android 11及以上需要开启这个权限"
+                app:title="@string/all_files_permission_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/about_header">
