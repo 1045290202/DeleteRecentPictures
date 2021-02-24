@@ -1,9 +1,13 @@
 package com.sjk.deleterecentpictures.utils
 
 import java.io.File
+import java.io.FileInputStream
 
 
 object FileUtil {
+    
+    private val gifFileFlags = arrayOf(71, 73, 70, 56, 0x3B)
+    
     /**
      * 删除单个文件
      *
@@ -21,6 +25,26 @@ object FileUtil {
         } else {
             false
         }
+    }
+    
+    fun isGifFile(filePath: String): Boolean {
+        return this.isGifFile(File(filePath))
+    }
+    
+    fun isGifFile(file: File): Boolean {
+        var isGif = true
+        val inputStream = FileInputStream(file)
+        for (i in 0..4) {
+            if (i == 4) {
+                inputStream.skip(inputStream.available() - 1L)
+            }
+            if (inputStream.read() != this.gifFileFlags[i]) {
+                isGif = false
+                break
+            }
+        }
+        inputStream.close()
+        return isGif
     }
     
     /**

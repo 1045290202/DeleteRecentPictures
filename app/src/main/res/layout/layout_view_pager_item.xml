@@ -2,14 +2,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    
+
     <!--<com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/photoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />-->
 
+    <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gifImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxHeight="260dp"
+            android:layout_gravity="center_horizontal" />
+
+    <!--<include
+            layout="@layout/layout_gif_sign"
+            android:id="@+id/gifSign"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone" />-->
+
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-        android:id="@+id/photoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            android:id="@+id/photoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 </RelativeLayout>

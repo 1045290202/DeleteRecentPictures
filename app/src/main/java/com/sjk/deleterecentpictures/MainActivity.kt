@@ -18,6 +18,7 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -28,7 +29,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.FileUtil
 import com.sjk.deleterecentpictures.utils.ImageScanner
-import com.sjk.deleterecentpictures.utils.TransformUtil
+import pl.droidsonroids.gif.GifDrawable
+import pl.droidsonroids.gif.GifImageView
 import java.util.*
 
 
@@ -74,9 +76,25 @@ open class MainActivity : BaseActivity() {
                     //设置图片
 //                    val bitmap = msg.obj as Bitmap
                     val latestPictureImageView = findViewById<SubsamplingScaleImageView>(R.id.latestPictureImageView)
-                    val bitmap = TransformUtil.filePath2Bitmap(imagePaths!![0]) ?: return
-                    latestPictureImageView.setImage(ImageSource.bitmap(bitmap))
-                    latestPictureImageView.contentDescription = imagePaths!![0]
+                    val latestPictureGifImageView = findViewById<GifImageView>(R.id.latestPictureGifImageView)
+                    val gifSign = findViewById<View>(R.id.gifSign)
+                    if (FileUtil.isGifFile(imagePaths!![0]!!)) {
+                        latestPictureImageView.visibility = View.GONE
+                        latestPictureGifImageView.visibility = View.VISIBLE
+                        gifSign.visibility = View.VISIBLE
+            
+                        val gifFromPath = GifDrawable(imagePaths!![0]!!)
+                        latestPictureGifImageView.setImageDrawable(gifFromPath)
+                        gifFromPath.start()
+                    } else {
+                        latestPictureImageView.visibility = View.VISIBLE
+                        latestPictureGifImageView.visibility = View.GONE
+                        gifSign.visibility = View.GONE
+
+//                    val bitmap = TransformUtil.filePath2Bitmap(imagePaths!![0]) ?: return
+                        latestPictureImageView.setImage(ImageSource.uri(imagePaths!![0]!!))
+                        latestPictureImageView.contentDescription = imagePaths!![0]
+                    }
                 }
                 MainActivityHandlerMsgWhat.DELETE_IMAGE_SUCCESS -> {
                     Toast.makeText(applicationContext, "删除图片 ${imagePaths!![0]} 成功", Toast.LENGTH_SHORT).show()
@@ -95,7 +113,7 @@ open class MainActivity : BaseActivity() {
                         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                         intent.data = Uri.parse("package:$packageName")
                         startActivityForResult(intent, 1)
-                    }else{
+                    } else {
                         Toast.makeText(applicationContext, "删除图片 ${imagePaths!![0]} 失败", Toast.LENGTH_SHORT).show()
                         read()
                     }
@@ -111,6 +129,7 @@ open class MainActivity : BaseActivity() {
         //设置默认偏好
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         initView()
+        requestWritePermission()
     }
     
     private fun initView() {
@@ -123,7 +142,7 @@ open class MainActivity : BaseActivity() {
         if (this.isLoaded) {
             return
         }
-        requestWritePermission()
+        
         isLoaded = true
     }
     

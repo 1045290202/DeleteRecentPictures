@@ -55,37 +55,53 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal">
 
-                <LinearLayout
+                <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="260dp"
                         android:layout_centerHorizontal="true"
                         android:padding="10dp">
 
-                    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-                        android:id="@+id/latestPictureImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:adjustViewBounds="true"
-                        android:maxHeight="260dp"
-                        android:stateListAnimator="@null"
-                        app:zoomEnabled="false"
-                        app:quickScaleEnabled="false"
-                        tools:ignore="ContentDescription"/>
-                </LinearLayout>
+                    <pl.droidsonroids.gif.GifImageView
+                            android:id="@+id/latestPictureGifImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:maxHeight="260dp"
+                            android:layout_gravity="center_horizontal" />
 
-<!--                <ImageView-->
-<!--                        android:id="@+id/latestPictureImageView"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="260dp"-->
-<!--                        android:layout_centerHorizontal="true"-->
-<!--                        android:layout_gravity="center_horizontal"-->
-<!--                        android:adjustViewBounds="true"-->
-<!--                        android:maxHeight="260dp"-->
-<!--                        android:padding="6dp"-->
-<!--                        android:scaleType="fitCenter"-->
-<!--                        android:stateListAnimator="@null"-->
-<!--                        tools:ignore="ContentDescription" />-->
+                    <include
+                            layout="@layout/layout_gif_sign"
+                            android:id="@+id/gifSign"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:visibility="gone"/>
+
+                    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+                            android:id="@+id/latestPictureImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:adjustViewBounds="true"
+                            android:maxHeight="260dp"
+                            android:stateListAnimator="@null"
+                            app:zoomEnabled="false"
+                            app:quickScaleEnabled="true"
+                            tools:ignore="ContentDescription" />
+                </RelativeLayout>
+
+                <!--                <ImageView-->
+                <!--                        android:id="@+id/latestPictureImageView"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="260dp"-->
+                <!--                        android:layout_centerHorizontal="true"-->
+                <!--                        android:layout_gravity="center_horizontal"-->
+                <!--                        android:adjustViewBounds="true"-->
+                <!--                        android:maxHeight="260dp"-->
+                <!--                        android:padding="6dp"-->
+                <!--                        android:scaleType="fitCenter"-->
+                <!--                        android:stateListAnimator="@null"-->
+                <!--                        tools:ignore="ContentDescription" />-->
 
                 <Button
                         android:id="@+id/openImageActivityButton"

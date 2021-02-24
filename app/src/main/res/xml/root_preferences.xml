@@ -27,7 +27,7 @@
         <EditTextPreference
                 app:defaultValue="10"
                 app:key="numberOfPictures"
-                app:dialogMessage="默认为10，不填写和填0代表默认值，不建议设置太高，内存顶不住"
+                app:dialogMessage="默认为10，不填写或填0都代表默认值"
                 app:summary="单次查看大图的数量"
                 app:title="@string/number_of_pictures_title" />
 
