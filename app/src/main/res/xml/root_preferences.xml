@@ -28,7 +28,7 @@
                 app:defaultValue="10"
                 app:key="numberOfPictures"
                 app:dialogMessage="默认为10，不填写或填0都代表默认值"
-                app:summary="单次查看大图的数量"
+                app:summary="单次搜索最近图片的数量"
                 app:title="@string/number_of_pictures_title" />
 
         <ListPreference

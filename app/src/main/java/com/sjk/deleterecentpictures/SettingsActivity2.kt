@@ -12,20 +12,17 @@ import android.provider.Settings
 import android.text.Html
 import android.text.InputType
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.preference.*
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.common.DataSource
-import com.sjk.deleterecentpictures.utils.CheckApkExist
+import com.sjk.deleterecentpictures.utils.ApkUtil
 
 class SettingsActivity2 : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -172,7 +169,7 @@ class SettingsActivity2 : BaseActivity() {
             when (preference.key) {
                 "author" -> {
                     val intent: Intent
-                    if (CheckApkExist.checkApkExist(context, COOLAPK_PACKAGE_NAME)) {
+                    if (ApkUtil.checkApkExist(context, COOLAPK_PACKAGE_NAME)) {
                         intent = Intent(Intent.ACTION_VIEW, Uri.parse("coolmarket://u/458995"))
                         intent.setPackage(COOLAPK_PACKAGE_NAME)
                     } else {

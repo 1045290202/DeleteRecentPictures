@@ -12,6 +12,7 @@
             tools:ignore="ScopedStorage" />
     
     <application
+            android:name=".common.App"
             android:allowBackup="true"
             android:fullBackupContent="false"
             android:icon="@mipmap/ic_launcher"

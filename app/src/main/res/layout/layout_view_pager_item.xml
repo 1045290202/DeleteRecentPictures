@@ -12,7 +12,7 @@
             android:id="@+id/gifImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:maxHeight="260dp"
+            android:maxHeight="280dp"
             android:layout_gravity="center_horizontal" />
 
     <!--<include
@@ -25,7 +25,7 @@
             android:visibility="gone" />-->
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            android:id="@+id/photoView"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 </RelativeLayout>

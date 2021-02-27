@@ -7,18 +7,19 @@ open class BaseActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        if (this.getDataSource().context == null) {
-            this.getDataSource().context = applicationContext
-        }
+        App.currentActivity = this
+    }
+    
+    protected fun getOutPut(): Output {
+        return Output
     }
     
     protected fun getDataSource(): DataSource {
         return DataSource
     }
     
-    protected fun getGlobalData(key: String): Any? {
-        return GlobalData.getData(key)
+    protected fun getGlobalData(key: String, default: Any?): Any? {
+        return GlobalData.getData(key, default)
     }
     
     protected fun setGlobalData(key: String, value: Any?) {

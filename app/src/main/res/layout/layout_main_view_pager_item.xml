@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp">
+        
+        <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/latestPictureGifImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxHeight="280dp"
+                android:layout_gravity="center_horizontal" />
+        
+        <include
+                layout="@layout/layout_gif_sign"
+                android:id="@+id/gifSign"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone" />
+        
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+                android:id="@+id/latestPictureImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:maxHeight="280dp"
+                android:stateListAnimator="@null"
+                app:zoomEnabled="false"
+                app:quickScaleEnabled="true"
+                tools:ignore="ContentDescription" />
+    </RelativeLayout>
+    
+    <Button
+            android:id="@+id/openImageActivityButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:maxHeight="280dp" />
+</RelativeLayout>

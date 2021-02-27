@@ -1,10 +1,12 @@
 <resources>
-    <string name="app_name">删除最新图片</string>
+    <string name="app_name">删除最近图片</string>
     <string name="author">来一斤BUG</string>
     <string name="delete">删除</string>
     <string name="cancel">取消</string>
     <string name="refresh">刷新</string>
     <string name="settings">设置</string>
+    <string name="searching">查找中…</string>
+    
     <string name="title_activity_settings2">Settings</string>
     
     <!-- Preference Titles -->
@@ -17,7 +19,7 @@
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="delete_directly_title">直接删除</string>
     <string name="thumbnail_size_title">缩略图大小</string>
-    <string name="number_of_pictures_title">图片数量</string>
+    <string name="number_of_pictures_title">单次查看数量</string>
     <string name="scan_type_title">媒体扫描方式</string>
     
     <!-- Path Preferences -->

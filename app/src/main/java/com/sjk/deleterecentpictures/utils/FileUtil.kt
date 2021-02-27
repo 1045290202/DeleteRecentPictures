@@ -1,12 +1,27 @@
 package com.sjk.deleterecentpictures.utils
 
+import android.os.Environment
+import com.sjk.deleterecentpictures.common.App
 import java.io.File
 import java.io.FileInputStream
+import java.security.cert.CertPath
 
 
 object FileUtil {
     
     private val gifFileFlags = arrayOf(71, 73, 70, 56, 0x3B)
+    
+    fun existsFile(filePath: String?): Boolean {
+        if (filePath == null) {
+            return false
+        }
+        
+        return this.existsFile(File(filePath))
+    }
+    
+    fun existsFile(file: File): Boolean {
+        return file.isFile && file.exists()
+    }
     
     /**
      * 删除单个文件
@@ -27,7 +42,10 @@ object FileUtil {
         }
     }
     
-    fun isGifFile(filePath: String): Boolean {
+    fun isGifFile(filePath: String?): Boolean {
+        if (filePath == null) {
+            return false
+        }
         return this.isGifFile(File(filePath))
     }
     
@@ -47,26 +65,15 @@ object FileUtil {
         return isGif
     }
     
-    /**
-     * 通知媒体扫描从数据库里面删除文件信息
-     *
-     * @param context  context
-     * @param filepath 被删除文件的文路径
-     */
-    /*fun updateFileFromDatabase(context: Context, filePath: String?, cb: (path: String, uri: Uri?) -> Unit) {
-        if (filePath == null) {
-            return
+    fun getSimplifiedPathInExternalStorage(completePath: String?): String? {
+        if (completePath == null){
+            return completePath
         }
-
-        *//*val where = "${MediaStore.Audio.Media.DATA} like \"$filePath%\""
-        val i = context.contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null)
-        if (i > 0) {
-            Log.e("", "媒体库更新成功！")
-        }*//*
-
-        MediaScannerConnection.scanFile(context, arrayOf(filePath), null) { path: String, uri: Uri? ->
-            cb(path, uri)
-            Log.e("", "媒体库更新成功！")
+        
+        val externalStorageDirectory: String = Environment.getExternalStorageDirectory().absolutePath
+        if (completePath.indexOf(externalStorageDirectory) == 0) {
+            return completePath.replaceFirst(externalStorageDirectory, "")
         }
-    }*/
+        return completePath
+    }
 }

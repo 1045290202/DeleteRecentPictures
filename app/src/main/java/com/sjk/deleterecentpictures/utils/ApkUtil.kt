@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.text.TextUtils
 
-object CheckApkExist {
+object ApkUtil {
     fun checkApkExist(context: Context?, ApkPackageName: String?): Boolean {
         return if (TextUtils.isEmpty(ApkPackageName)) {
             false

@@ -1,3 +1,7 @@
+/**
+ * 已废弃
+ */
+
 package com.sjk.deleterecentpictures.utils
 
 import android.app.PendingIntent
