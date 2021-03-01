@@ -1,4 +1,4 @@
-package com.sjk.deleterecentpictures
+package com.sjk.deleterecentpictures.activity.settings
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -20,14 +20,15 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.common.DataSource
 import com.sjk.deleterecentpictures.utils.ApkUtil
 
-class SettingsActivity2 : BaseActivity() {
+class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsActivity2 = this
+        settingsActivity = this
         preferenceChanged = false
         dayNightModeChange(resources.configuration, false)
         setContentView(R.layout.activity_settings2)
@@ -223,6 +224,6 @@ class SettingsActivity2 : BaseActivity() {
     companion object {
         private const val TAG = "SettingsActivity2"
         private var preferenceChanged = false
-        private var settingsActivity2: SettingsActivity2? = null
+        private var settingsActivity: SettingsActivity? = null
     }
 }

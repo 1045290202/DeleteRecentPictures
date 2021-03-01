@@ -45,7 +45,7 @@ object DataSource {
                     selection = if (externalFilesDir != null) {
                         "${externalFilesDir.absolutePath}/${sp.getString("customizePath", "")}"
                     } else {
-                        App.outPut.showToast("无法获取外置存储位置, 替换为默认查询")
+                        App.output.showToast("无法获取外置存储位置, 替换为默认查询")
                         null
                     }
                 }
@@ -56,5 +56,17 @@ object DataSource {
     
     fun getSimplifiedPathInExternalStorage(completePath: String?): String? {
         return App.fileUtil.getSimplifiedPathInExternalStorage(completePath)
+    }
+    
+    fun getRecentImagePaths(): MutableList<String?> {
+        return App.recentImages.imagePaths
+    }
+    
+    fun getCurrentImagePath(): String? {
+        return App.recentImages.currentImagePath
+    }
+    
+    fun getCurrentImagePathIndex(): Int {
+        return App.recentImages.currentImagePathIndex
     }
 }

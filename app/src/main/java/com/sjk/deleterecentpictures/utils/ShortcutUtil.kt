@@ -10,7 +10,7 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.os.Build
-import com.sjk.deleterecentpictures.SettingsActivity2
+import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 
 object ShortcutUtil {
     fun createLauncherShortcut(context: Context) {
@@ -18,7 +18,7 @@ object ShortcutUtil {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
                     ?: return
             if (shortcutManager.isRequestPinShortcutSupported) {
-                val intent = Intent(context, SettingsActivity2::class.java)
+                val intent = Intent(context, SettingsActivity::class.java)
                 intent.action = Intent.ACTION_VIEW
                 val pinShortcutInfo = ShortcutInfo.Builder(context, "delete-directly-shortcut")
                         .setShortLabel("直接删除最新图片")

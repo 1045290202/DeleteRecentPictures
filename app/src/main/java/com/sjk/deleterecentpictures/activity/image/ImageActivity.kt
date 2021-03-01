@@ -1,4 +1,4 @@
-package com.sjk.deleterecentpictures
+package com.sjk.deleterecentpictures.activity.image
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.activity.main.MainActivityViewPagerAdapter
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.FileUtil
@@ -32,10 +34,22 @@ class ImageActivity : BaseActivity() {
     }
     
     private fun init() {
-        val imagePath: String? = this.getGlobalData("currentImagePath", null) as String?
-        viewPagerAdapter.imagePaths = mutableListOf(imagePath)
+//        val imagePath: String? = this.getGlobalData("currentImagePath", null) as String?
+        viewPagerAdapter.imagePaths = this.getDataSource().getRecentImagePaths()
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         viewPager.adapter = viewPagerAdapter
+        viewPager.setCurrentItem(this.getDataSource().getCurrentImagePathIndex(), false)
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    this@ImageActivity.getInput().setCurrentImagePathIndex(position)
+        
+                    if (this@ImageActivity.getDataSource().getRecentImagePaths().size == 0) {
+                        this@ImageActivity.getInput().setCurrentImagePathIndex(0)
+                        return
+                    }
+                }
+            })
     }
     
     private fun buttonClickEventBind() {
@@ -81,7 +95,7 @@ internal class ImageActivityViewPagerAdapter : RecyclerView.Adapter<ImageActivit
         return viewPagerViewHolder
     }
     
-    override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder, position: Int) {
         holder.imagePath = imagePaths[position]
         if (holder.imagePath == null) {
             holder.gifImageView.visibility = View.GONE
@@ -90,25 +104,62 @@ internal class ImageActivityViewPagerAdapter : RecyclerView.Adapter<ImageActivit
         }
         
         if (!App.fileUtil.existsFile(holder.imagePath)) {
-            App.outPut.showToast("文件不存在，可能已被其他软件删除")
             return
         }
         
-        holder.isGif = FileUtil.isGifFile(holder.imagePath)
-        if (holder.isGif) {
-            holder.gifImageView.visibility = View.VISIBLE
-            holder.imageView.visibility = View.GONE
-            
-            val gifFromPath = GifDrawable(holder.imagePath!!)
-            holder.gifImageView.setImageDrawable(gifFromPath)
-            gifFromPath.start()
-            
+        if (position < imagePaths.size) {
+            holder.isGif = FileUtil.isGifFile(holder.imagePath)
+            if (holder.isGif) {
+                holder.gifImageView.visibility = View.VISIBLE
+                holder.imageView.visibility = View.GONE
+                
+                return
+            }
+            holder.gifImageView.visibility = View.GONE
+            holder.imageView.visibility = View.VISIBLE
+        }
+    }
+    
+    override fun onViewDetachedFromWindow(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        
+        if (!holder.isGif) {
+            holder.imageView.recycle()
             return
         }
         
-        holder.gifImageView.visibility = View.GONE
-        holder.imageView.visibility = View.VISIBLE
-        holder.imageView.setImage(ImageSource.uri(holder.imagePath!!))
+        val gifDrawable = holder.gifImageView.drawable as GifDrawable
+        if (gifDrawable.isRecycled) {
+            return
+        }
+        
+        gifDrawable.recycle()
+    }
+    
+    override fun onViewAttachedToWindow(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder) {
+        super.onViewAttachedToWindow(holder)
+
+//        if (holder.hasImage){
+//            return
+//        }
+        if (holder.imagePath == null) {
+            App.output.showToast("文件路径为空")
+            return
+        }
+        
+        if (!App.fileUtil.existsFile(holder.imagePath)) {
+            App.output.showToast("文件不存在，可能已被其他软件删除")
+            return
+        }
+        
+        if (!holder.isGif) {
+            holder.imageView.setImage(ImageSource.uri(holder.imagePath!!))
+            return
+        }
+        
+        val gifFromPath = GifDrawable(holder.imagePath!!)
+        holder.gifImageView.setImageDrawable(gifFromPath)
+        gifFromPath.start()
     }
     
     override fun getItemCount(): Int {

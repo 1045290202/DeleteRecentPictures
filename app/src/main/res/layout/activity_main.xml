@@ -7,7 +7,7 @@
         android:orientation="vertical"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        tools:context=".MainActivity"
+        tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
     
     <androidx.core.widget.NestedScrollView

@@ -1,4 +1,4 @@
-package com.sjk.deleterecentpictures
+package com.sjk.deleterecentpictures.activity.main
 
 
 import android.Manifest
@@ -20,6 +20,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
+import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.common.*
 import com.sjk.deleterecentpictures.utils.FileUtil
 import com.sjk.deleterecentpictures.utils.ImageScannerUtil
@@ -33,9 +36,8 @@ open class MainActivity : BaseActivity() {
     private var isLoaded = false
     private lateinit var viewPager: ViewPager2
     private val viewPagerAdapter = MainActivityViewPagerAdapter()
-    private var currentImagePath: String? = null
     private val event: Event = App.newEvent
-    private var viewPagerCurrentPosition = 0
+//    private var viewPagerCurrentPosition = 0
     
     companion object {
         private const val TAG = "MainActivity"
@@ -58,12 +60,40 @@ open class MainActivity : BaseActivity() {
         requestWritePermission()
     }
     
+    override fun onResume() {
+        super.onResume()
+        if (this.viewPager.currentItem != this.getDataSource().getCurrentImagePathIndex()) {
+            this.viewPager.setCurrentItem(this.getDataSource().getCurrentImagePathIndex(), false)
+        }
+    }
+    
+    override fun finish() {
+        super.finish()
+        App.recentImages.clearImagePaths()
+        this.getInput().setCurrentImagePathIndex(0)
+    }
+    
     private fun initView() {
         setContentView(R.layout.activity_main)
         buttonClickEventBind()
         
         this.viewPager = findViewById(R.id.viewPager)
         this.viewPager.adapter = viewPagerAdapter
+        this.viewPagerAdapter.imagePaths = this.getDataSource().getRecentImagePaths()
+        this.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+        
+                    this@MainActivity.getInput().setCurrentImagePathIndex(position)
+        
+                    if (this@MainActivity.getDataSource().getRecentImagePaths().size == 0) {
+                        this@MainActivity.getInput().setCurrentImagePathIndex(0)
+                        return
+                    }
+        
+                    this@MainActivity.refreshCurrentImagePath()
+                }
+            })
     }
     
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -82,7 +112,7 @@ open class MainActivity : BaseActivity() {
             if (result) {
                 startActivity(Intent(this@MainActivity, MainActivity::class.java))
                 finish()
-                this.getOutPut().showToast("已重新加载设置")
+                this.getOutput().showToast("已重新加载设置")
             }
         }/* else {
 //            Toast.makeText(this, "无返回值", Toast.LENGTH_SHORT).show();
@@ -93,7 +123,7 @@ open class MainActivity : BaseActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == 0) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                this.getOutPut().showToast("未获取到存储权限")
+                this.getOutput().showToast("未获取到存储权限")
                 logW(TAG, "Storage permission not obtained")
                 finish()
                 return
@@ -130,27 +160,27 @@ open class MainActivity : BaseActivity() {
     private fun buttonClickEventBind() {
         val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
         latestPicturePathButton.setOnClickListener {
-            if (this.currentImagePath == null) {
+            if (this.getDataSource().getCurrentImagePath() == null) {
                 return@setOnClickListener
             }
-            this.getOutPut().showToastLong("完整路径：${this.currentImagePath}")
+            this.getOutput().showToastLong("完整路径：${this.getDataSource().getCurrentImagePath()}")
         }
         latestPicturePathButton.setOnLongClickListener {
-            if (this.currentImagePath == null) {
-                this.getOutPut().showToast("无路径")
+            if (this.getDataSource().getCurrentImagePath() == null) {
+                this.getOutput().showToast("无路径")
                 return@setOnLongClickListener true
             }
             
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.app_name), this.currentImagePath)
+            val clip = ClipData.newPlainText(resources.getString(R.string.app_name), this.getDataSource().getCurrentImagePath())
             clipboard.setPrimaryClip(clip)
-            this.getOutPut().showToast("${this.currentImagePath}已复制到剪切板")
+            this.getOutput().showToast("${this.getDataSource().getCurrentImagePath()}已复制到剪切板")
             true
         }
         val refreshButton = findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener {
             this.refreshAll()
-            this.getOutPut().showToast("刷新成功")
+            this.getOutput().showToast("刷新成功")
         }
         /*val openImageActivityButton = findViewById<Button>(R.id.openImageActivityButton)
         openImageActivityButton.setOnClickListener {
@@ -172,7 +202,7 @@ open class MainActivity : BaseActivity() {
             } else {
                 MaterialAlertDialogBuilder(this@MainActivity)
                         .setTitle("提示")
-                        .setMessage("请确认是否删除\n${this.currentImagePath}")
+                        .setMessage("请确认是否删除\n${this.getDataSource().getCurrentImagePath()}")
                         .setPositiveButton("确定") { _: DialogInterface?, _: Int -> deleteCurrentImage() }
                         .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                         .show()
@@ -185,14 +215,14 @@ open class MainActivity : BaseActivity() {
         }
         val settingsButton = findViewById<Button>(R.id.settingsButton)
         settingsButton.setOnClickListener {
-            val intent = Intent(this@MainActivity, SettingsActivity2::class.java)
+            val intent = Intent(this@MainActivity, SettingsActivity::class.java)
             startActivityForResult(intent, 1)
         }
     }
     
     private fun deleteCurrentImage(needToRefresh: Boolean = true) {
-        if (this.currentImagePath == null || this.currentImagePath == "") {
-            this.getOutPut().showToast("没有获取到图片路径，删除失败")
+        if (this.getDataSource().getCurrentImagePath() == null || this.getDataSource().getCurrentImagePath() == "") {
+            this.getOutput().showToast("没有获取到图片路径，删除失败")
             return
         }
         
@@ -201,9 +231,9 @@ open class MainActivity : BaseActivity() {
         
         val scanType: String = this.getDataSource().getSP().getString("scanType", "1")!!
         
-        if (!App.fileUtil.existsFile(this.currentImagePath)) {
-            this.getOutPut().showToast("文件不存在，删除失败")
-            ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.currentImagePath, scanType.toInt()) { path: String, uri: Uri? ->
+        if (!App.fileUtil.existsFile(this.getDataSource().getCurrentImagePath())) {
+            this.getOutput().showToast("文件不存在，删除失败")
+            ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
                 // 里面是线程回调，这里面不能刷新UI，除非放到UI线程里执行
                 this.runOnUiThread {
                     this.refreshImages()
@@ -214,12 +244,12 @@ open class MainActivity : BaseActivity() {
         }
         
         //删除图片并判断
-        if (FileUtil.deleteFile(this.currentImagePath)) {
-            this.getOutPut().showToast("${this.currentImagePath}删除成功")
+        if (FileUtil.deleteFile(this.getDataSource().getCurrentImagePath())) {
+            this.getOutput().showToast("${this.getDataSource().getCurrentImagePath()}删除成功")
         } else {
-            this.getOutPut().showToast("文件无法删除，请确认是否已给予存储权限")
+            this.getOutput().showToast("文件无法删除，请确认是否已给予存储权限")
         }
-        ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.currentImagePath, scanType.toInt()) { path: String, uri: Uri? ->
+        ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
             // 里面是线程回调，这里面不能刷新UI，除非放到UI线程里执行
             this.runOnUiThread {
                 if (this.getDataSource().getSP().getBoolean("closeApp", true)) {
@@ -238,32 +268,19 @@ open class MainActivity : BaseActivity() {
     private fun refreshAll() {
         Thread {
             this.refreshImages()
-            this.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    this@MainActivity.viewPagerCurrentPosition = position
-        
-        
-                    if (viewPagerAdapter.imagePaths.size == 0) {
-                        this@MainActivity.currentImagePath = null
-                        return
-                    }
-        
-                    this@MainActivity.refreshCurrentImagePath()
-                }
-            })
         }.start()
     }
     
     private fun refreshCurrentImagePath() {
-        this@MainActivity.currentImagePath = this.viewPagerAdapter.imagePaths[this.viewPagerCurrentPosition]
+//        this@MainActivity.getInput().setCurrentImagePathIndex(this.getDataSource().getCurrentImagePathIndex())
         val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
-        latestPicturePathButton.text = App.dataSource.getSimplifiedPathInExternalStorage(this@MainActivity.currentImagePath)
+        latestPicturePathButton.text = this.getDataSource().getSimplifiedPathInExternalStorage(this@MainActivity.getDataSource().getCurrentImagePath())
     }
     
     private fun refreshImages() {
         ImageScannerUtil.init(this, this.getDataSource().getSelection())
-        this.viewPagerAdapter.imagePaths = arrayListOf()
+//        App.recentImages.resetCurrentImagePathIndex()
+        App.recentImages.clearImagePaths()
         
         var i = this.getDataSource().getNumberOfPictures()
         while (i > 0) {
@@ -271,7 +288,7 @@ open class MainActivity : BaseActivity() {
             if (!App.fileUtil.existsFile(imagePath)) {
                 continue
             }
-            this.viewPagerAdapter.imagePaths.add(imagePath)
+            this.getDataSource().getRecentImagePaths().add(imagePath)
             i--
         }
         /*for (i in 0..this.getDataSource().getNumberOfPictures()) {
@@ -279,7 +296,7 @@ open class MainActivity : BaseActivity() {
             this.viewPagerAdapter.imagePaths.add(imagePath)
         }*/
         
-        if (this.viewPagerAdapter.imagePaths.size == 0) {
+        if (this.getDataSource().getRecentImagePaths().size == 0) {
 //            this.getOutPut().showToast("未发现图片")
             val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
             latestPicturePathButton.text = "未发现图片"
@@ -385,12 +402,12 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
 //            return
 //        }
         if (holder.imagePath == null) {
-            App.outPut.showToast("文件路径为空")
+            App.output.showToast("文件路径为空")
             return
         }
         
         if (!App.fileUtil.existsFile(holder.imagePath)) {
-            App.outPut.showToast("文件不存在，可能已被其他软件删除")
+            App.output.showToast("文件不存在，可能已被其他软件删除")
             return
         }
         
@@ -420,11 +437,11 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
             openImageActivityButton.setOnClickListener {
                 //打开图片查看界面
                 if (!App.fileUtil.existsFile(this.imagePath)) {
-                    App.outPut.showToast("图片无法查看")
+                    App.output.showToast("图片无法查看")
                     return@setOnClickListener
                 }
-                
-                App.globalData.setData("currentImagePath", this.imagePath)
+
+//                App.globalData.setData("currentImagePath", this.imagePath)
                 val intent = Intent(itemView.context, ImageActivity::class.java)
                 itemView.context.startActivity(intent)
             }

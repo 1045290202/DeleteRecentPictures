@@ -15,7 +15,8 @@ class App : Application() {
         @SuppressLint("StaticFieldLeak")
         lateinit var currentActivity: Activity
         lateinit var dataSource: DataSource
-        lateinit var outPut: Output
+        lateinit var output: Output
+        lateinit var input: Input
         lateinit var const: Const
         lateinit var switch: Switch
         lateinit var globalData: GlobalData
@@ -24,6 +25,7 @@ class App : Application() {
         lateinit var densityUtil: DensityUtil
         lateinit var fileUtil: FileUtil
         lateinit var imageScannerUtil: ImageScannerUtil
+        lateinit var recentImages: RecentImages
         
         val newEvent: Event
             get() {
@@ -35,7 +37,8 @@ class App : Application() {
         super.onCreate()
         context = applicationContext
         dataSource = DataSource
-        outPut = Output
+        output = Output
+        input = Input
         const = Const
         switch = Switch
         globalData = GlobalData
@@ -44,6 +47,7 @@ class App : Application() {
         densityUtil = DensityUtil
         fileUtil = FileUtil
         imageScannerUtil = ImageScannerUtil
+        recentImages = RecentImages
     }
     
 }

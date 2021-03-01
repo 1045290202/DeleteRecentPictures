@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
-import com.sjk.deleterecentpictures.MainActivity
+import com.sjk.deleterecentpictures.activity.main.MainActivity
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 class QuickSettingOpenService : TileService() {

@@ -10,23 +10,27 @@ open class BaseActivity : AppCompatActivity() {
         App.currentActivity = this
     }
     
-    protected fun getOutPut(): Output {
-        return Output
+    protected fun getOutput(): Output {
+        return App.output
+    }
+    
+    protected fun getInput(): Input {
+        return App.input
     }
     
     protected fun getDataSource(): DataSource {
-        return DataSource
+        return App.dataSource
     }
     
     protected fun getGlobalData(key: String, default: Any?): Any? {
-        return GlobalData.getData(key, default)
+        return App.globalData.getData(key, default)
     }
     
     protected fun setGlobalData(key: String, value: Any?) {
-        GlobalData.setData(key, value)
+        App.globalData.setData(key, value)
     }
     
     protected fun removeGlobalData(key: String) {
-        GlobalData.removeData(key)
+        App.globalData.removeData(key)
     }
 }
