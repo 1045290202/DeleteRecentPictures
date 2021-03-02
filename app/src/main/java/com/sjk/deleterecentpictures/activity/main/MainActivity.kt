@@ -71,6 +71,7 @@ open class MainActivity : BaseActivity() {
         super.finish()
         App.recentImages.clearImagePaths()
         this.getInput().setCurrentImagePathIndex(0)
+        App.imageScannerUtil.close()
     }
     
     private fun initView() {
@@ -285,9 +286,9 @@ open class MainActivity : BaseActivity() {
         var i = this.getDataSource().getNumberOfPictures()
         while (i > 0) {
             val imagePath = App.imageScannerUtil.getNext() ?: break
-            if (!App.fileUtil.existsFile(imagePath)) {
+            /*if (!App.fileUtil.existsFile(imagePath)) {
                 continue
-            }
+            }*/
             this.getDataSource().getRecentImagePaths().add(imagePath)
             i--
         }
@@ -436,10 +437,10 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
             val openImageActivityButton = itemView.findViewById<Button>(R.id.openImageActivityButton)
             openImageActivityButton.setOnClickListener {
                 //打开图片查看界面
-                if (!App.fileUtil.existsFile(this.imagePath)) {
+                /*if (!App.fileUtil.existsFile(this.imagePath)) {
                     App.output.showToast("图片无法查看")
                     return@setOnClickListener
-                }
+                }*/
 
 //                App.globalData.setData("currentImagePath", this.imagePath)
                 val intent = Intent(itemView.context, ImageActivity::class.java)

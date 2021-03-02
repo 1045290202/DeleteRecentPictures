@@ -75,8 +75,16 @@ object ImageScannerUtil {
         return imagePath
     }
     
+    fun isEnd(): Boolean {
+        cursor?.let {
+            return it.isLast
+        }
+        return true
+    }
+    
     fun close() {
         this.cursor?.close()
+        this.cursor = null
     }
     
     /**
