@@ -69,4 +69,9 @@ object DataSource {
     fun getCurrentImagePathIndex(): Int {
         return App.recentImages.currentImagePathIndex
     }
+    
+    fun getNavigationBarHeight(): Int{
+        val resourceId = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return this.context.resources.getDimensionPixelSize(resourceId)
+    }
 }

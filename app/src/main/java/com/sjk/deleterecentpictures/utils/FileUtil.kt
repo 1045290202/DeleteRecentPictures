@@ -1,10 +1,9 @@
 package com.sjk.deleterecentpictures.utils
 
 import android.os.Environment
-import com.sjk.deleterecentpictures.common.App
+import android.webkit.MimeTypeMap
 import java.io.File
 import java.io.FileInputStream
-import java.security.cert.CertPath
 
 
 object FileUtil {
@@ -66,7 +65,7 @@ object FileUtil {
     }
     
     fun getSimplifiedPathInExternalStorage(completePath: String?): String? {
-        if (completePath == null){
+        if (completePath == null) {
             return completePath
         }
         
@@ -76,4 +75,14 @@ object FileUtil {
         }
         return completePath
     }
+    
+    fun getMimeType(url: String?): String? {
+        var type: String? = null
+        val extension = MimeTypeMap.getFileExtensionFromUrl(url)
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        }
+        return type
+    }
+    
 }

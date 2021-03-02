@@ -430,12 +430,12 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
         var latestPictureImageView: SubsamplingScaleImageView = itemView.findViewById(R.id.latestPictureImageView)
         var latestPictureGifImageView: GifImageView = itemView.findViewById(R.id.latestPictureGifImageView)
         var gifSign: View = itemView.findViewById(R.id.gifSign)
+        private val openImageActivityButton = itemView.findViewById<Button>(R.id.openImageActivityButton)
         var imagePath: String? = null
         var isGif = false
         
         init {
-            val openImageActivityButton = itemView.findViewById<Button>(R.id.openImageActivityButton)
-            openImageActivityButton.setOnClickListener {
+            this.openImageActivityButton.setOnClickListener {
                 //打开图片查看界面
                 /*if (!App.fileUtil.existsFile(this.imagePath)) {
                     App.output.showToast("图片无法查看")
@@ -445,6 +445,11 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
 //                App.globalData.setData("currentImagePath", this.imagePath)
                 val intent = Intent(itemView.context, ImageActivity::class.java)
                 itemView.context.startActivity(intent)
+            }
+            this.openImageActivityButton.setOnLongClickListener {
+                App.output.showImageLongClickDialog(this.imagePath)
+                
+                return@setOnLongClickListener true
             }
         }
     }

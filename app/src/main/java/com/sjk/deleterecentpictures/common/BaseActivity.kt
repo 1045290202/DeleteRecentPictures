@@ -10,6 +10,11 @@ open class BaseActivity : AppCompatActivity() {
         App.currentActivity = this
     }
     
+    override fun onResume() {
+        super.onResume()
+        App.currentActivity = this
+    }
+    
     protected fun getOutput(): Output {
         return App.output
     }
