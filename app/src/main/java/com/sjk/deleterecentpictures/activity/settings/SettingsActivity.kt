@@ -2,6 +2,7 @@ package com.sjk.deleterecentpictures.activity.settings
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -20,9 +21,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
-import com.sjk.deleterecentpictures.common.DataSource
 import com.sjk.deleterecentpictures.utils.ApkUtil
 
 class SettingsActivity : BaseActivity() {
@@ -109,19 +111,11 @@ class SettingsActivity : BaseActivity() {
          * 绑定Preference事件
          */
         private fun bindPreferenceEvent() {
-            val thumbnailSizePreference = findPreference<SeekBarPreference>("thumbnailSize")
+            /*val thumbnailSizePreference = findPreference<SeekBarPreference>("thumbnailSize")
             thumbnailSizePreference?.apply {
                 val thumbnailSizePreferenceSummary = summary.toString()
                 summary = "$thumbnailSizePreferenceSummary\n当前：${value}px".trimIndent()
                 onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference, newValue: Any ->
-                    preference.summary = "$thumbnailSizePreferenceSummary\n当前：${newValue}px".trimIndent()
-                    true
-                }
-            }
-            /*if (thumbnailSizePreference != null) {
-                val thumbnailSizePreferenceSummary = thumbnailSizePreference.summary.toString()
-                thumbnailSizePreference.summary = "$thumbnailSizePreferenceSummary\n当前：${thumbnailSizePreference.value}px".trimIndent()
-                thumbnailSizePreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference: Preference, newValue: Any ->
                     preference.summary = "$thumbnailSizePreferenceSummary\n当前：${newValue}px".trimIndent()
                     true
                 }
@@ -136,11 +130,11 @@ class SettingsActivity : BaseActivity() {
             
             val allFilesPermissionPreference = findPreference<Preference>("allFilesPermission")
             allFilesPermissionPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference: Preference ->
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                     return@OnPreferenceClickListener true
                 }
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.parse("package:${DataSource.context!!.packageName}")
+                intent.data = Uri.parse("package:${App.context.packageName}")
                 startActivity(intent)
                 true
             }
@@ -183,7 +177,7 @@ class SettingsActivity : BaseActivity() {
                     startActivity(intent)
                 }
                 "customizePathDescription" -> {
-                    val alertDialog = AlertDialog.Builder(context)
+                    val alertDialog = MaterialAlertDialogBuilder(App.currentActivity)
                             .setTitle(resources.getString(R.string.customize_path_description_title))
                             .create()
         

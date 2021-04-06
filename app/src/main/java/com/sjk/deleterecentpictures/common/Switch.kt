@@ -1,13 +1,14 @@
 package com.sjk.deleterecentpictures.common
 
 object Switch {
+    const val ENABLE_LOG: Boolean = false
     val ENABLE_LOG_LEVELS: Map<LoggerLevelEnum, Boolean> = mapOf(
-            LoggerLevelEnum.VERBOSE to false,
-            LoggerLevelEnum.DEBUG to false,
-            LoggerLevelEnum.INFO to false,
-            LoggerLevelEnum.WARN to false,
-            LoggerLevelEnum.ERROR to false,
-            LoggerLevelEnum.LOG to false
+            LoggerLevelEnum.VERBOSE to true,
+            LoggerLevelEnum.DEBUG to true,
+            LoggerLevelEnum.INFO to true,
+            LoggerLevelEnum.WARN to true,
+            LoggerLevelEnum.ERROR to true,
+            LoggerLevelEnum.LOG to true
     )
     const val ENABLE_LOG_TIME = true
 }

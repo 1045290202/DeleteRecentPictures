@@ -25,6 +25,7 @@ class App : Application() {
         lateinit var densityUtil: DensityUtil
         lateinit var fileUtil: FileUtil
         lateinit var imageScannerUtil: ImageScannerUtil
+        lateinit var qrCodeUtil: QRCodeUtil
         lateinit var recentImages: RecentImages
         
         val newEvent: Event
@@ -47,6 +48,7 @@ class App : Application() {
         densityUtil = DensityUtil
         fileUtil = FileUtil
         imageScannerUtil = ImageScannerUtil
+        qrCodeUtil = QRCodeUtil
         recentImages = RecentImages
     }
     

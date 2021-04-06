@@ -42,6 +42,9 @@ private object Logger {
     
     
     fun v(tag: String, msg: String) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.VERBOSE] == false) {
             return
         }
@@ -49,6 +52,9 @@ private object Logger {
     }
     
     fun d(tag: String, msg: String) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.DEBUG] == false) {
             return
         }
@@ -56,6 +62,9 @@ private object Logger {
     }
     
     fun i(tag: String, msg: String) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.INFO] == false) {
             return
         }
@@ -63,6 +72,9 @@ private object Logger {
     }
     
     fun w(tag: String, msg: String) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.WARN] == false) {
             return
         }
@@ -70,6 +82,9 @@ private object Logger {
     }
     
     fun e(tag: String, msg: String) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.ERROR] == false) {
             return
         }
@@ -77,6 +92,9 @@ private object Logger {
     }
     
     fun log(msg: Any?) {
+        if (!App.switch.ENABLE_LOG) {
+            return
+        }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.LOG] == false) {
             return
         }

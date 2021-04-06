@@ -4,11 +4,14 @@
         package="com.sjk.deleterecentpictures">
     
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
             tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"
+    <uses-permission
+            android:name="android.permission.WRITE_MEDIA_STORAGE"
             tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+    <uses-permission
+            android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
             tools:ignore="ScopedStorage" />
     
     <application
@@ -33,25 +36,26 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        
+    
         <activity
                 android:name=".activity.settings.SettingsActivity"
                 android:excludeFromRecents="true"
-                android:exported="true">
-        </activity>
-<!--        <activity-->
-<!--                android:name=".SettingsActivity"-->
-<!--                android:configChanges="uiMode"-->
-<!--                android:excludeFromRecents="true" />-->
+                android:screenOrientation="sensor"
+                android:exported="true" />
+        <!--        <activity-->
+        <!--                android:name=".SettingsActivity"-->
+        <!--                android:configChanges="uiMode"-->
+        <!--                android:excludeFromRecents="true" />-->
         <activity
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="true"
+                android:screenOrientation="sensor"
                 android:theme="@style/PhotoActivityTheme" /> <!-- @style/DialogTheme -->
         <activity
                 android:name=".activity.main.MainActivity"
                 android:excludeFromRecents="true"
                 android:exported="true"
-                android:screenOrientation="user"
+                android:screenOrientation="sensor"
                 android:theme="@style/DialogTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,14 +64,14 @@
             </intent-filter>
         </activity>
         
-         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths" />
         </provider>
     </application>
 

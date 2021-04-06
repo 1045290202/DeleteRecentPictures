@@ -5,13 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
 import java.io.File
-import java.lang.Exception
 
 
 object Output {
+    const val TAG: String = "Output"
     private val dataSource: DataSource = DataSource
     
     fun showToast(content: CharSequence) {
@@ -87,27 +87,20 @@ object Output {
         return true
     }
     
-    fun showImageLongClickDialog(filePath: String?) {
-        AlertDialog.Builder(App.currentActivity)
-                .setTitle("请选择你的操作")
-                .setItems(App.const.IMAGE_LONG_CLICK_DIALOG_ITEMS) { dialogInterface: DialogInterface, i: Int ->
-                    this.onImageLongClickDialogItemClick(dialogInterface, i, filePath)
-                }
-                .show()
+    fun openLinkWithBrowser(url: String): Boolean {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            App.context.startActivity(intent)
+        } catch (e: Exception) {
+            logE(TAG, e.stackTraceToString())
+            return false
+        }
+        return true
     }
     
-    private fun onImageLongClickDialogItemClick(dialogInterface: DialogInterface, i: Int, filePath: String?) {
-        when (i) {
-            0 -> {
-                if (!this.openByOtherApp(filePath)) {
-                    this.showToast("唤起打开方式失败")
-                }
-            }
-            1 -> {
-                if (!this.shareToOtherApp(filePath)) {
-                    this.showToast("唤起分享方式失败")
-                }
-            }
-        }
+    fun showImageLongClickDialog(filePath: String?) {
+        ImageLongClickDialog.build(filePath = filePath).show()
     }
 }

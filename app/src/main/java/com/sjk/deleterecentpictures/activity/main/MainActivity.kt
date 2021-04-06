@@ -55,7 +55,6 @@ open class MainActivity : BaseActivity() {
         
         //设置默认偏好
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
-        
         initView()
         requestWritePermission()
     }

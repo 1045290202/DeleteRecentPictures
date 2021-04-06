@@ -1,30 +1,20 @@
 package com.sjk.deleterecentpictures.activity.image
 
-import android.app.Dialog
-import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.google.android.material.dialog.MaterialDialogs
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.FileUtil
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.GifImageView
-import java.io.File
-import java.lang.Exception
 import java.util.*
 
 
