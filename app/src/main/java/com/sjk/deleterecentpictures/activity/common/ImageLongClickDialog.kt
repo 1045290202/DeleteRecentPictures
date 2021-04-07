@@ -52,11 +52,11 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
             
                     App.currentActivity.runOnUiThread {
                         if (content == null) {
-                            App.output.showToast("未发现二维码")
+                            App.output.showToast("未发现条形码（二维码）")
                             return@runOnUiThread
                         }
                         MaterialAlertDialogBuilder(this.dialogBuilder.context)
-                                .setTitle("二维码内容")
+                                .setTitle("识别内容")
                                 .setMessage("$content")
                                 .setNegativeButton("取消") { dialogInterface: DialogInterface, i: Int ->
                                     dialogInterface.cancel()
@@ -67,7 +67,7 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
                                 }
                                 .setPositiveButton("浏览器打开") { dialogInterface: DialogInterface, i: Int ->
                                     if (!App.output.openLinkWithBrowser(content)) {
-                                        App.output.showToast("链接打开失败")
+                                        App.output.showToast("打开失败")
                                     }
                                 }
                                 .show()

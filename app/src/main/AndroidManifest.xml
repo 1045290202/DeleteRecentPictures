@@ -39,16 +39,12 @@
     
         <activity
                 android:name=".activity.settings.SettingsActivity"
-                android:excludeFromRecents="true"
+                android:excludeFromRecents="false"
                 android:screenOrientation="sensor"
                 android:exported="true" />
-        <!--        <activity-->
-        <!--                android:name=".SettingsActivity"-->
-        <!--                android:configChanges="uiMode"-->
-        <!--                android:excludeFromRecents="true" />-->
         <activity
                 android:name=".activity.image.ImageActivity"
-                android:excludeFromRecents="true"
+                android:excludeFromRecents="false"
                 android:screenOrientation="sensor"
                 android:theme="@style/PhotoActivityTheme" /> <!-- @style/DialogTheme -->
         <activity
