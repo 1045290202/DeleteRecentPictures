@@ -278,7 +278,7 @@ open class MainActivity : BaseActivity() {
     }
     
     private fun refreshImages() {
-        ImageScannerUtil.init(this, this.getDataSource().getSelection())
+        ImageScannerUtil.init(this, this.getDataSource().getSelection(), sortOrder = App.dataSource.getSortOrder())
 //        App.recentImages.resetCurrentImagePathIndex()
         App.recentImages.clearImagePaths()
         

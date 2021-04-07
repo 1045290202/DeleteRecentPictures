@@ -28,11 +28,10 @@ object DataSource {
     
     fun getSelection(): String? {
         var selection: String? = null
-        context.let {
+        this.context.let {
             val strings = it.resources.getStringArray(R.array.path_values)
-            val sp = PreferenceManager.getDefaultSharedPreferences(this.context)
             //        Log.d(TAG, "read: " + sp.getString("path", strings[0]));
-            when (sp.getString("path", strings[0])) {
+            when (this.getSP().getString("path", strings[0])) {
                 strings[0] -> {
                     selection = null
                 }
@@ -43,7 +42,7 @@ object DataSource {
                     val externalFilesDir = Environment.getExternalStorageDirectory()
         
                     selection = if (externalFilesDir != null) {
-                        "${externalFilesDir.absolutePath}/${sp.getString("customizePath", "")}"
+                        "${externalFilesDir.absolutePath}/${this.getSP().getString("customizePath", "")}"
                     } else {
                         App.output.showToast("无法获取外置存储位置, 替换为默认查询")
                         null
@@ -70,8 +69,26 @@ object DataSource {
         return App.recentImages.currentImagePathIndex
     }
     
-    fun getNavigationBarHeight(): Int{
+    fun getNavigationBarHeight(): Int {
         val resourceId = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return this.context.resources.getDimensionPixelSize(resourceId)
+    }
+    
+    fun getSortOrder(): String {
+        var sorterOrderType = App.imageScannerUtil.DATE_MODIFIED
+        
+        this.context.let {
+            val strings = it.resources.getStringArray(R.array.sort_order)
+            when (this.getSP().getString("sortOrder", strings[0])) {
+                strings[0] -> {
+                    sorterOrderType = App.imageScannerUtil.DATE_MODIFIED
+                }
+                strings[1] -> {
+                    sorterOrderType = App.imageScannerUtil.DATE_ADDED
+                }
+            }
+        }
+        
+        return sorterOrderType
     }
 }

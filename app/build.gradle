@@ -8,8 +8,8 @@ android {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 25
-        versionName "2.0.5"
+        versionCode 26
+        versionName "2.0.6"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

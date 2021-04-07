@@ -21,4 +21,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    
+    <string-array name="sort_order_name">
+        <item>修改时间（倒序）</item>
+        <item>添加时间（倒序）</item>
+    </string-array>
+
+    <string-array name="sort_order">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

@@ -40,6 +40,15 @@
                 app:title="@string/scan_type_title"
                 app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"
                 app:useSimpleSummaryProvider="false" />
+        
+        <ListPreference
+                app:defaultValue="1"
+                app:entries="@array/sort_order_name"
+                app:entryValues="@array/sort_order"
+                app:key="sortOrder"
+                app:singleLineTitle="true"
+                app:title="@string/sort_order_title"
+                app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/path_header">
