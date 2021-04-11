@@ -69,6 +69,21 @@ object DataSource {
         return App.recentImages.currentImagePathIndex
     }
     
+    fun getImageChecks(): MutableList<Boolean> {
+        return App.recentImages.imageChecks
+    }
+    
+    fun getAllCheckedImagePaths(): MutableList<String?> {
+        val checkedImagePaths: MutableList<String?> = mutableListOf()
+        for ((index, imageCheck) in this.getImageChecks().withIndex()) {
+            if (!imageCheck) {
+                continue
+            }
+            checkedImagePaths.add(this.getRecentImagePaths()[index])
+        }
+        return checkedImagePaths
+    }
+    
     fun getNavigationBarHeight(): Int {
         val resourceId = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return this.context.resources.getDimensionPixelSize(resourceId)

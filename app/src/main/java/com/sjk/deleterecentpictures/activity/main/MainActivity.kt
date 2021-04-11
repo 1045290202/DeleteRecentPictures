@@ -13,12 +13,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CompoundButton
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
@@ -43,11 +45,18 @@ open class MainActivity : BaseActivity() {
         private const val TAG = "MainActivity"
         
         //    public static Bitmap theLatestImage;
-        private val PERMISSIONS_STORAGE = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-        )
+        private val PERMISSIONS_STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            )
+        } else {
+            arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+        }
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,15 +70,16 @@ open class MainActivity : BaseActivity() {
     
     override fun onResume() {
         super.onResume()
-        if (this.viewPager.currentItem != this.getDataSource().getCurrentImagePathIndex()) {
-            this.viewPager.setCurrentItem(this.getDataSource().getCurrentImagePathIndex(), false)
+        if (this.viewPager.currentItem != App.dataSource.getCurrentImagePathIndex()) {
+            this.viewPager.setCurrentItem(App.dataSource.getCurrentImagePathIndex(), false)
         }
     }
     
     override fun finish() {
         super.finish()
         App.recentImages.clearImagePaths()
-        this.getInput().setCurrentImagePathIndex(0)
+        App.recentImages.clearImageChecks()
+        App.recentImages.resetCurrentImagePathIndex()
         App.imageScannerUtil.close()
     }
     
@@ -77,23 +87,24 @@ open class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         buttonClickEventBind()
         
-        this.viewPager = findViewById(R.id.viewPager)
+        this.viewPager = this.findViewById(R.id.viewPager)
         this.viewPager.adapter = viewPagerAdapter
-        this.viewPagerAdapter.imagePaths = this.getDataSource().getRecentImagePaths()
+        this.viewPagerAdapter.imagePaths = App.dataSource.getRecentImagePaths()
+        this.viewPagerAdapter.imageChecks = App.dataSource.getImageChecks()
         this.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
         
-                    this@MainActivity.getInput().setCurrentImagePathIndex(position)
+                App.input.setCurrentImagePathIndex(position)
         
-                    if (this@MainActivity.getDataSource().getRecentImagePaths().size == 0) {
-                        this@MainActivity.getInput().setCurrentImagePathIndex(0)
-                        return
-                    }
-        
-                    this@MainActivity.refreshCurrentImagePath()
+                if (App.dataSource.getRecentImagePaths().size == 0) {
+                    App.input.setCurrentImagePathIndex(0)
+                    return
                 }
-            })
+        
+                this@MainActivity.refreshCurrentImagePath()
+            }
+        })
     }
     
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -110,8 +121,8 @@ open class MainActivity : BaseActivity() {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
             val result = data.getBooleanExtra("preferenceChanged", false)
             if (result) {
-                startActivity(Intent(this@MainActivity, MainActivity::class.java))
-                finish()
+                this.startActivity(Intent(this@MainActivity, MainActivity::class.java))
+                this.finish()
                 this.getOutput().showToast("已重新加载设置")
             }
         }/* else {
@@ -160,27 +171,29 @@ open class MainActivity : BaseActivity() {
     private fun buttonClickEventBind() {
         val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
         latestPicturePathButton.setOnClickListener {
-            if (this.getDataSource().getCurrentImagePath() == null) {
+            if (App.dataSource.getCurrentImagePath() == null) {
                 return@setOnClickListener
             }
-            this.getOutput().showToastLong("完整路径：${this.getDataSource().getCurrentImagePath()}")
+            App.output.showToastLong("完整路径：${App.dataSource.getCurrentImagePath()}")
         }
         latestPicturePathButton.setOnLongClickListener {
-            if (this.getDataSource().getCurrentImagePath() == null) {
-                this.getOutput().showToast("无路径")
+            if (App.dataSource.getCurrentImagePath() == null) {
+                App.output.showToast("无路径")
                 return@setOnLongClickListener true
             }
             
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.app_name), this.getDataSource().getCurrentImagePath())
+            val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(resources.getString(R.string.app_name), App.dataSource.getCurrentImagePath())
             clipboard.setPrimaryClip(clip)
-            this.getOutput().showToast("${this.getDataSource().getCurrentImagePath()}已复制到剪切板")
+            App.output.showToast("${App.dataSource.getCurrentImagePath()}已复制到剪切板")
             true
         }
-        val refreshButton = findViewById<Button>(R.id.refreshButton)
+        val refreshButton = this.findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener {
             this.refreshAll()
-            this.getOutput().showToast("刷新成功")
+            App.input.setAllImageChecksFalse()
+            this.viewPagerAdapter.setAllHolderChecked(false)
+            App.output.showToast("刷新成功")
         }
         /*val openImageActivityButton = findViewById<Button>(R.id.openImageActivityButton)
         openImageActivityButton.setOnClickListener {
@@ -189,28 +202,47 @@ open class MainActivity : BaseActivity() {
             startActivity(intent)
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }*/
-        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        val cancelButton = this.findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { finish() }
         
         //删除按钮
-        val deleteButton = findViewById<Button>(R.id.deleteButton)
+        val deleteButton = this.findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
+            if (this.arePicturesChecked()) {
+                App.output.showDeleteCheckedImagesDialog(positiveCallback = { dialogInterface: DialogInterface?, witch: Int ->
+                    this.deleteCheckedImages {
+                        App.input.setAllImageChecksFalse()
+                        this.viewPagerAdapter.setAllHolderChecked(false)
+                    }
+                })
+                return@setOnClickListener
+            }
             
             val deleteDirectly = this.getDataSource().getSP().getBoolean("deleteDirectly", false)
             if (deleteDirectly) {
-                deleteCurrentImage()
+                this.deleteCurrentImage {
+                    App.input.setAllImageChecksFalse()
+                    this.viewPagerAdapter.setAllHolderChecked(false)
+                }
             } else {
-                MaterialAlertDialogBuilder(this@MainActivity)
-                        .setTitle("提示")
-                        .setMessage("请确认是否删除\n${this.getDataSource().getCurrentImagePath()}")
-                        .setPositiveButton("确定") { _: DialogInterface?, _: Int -> deleteCurrentImage() }
-                        .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                        .show()
+                App.output.showDeleteCurrentImageDialog(positiveCallback = { dialogInterface: DialogInterface?, witch: Int ->
+                    this.deleteCurrentImage {
+                        App.input.setAllImageChecksFalse()
+                        this.viewPagerAdapter.setAllHolderChecked(false)
+                    }
+                })
             }
         }
         deleteButton.setOnLongClickListener {
-            deleteCurrentImage(false)
-            finish()
+            if (this.arePicturesChecked()) {
+                this.deleteCheckedImages {
+                    this.finish()
+                }
+                return@setOnLongClickListener true
+            }
+            this.deleteCurrentImage(false) {
+                this.finish()
+            }
             true
         }
         val settingsButton = findViewById<Button>(R.id.settingsButton)
@@ -220,7 +252,44 @@ open class MainActivity : BaseActivity() {
         }
     }
     
-    private fun deleteCurrentImage(needToRefresh: Boolean = true) {
+    private fun arePicturesChecked(): Boolean {
+        return App.dataSource.getAllCheckedImagePaths().size != 0
+    }
+    
+    private fun deleteCheckedImages(needToRefresh: Boolean = true, callback: () -> Unit = fun() {}) {
+        val deleteButton: Button = findViewById(R.id.deleteButton)
+        deleteButton.isEnabled = false
+        
+        Thread {
+            var allDeleted = true
+            var someDeleted = false
+            val allCheckedImagePaths = App.dataSource.getAllCheckedImagePaths()
+            for (imagePath in allCheckedImagePaths) {
+                //删除图片并判断
+                if (FileUtil.deleteFile(imagePath)) {
+                    someDeleted = true
+                } else {
+                    allDeleted = false
+                }
+            }
+            this.runOnUiThread {
+                when {
+                    allDeleted -> {
+                        App.output.showToast("已全部删除")
+                    }
+                    someDeleted -> {
+                        App.output.showToast("部分图片删除失败")
+                    }
+                    else -> {
+                        App.output.showToast("所有图片删除失败，请确认是否已给予存储权限")
+                    }
+                }
+            }
+            this.refreshMediaLibraryAfterDelete(needToRefresh, callback, allCheckedImagePaths)
+        }.start()
+    }
+    
+    private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: () -> Unit = fun() {}) {
         if (this.getDataSource().getCurrentImagePath() == null || this.getDataSource().getCurrentImagePath() == "") {
             this.getOutput().showToast("没有获取到图片路径，删除失败")
             return
@@ -229,38 +298,59 @@ open class MainActivity : BaseActivity() {
         val deleteButton: Button = findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
         
-        val scanType: String = this.getDataSource().getSP().getString("scanType", "1")!!
-        
-        if (!App.fileUtil.existsFile(this.getDataSource().getCurrentImagePath())) {
-            this.getOutput().showToast("文件不存在，删除失败")
-            ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
-                // 里面是线程回调，这里面不能刷新UI，除非放到UI线程里执行
+        Thread {
+            val scanType: String = App.dataSource.getSP().getString("scanType", "1")!!
+            
+            if (!App.fileUtil.existsFile(this.getDataSource().getCurrentImagePath())) {
                 this.runOnUiThread {
-                    this.refreshImages()
-                    deleteButton.isEnabled = true
+                    App.output.showToast("文件不存在，删除失败")
+                }
+                ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
+                    this.runOnUiThread {
+                        this.refreshImages()
+                        deleteButton.isEnabled = true
+                        callback()
+                    }
+                }
+                return@Thread
+            }
+            
+            //删除图片并判断
+            if (FileUtil.deleteFile(App.dataSource.getCurrentImagePath())) {
+                this.runOnUiThread {
+                    App.output.showToast("${this.getDataSource().getCurrentImagePath()}删除成功")
+                }
+            } else {
+                this.runOnUiThread {
+                    App.output.showToast("文件无法删除，请确认是否已给予存储权限")
                 }
             }
-            return
-        }
-        
-        //删除图片并判断
-        if (FileUtil.deleteFile(this.getDataSource().getCurrentImagePath())) {
-            this.getOutput().showToast("${this.getDataSource().getCurrentImagePath()}删除成功")
-        } else {
-            this.getOutput().showToast("文件无法删除，请确认是否已给予存储权限")
-        }
-        ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
-            // 里面是线程回调，这里面不能刷新UI，除非放到UI线程里执行
-            this.runOnUiThread {
-                if (this.getDataSource().getSP().getBoolean("closeApp", true)) {
-                    this.finish()
-                    return@runOnUiThread
+            this.refreshMediaLibraryAfterDelete(needToRefresh, callback, arrayListOf(this.getDataSource().getCurrentImagePath()))
+        }.start()
+    }
+    
+    private fun refreshMediaLibraryAfterDelete(needToRefresh: Boolean = true, callback: () -> Unit, imagePaths: List<String?>) {
+        val scanType: String = App.dataSource.getSP().getString("scanType", "1")!!
+        val imagePathsSize = imagePaths.size
+        for ((index, imagePath) in imagePaths.withIndex()) {
+            ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, imagePath, scanType.toInt()) { path: String, uri: Uri? ->
+                if (index < imagePathsSize - 1){
+                    return@refreshMediaLibraryByPath
                 }
-                if (needToRefresh) {
-                    this.refreshImages()
-                    this.refreshCurrentImagePath()
+                this.runOnUiThread {
+                    if (App.dataSource.getSP().getBoolean("closeApp", true)) {
+                        callback()
+                        this.finish()
+                        return@runOnUiThread
+                    }
+                    if (needToRefresh) {
+                        this.refreshImages()
+                        this.refreshCurrentImagePath()
+                    }
+                    val deleteButton: Button = findViewById(R.id.deleteButton)
+                    deleteButton.isEnabled = true
+                    callback()
                 }
-                deleteButton.isEnabled = true
             }
         }
     }
@@ -291,6 +381,9 @@ open class MainActivity : BaseActivity() {
             this.getDataSource().getRecentImagePaths().add(imagePath)
             i--
         }
+        for (index in this.viewPagerAdapter.imagePaths.indices) {
+            this.viewPagerAdapter.imageChecks.add(false)
+        }
         /*for (i in 0..this.getDataSource().getNumberOfPictures()) {
             val imagePath = App.imageScannerUtil.getNext() ?: break
             this.viewPagerAdapter.imagePaths.add(imagePath)
@@ -310,11 +403,17 @@ open class MainActivity : BaseActivity() {
 }
 
 internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityViewPagerAdapter.ViewPagerViewHolder>() {
+    companion object {
+        lateinit var instance: MainActivityViewPagerAdapter
+    }
+    
     private var viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
     var imagePaths: MutableList<String?> = arrayListOf()
+    var imageChecks: MutableList<Boolean> = arrayListOf()
     val event: Event = App.newEvent
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
+        instance = this
         val viewPagerViewHolder = ViewPagerViewHolder(LayoutInflater.from(parent.context)
                 .inflate(R.layout.layout_main_view_pager_item, parent, false))
         viewPagerViewHolders.add(viewPagerViewHolder)
@@ -352,7 +451,11 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
     }
     
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
-        holder.imagePath = imagePaths[position]
+        if (this.imageChecks.size > 0) {
+            holder.isChecked = this.imageChecks[position]
+        }
+        
+        holder.imagePath = this.imagePaths[position]
         if (holder.imagePath == null) {
             holder.latestPictureGifImageView.visibility = View.GONE
             holder.gifSign.visibility = View.GONE
@@ -381,6 +484,8 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
     
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
+
+//        holder.checkBox.isChecked = holder.isChecked
         
         if (!holder.isGif) {
             holder.latestPictureImageView.recycle()
@@ -397,7 +502,8 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
     
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
-
+        
+        holder.checkBox.isChecked = holder.isChecked
 //        if (holder.hasImage){
 //            return
 //        }
@@ -425,13 +531,28 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
         return this.imagePaths.size
     }
     
+    fun setHolderChecked(position: Int, isChecked: Boolean) {
+        this.viewPagerViewHolders[position].run {
+            this.checkBox.isChecked = isChecked
+            this.isChecked = isChecked
+        }
+    }
+    
+    fun setAllHolderChecked(isChecked: Boolean) {
+        this.viewPagerViewHolders.forEachIndexed { index: Int, viewPagerViewHolder: ViewPagerViewHolder ->
+            this.setHolderChecked(index, isChecked)
+        }
+    }
+    
     internal inner class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var latestPictureImageView: SubsamplingScaleImageView = itemView.findViewById(R.id.latestPictureImageView)
-        var latestPictureGifImageView: GifImageView = itemView.findViewById(R.id.latestPictureGifImageView)
-        var gifSign: View = itemView.findViewById(R.id.gifSign)
+        val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
+        val latestPictureImageView: SubsamplingScaleImageView = itemView.findViewById(R.id.latestPictureImageView)
+        val latestPictureGifImageView: GifImageView = itemView.findViewById(R.id.latestPictureGifImageView)
+        val gifSign: View = itemView.findViewById(R.id.gifSign)
         private val openImageActivityButton = itemView.findViewById<Button>(R.id.openImageActivityButton)
         var imagePath: String? = null
         var isGif = false
+        var isChecked: Boolean = false
         
         init {
             this.openImageActivityButton.setOnClickListener {
@@ -449,6 +570,19 @@ internal class MainActivityViewPagerAdapter : RecyclerView.Adapter<MainActivityV
                 App.output.showImageLongClickDialog(this.imagePath)
                 
                 return@setOnLongClickListener true
+            }
+            this.checkBox.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+                if (App.dataSource.getCurrentImagePath() != this.imagePath) {
+                    return@setOnCheckedChangeListener
+                }
+                this.isChecked = isChecked
+                instance.imageChecks[App.dataSource.getCurrentImagePathIndex()] = isChecked
+            }
+            this.checkBox.setOnLongClickListener {
+                this@MainActivityViewPagerAdapter.setAllHolderChecked(false)
+                App.input.setAllImageChecksFalse()
+                App.output.showToast("已取消所有已选择图片")
+                true
             }
         }
     }

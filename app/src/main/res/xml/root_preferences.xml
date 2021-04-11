@@ -12,7 +12,7 @@
         <SwitchPreference
                 app:defaultValue="false"
                 app:key="deleteDirectly"
-                app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除）"
+                app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除和多选删除）"
                 app:title="@string/delete_directly_title" />
 
 <!--        <SeekBarPreference-->

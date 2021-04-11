@@ -12,11 +12,17 @@ object RecentImages {
             return this.imagePaths[this.currentImagePathIndex]
         }
     
+    val imageChecks: MutableList<Boolean> = mutableListOf()
+    
     fun clearImagePaths() {
         this.imagePaths.clear()
     }
     
     fun resetCurrentImagePathIndex() {
         this.currentImagePathIndex = 0
+    }
+    
+    fun clearImageChecks() {
+        this.imageChecks.clear()
     }
 }

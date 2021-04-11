@@ -47,4 +47,14 @@
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:maxHeight="280dp" />
+    
+    <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/checkbox"
+            style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+
+
 </RelativeLayout>

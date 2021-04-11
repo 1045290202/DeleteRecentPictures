@@ -25,8 +25,8 @@ fun logE(tag: String, msg: String) {
     Logger.e(tag, msg)
 }
 
-fun log(msg: Any?) {
-    Logger.log(msg)
+fun log(vararg msgs: Any?) {
+    Logger.log(*msgs)
 }
 
 private object Logger {
@@ -91,14 +91,21 @@ private object Logger {
         Log.e("e ${this.getLogTime()}$tag", msg)
     }
     
-    fun log(msg: Any?) {
+    fun log(vararg msgs: Any?) {
         if (!App.switch.ENABLE_LOG) {
             return
         }
         if (App.switch.ENABLE_LOG_LEVELS[LoggerLevelEnum.LOG] == false) {
             return
         }
-        println("${this.getLogTime()}$msg")
+        val stringBuilder = StringBuilder()
+        for ((index, msg) in msgs.withIndex()) {
+            if (index != 0){
+                stringBuilder.append(" ")
+            }
+            stringBuilder.append(msg.toString())
+        }
+        println("${this.getLogTime()}$stringBuilder")
     }
 }
 

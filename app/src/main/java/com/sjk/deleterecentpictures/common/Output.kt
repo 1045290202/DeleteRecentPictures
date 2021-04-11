@@ -4,8 +4,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
 import java.io.File
 
@@ -102,5 +105,35 @@ object Output {
     
     fun showImageLongClickDialog(filePath: String?) {
         ImageLongClickDialog.build(filePath = filePath).show()
+    }
+    
+    fun showDeleteCurrentImageDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
+        MaterialAlertDialogBuilder(App.currentActivity)
+                .setTitle("提示")
+                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImagePath()}")
+                .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
+                .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                .show()
+    }
+    
+    fun showDeleteCheckedImagesDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
+        val allCheckedImagePaths = this.dataSource.getAllCheckedImagePaths()
+        val items: MutableList<String> = mutableListOf()
+        for (imagePath in allCheckedImagePaths) {
+            if (imagePath == null) {
+                items.add("图片路径为空")
+            } else {
+                items.add("$imagePath")
+            }
+        }
+        MaterialAlertDialogBuilder(App.currentActivity)
+                .setTitle("即将删除")
+//                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImagePath()}")
+                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
+                    this.showDeleteCheckedImagesDialog(positiveCallback)
+                }
+                .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
+                .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                .show()
     }
 }
