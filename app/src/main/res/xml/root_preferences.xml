@@ -14,6 +14,12 @@
                 app:key="deleteDirectly"
                 app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除和多选删除）"
                 app:title="@string/delete_directly_title" />
+        
+        <SwitchPreference
+                app:defaultValue="false"
+                app:key="useRMCommand"
+                app:summary="当删除图片被系统拦截时，可打开此选项，程序将尝试使用&quot;rm -r&quot;指令删除图片，同时媒体扫描方式可能需要切换成ContentResolver"
+                app:title="@string/use_rm_command_title" />
 
 <!--        <SeekBarPreference-->
 <!--                android:max="1024"-->

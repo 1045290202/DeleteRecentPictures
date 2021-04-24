@@ -18,6 +18,7 @@
     <!-- General Settings Preferences -->
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="delete_directly_title">直接删除</string>
+    <string name="use_rm_command_title">使用rm指令删除</string>
     <string name="thumbnail_size_title">缩略图大小</string>
     <string name="number_of_pictures_title">单次查看数量</string>
     <string name="scan_type_title">媒体扫描方式</string>

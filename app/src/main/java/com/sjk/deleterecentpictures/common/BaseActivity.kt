@@ -1,5 +1,6 @@
 package com.sjk.deleterecentpictures.common
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -8,6 +9,11 @@ open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.currentActivity = this
+    }
+    
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+//        this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
     }
     
     override fun onResume() {

@@ -12,4 +12,15 @@ object Input {
             }
         }
     }
+    
+    fun copyCurrentImagePath(): Boolean {
+        if (App.dataSource.getCurrentImagePath() == null) {
+            App.output.showToast("无路径")
+            return false
+        }
+        
+        App.clipboardUtil.setText(App.dataSource.getCurrentImagePath()!!)
+        App.output.showToast("已复制到剪切板")
+        return true
+    }
 }

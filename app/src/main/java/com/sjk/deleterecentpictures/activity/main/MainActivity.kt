@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
@@ -61,7 +62,6 @@ open class MainActivity : BaseActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         //设置默认偏好
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         initView()
@@ -171,29 +171,28 @@ open class MainActivity : BaseActivity() {
     private fun buttonClickEventBind() {
         val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
         latestPicturePathButton.setOnClickListener {
-            if (App.dataSource.getCurrentImagePath() == null) {
-                return@setOnClickListener
-            }
-            App.output.showToastLong("完整路径：${App.dataSource.getCurrentImagePath()}")
+            App.output.showPathButtonClickDialog()
         }
         latestPicturePathButton.setOnLongClickListener {
-            if (App.dataSource.getCurrentImagePath() == null) {
-                App.output.showToast("无路径")
-                return@setOnLongClickListener true
-            }
-            
-            val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(resources.getString(R.string.app_name), App.dataSource.getCurrentImagePath())
-            clipboard.setPrimaryClip(clip)
-            App.output.showToast("${App.dataSource.getCurrentImagePath()}已复制到剪切板")
+            App.input.copyCurrentImagePath()
             true
         }
         val refreshButton = this.findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener {
-            this.refreshAll()
-            App.input.setAllImageChecksFalse()
-            this.viewPagerAdapter.setAllHolderChecked(false)
-            App.output.showToast("刷新成功")
+            this.refreshAll {
+                App.input.setAllImageChecksFalse()
+                this.viewPagerAdapter.setAllHolderChecked(false)
+                App.output.showToast("刷新成功")
+            }
+        }
+        refreshButton.setOnLongClickListener {
+            this.refreshAll {
+                App.input.setAllImageChecksFalse()
+                this.viewPagerAdapter.setAllHolderChecked(false)
+                this.viewPager.setCurrentItem(0, true)
+                App.output.showToast("刷新成功并返回第一张图片")
+            }
+            true
         }
         /*val openImageActivityButton = findViewById<Button>(R.id.openImageActivityButton)
         openImageActivityButton.setOnClickListener {
@@ -307,9 +306,10 @@ open class MainActivity : BaseActivity() {
                 }
                 ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImagePath(), scanType.toInt()) { path: String, uri: Uri? ->
                     this.runOnUiThread {
-                        this.refreshImages()
-                        deleteButton.isEnabled = true
-                        callback()
+                        this.refreshImages {
+                            deleteButton.isEnabled = true
+                            callback()
+                        }
                     }
                 }
                 return@Thread
@@ -334,7 +334,7 @@ open class MainActivity : BaseActivity() {
         val imagePathsSize = imagePaths.size
         for ((index, imagePath) in imagePaths.withIndex()) {
             ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, imagePath, scanType.toInt()) { path: String, uri: Uri? ->
-                if (index < imagePathsSize - 1){
+                if (index < imagePathsSize - 1) {
                     return@refreshMediaLibraryByPath
                 }
                 this.runOnUiThread {
@@ -344,8 +344,9 @@ open class MainActivity : BaseActivity() {
                         return@runOnUiThread
                     }
                     if (needToRefresh) {
-                        this.refreshImages()
-                        this.refreshCurrentImagePath()
+                        this.refreshImages {
+                            this.refreshCurrentImagePath()
+                        }
                     }
                     val deleteButton: Button = findViewById(R.id.deleteButton)
                     deleteButton.isEnabled = true
@@ -355,9 +356,9 @@ open class MainActivity : BaseActivity() {
         }
     }
     
-    private fun refreshAll() {
+    private fun refreshAll(callback: () -> Unit = fun() {}) {
         Thread {
-            this.refreshImages()
+            this.refreshImages(callback)
         }.start()
     }
     
@@ -367,7 +368,7 @@ open class MainActivity : BaseActivity() {
         latestPicturePathButton.text = this.getDataSource().getSimplifiedPathInExternalStorage(this@MainActivity.getDataSource().getCurrentImagePath())
     }
     
-    private fun refreshImages() {
+    private fun refreshImages(callback: () -> Unit = fun() {}) {
         ImageScannerUtil.init(this, this.getDataSource().getSelection(), sortOrder = App.dataSource.getSortOrder())
 //        App.recentImages.resetCurrentImagePathIndex()
         App.recentImages.clearImagePaths()
@@ -398,6 +399,7 @@ open class MainActivity : BaseActivity() {
         this.runOnUiThread {
             this.viewPagerAdapter.notifyDataSetChanged()
             this.refreshCurrentImagePath()
+            callback()
         }
     }
 }

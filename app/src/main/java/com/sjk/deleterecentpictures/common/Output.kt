@@ -22,7 +22,7 @@ object Output {
     }
     
     fun showToast(content: Int) {
-        Toast.makeText(this.dataSource.context, content, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_SHORT).show()
     }
     
     fun showToastLong(content: CharSequence) {
@@ -30,7 +30,7 @@ object Output {
     }
     
     fun showToastLong(content: Int) {
-        Toast.makeText(this.dataSource.context, content, Toast.LENGTH_LONG).show()
+        Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_LONG).show()
     }
     
     fun openByOtherApp(filePath: String?): Boolean {
@@ -118,22 +118,39 @@ object Output {
     
     fun showDeleteCheckedImagesDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
         val allCheckedImagePaths = this.dataSource.getAllCheckedImagePaths()
-        val items: MutableList<String> = mutableListOf()
-        for (imagePath in allCheckedImagePaths) {
+//        val items: MutableList<String> = mutableListOf()
+        val stringBuilder: StringBuilder = StringBuilder()
+        for ((i, imagePath) in allCheckedImagePaths.withIndex()) {
+            if (i > 0) {
+                stringBuilder.append("\n\n")
+            }
             if (imagePath == null) {
-                items.add("图片路径为空")
+                stringBuilder.append("图片路径为空")
+//                items.add("图片路径为空")
             } else {
-                items.add("$imagePath")
+                stringBuilder.append("$imagePath")
+//                items.add("$imagePath")
             }
         }
         MaterialAlertDialogBuilder(App.currentActivity)
-                .setTitle("即将删除")
-//                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImagePath()}")
-                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
-                    this.showDeleteCheckedImagesDialog(positiveCallback)
-                }
+                .setTitle("即将删除${allCheckedImagePaths.size}张图片")
+                .setMessage(stringBuilder.toString())
+//                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
+//                    this.showDeleteCheckedImagesDialog(positiveCallback)
+//                }
                 .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
                 .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                .show()
+    }
+    
+    fun showPathButtonClickDialog() {
+        MaterialAlertDialogBuilder(App.currentActivity)
+                .setTitle("当前图片路径")
+                .setMessage("${this.dataSource.getCurrentImagePath()}")
+                .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+                .setNeutralButton("复制") { dialog: DialogInterface, _: Int ->
+                    App.input.copyCurrentImagePath()
+                }
                 .show()
     }
 }

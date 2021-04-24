@@ -106,4 +106,11 @@ object DataSource {
         
         return sorterOrderType
     }
+    
+    /**
+     * 获取当前屏幕的旋转方向
+     */
+    fun getCurrentScreenOrientation(): Int {
+        return App.appResources.configuration.orientation
+    }
 }

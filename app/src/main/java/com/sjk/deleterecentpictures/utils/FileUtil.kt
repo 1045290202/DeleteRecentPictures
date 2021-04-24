@@ -2,6 +2,7 @@ package com.sjk.deleterecentpictures.utils
 
 import android.os.Environment
 import android.webkit.MimeTypeMap
+import com.sjk.deleterecentpictures.common.App
 import java.io.File
 import java.io.FileInputStream
 
@@ -33,11 +34,32 @@ object FileUtil {
             return false
         }
         
-        val file = File(filePath)
+        return this.getDeleteMethod()(filePath)
+        /*val file = File(filePath)
         return if (file.isFile && file.exists()) {
             file.delete()
         } else {
             false
+        }*/
+    }
+    
+    private fun getDeleteMethod(): (String) -> Boolean {
+        when (App.dataSource.getSP().getBoolean("useRMCommand", false)) {
+            true -> {
+                return fun(filePath: String): Boolean {
+                    return App.shellUtil.execDeleteFile(filePath)
+                }
+            }
+            false -> {
+                return fun(filePath: String): Boolean {
+                    val file = File(filePath)
+                    return if (file.isFile && file.exists()) {
+                        file.delete()
+                    } else {
+                        false
+                    }
+                }
+            }
         }
     }
     

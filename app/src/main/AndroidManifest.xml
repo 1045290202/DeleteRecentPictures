@@ -40,18 +40,18 @@
         <activity
                 android:name=".activity.settings.SettingsActivity"
                 android:excludeFromRecents="false"
-                android:screenOrientation="sensor"
+                android:screenOrientation="user"
                 android:exported="true" />
         <activity
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="false"
-                android:screenOrientation="sensor"
+                android:screenOrientation="user"
                 android:theme="@style/PhotoActivityTheme" /> <!-- @style/DialogTheme -->
         <activity
                 android:name=".activity.main.MainActivity"
                 android:excludeFromRecents="true"
                 android:exported="true"
-                android:screenOrientation="sensor"
+                android:screenOrientation="user"
                 android:theme="@style/DialogTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

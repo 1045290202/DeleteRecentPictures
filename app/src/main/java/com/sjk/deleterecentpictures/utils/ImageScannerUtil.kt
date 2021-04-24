@@ -25,10 +25,10 @@ object ImageScannerUtil {
     
     val screenshotsPath: String
         get() {
-            var path = Environment.getExternalStorageDirectory().absolutePath + "/DCIM/Screenshots/"
+            var path = "${Environment.getExternalStorageDirectory().absolutePath}/DCIM/Screenshots/"
             val file = File(path)
             if (!file.exists()) {
-                path = Environment.getExternalStorageDirectory().absolutePath + "/Pictures/Screenshots/"
+                path = "${Environment.getExternalStorageDirectory().absolutePath}/Pictures/Screenshots/"
             }
             return path
         }
