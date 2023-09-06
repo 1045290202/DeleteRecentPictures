@@ -1,27 +1,35 @@
 package com.sjk.deleterecentpictures.common
 
+import com.sjk.deleterecentpictures.bean.ImageInfoBean
+
 object RecentImages {
-    val imagePaths: MutableList<String?> = mutableListOf()
-    var currentImagePathIndex: Int = 0
-    val currentImagePath: String?
+    val imageInfos: MutableList<ImageInfoBean?> = ArrayList()
+    var currentImageInfoIndex: Int = 0
+
+    val currentImageInfo: ImageInfoBean?
         get() {
-            if (this.currentImagePathIndex >= this.imagePaths.size || currentImagePathIndex < 0) {
+            if (this.currentImageInfoIndex >= this.imageInfos.size || this.currentImageInfoIndex < 0) {
                 return null
             }
-            
-            return this.imagePaths[this.currentImagePathIndex]
+
+            return this.imageInfos[this.currentImageInfoIndex]
         }
-    
-    val imageChecks: MutableList<Boolean> = mutableListOf()
-    
+
+    val currentImagePath: String?
+        get() {
+            return this.currentImageInfo?.path
+        }
+
+    val imageChecks: MutableList<Boolean> = ArrayList()
+
     fun clearImagePaths() {
-        this.imagePaths.clear()
+        this.imageInfos.clear()
     }
-    
+
     fun resetCurrentImagePathIndex() {
-        this.currentImagePathIndex = 0
+        this.currentImageInfoIndex = 0
     }
-    
+
     fun clearImageChecks() {
         this.imageChecks.clear()
     }

@@ -1,5 +1,6 @@
 package com.sjk.deleterecentpictures.utils
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
@@ -8,18 +9,20 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.DataSource
 import java.io.File
 import java.util.*
 
 
 object ImageScannerUtil {
-    private const val TAG = "ImageScanner"
+    private const val TAG = "ImageScannerUtil"
     var imagePaths: MutableList<String?>? = null
-    
+    var imageUris: MutableList<Uri?>? = null
+
     //    public var firstImageThumbnail: Bitmap? = null
     private var cursor: Cursor? = null
-    
+
     const val DATE_MODIFIED = MediaStore.Images.Media.DATE_MODIFIED
     const val DATE_ADDED = MediaStore.Images.Media.DATE_ADDED
     
@@ -32,7 +35,12 @@ object ImageScannerUtil {
             }
             return path
         }
-    
+
+    init {
+        imagePaths = ArrayList()
+        imageUris = ArrayList()
+    }
+
     fun init(context: Context, selection: String?, escape: Boolean = true, sortOrder: String = this.DATE_MODIFIED) {
         var realSelection = selection
         if (realSelection != null) {
@@ -50,31 +58,47 @@ object ImageScannerUtil {
                 "$sortOrder DESC"
         )
     }
-    
-    fun getNext(): String? {
-        var imagePath: String? = null
+
+    fun getCurrent(): ImageInfoBean? {
+        var imageInfo: ImageInfoBean? = null
         cursor?.let {
-            try {
-                imagePath = it.getString(it.getColumnIndex(MediaStore.Images.Media.DATA))
-                it.moveToNext()
+            imageInfo = try {
+                val columnIndexData: Int = it.getColumnIndex(MediaStore.Images.Media.DATA)
+                val imagePath = it.getString(columnIndexData)
+
+                val columnIndexId: Int = it.getColumnIndex(MediaStore.Images.Media._ID)
+                val imageId: Long = it.getLong(columnIndexId)
+                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
+
+                ImageInfoBean(imagePath, imageUri, imageId)
             } catch (e: CursorIndexOutOfBoundsException) {
-                imagePath = null
+                null
             }
         }
-        
-        return imagePath
+
+        return imageInfo
     }
-    
-    fun getPrevious(): String? {
-        var imagePath: String? = null
+
+    fun getNext(): ImageInfoBean? {
+        val imageInfo: ImageInfoBean? = getCurrent()
         cursor?.let {
-            imagePath = it.getString(it.getColumnIndex(MediaStore.Images.Media.DATA))
-            it.moveToPrevious()
+            if (!it.isLast) {
+                it.moveToNext()
+            }
         }
-        
-        return imagePath
+        return imageInfo
     }
-    
+
+    fun getPrevious(): ImageInfoBean? {
+        val imageInfo: ImageInfoBean? = getCurrent()
+        cursor?.let {
+            if (!it.isFirst) {
+                it.moveToPrevious()
+            }
+        }
+        return imageInfo
+    }
+
     fun isEnd(): Boolean {
         cursor?.let {
             return it.isLast
@@ -96,7 +120,6 @@ object ImageScannerUtil {
             sel = "${MediaStore.Images.Media.DATA} like '$sel%'${if (escape) " escape '\\'" else ""}"
         }
         Log.d(TAG, "getImages: $sel")
-        imagePaths = ArrayList()
         try {
             val numberOfPictures: Int = DataSource.getNumberOfPictures()
             
@@ -109,25 +132,14 @@ object ImageScannerUtil {
             if (cursor != null && cursor.moveToFirst()) {
                 var i: Long = 0
                 do {
-//                    imagePaths.add(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//                        .buildUpon()
-//                        .appendPath(java.lang.String.valueOf(cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID)))).build())
-                    val imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-                    /*if (cursor.isFirst) {
-                        firstImageThumbnail = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            val sp = PreferenceManager.getDefaultSharedPreferences(context)
-                            val thumbnailSize = sp.getInt("thumbnailSize", 512)
-                            ThumbnailUtils.createImageThumbnail(
-                                    File(imagePath),
-                                    Size(thumbnailSize, thumbnailSize),
-                                    CancellationSignal()
-                            )
-                        } else {
-                            val imageColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                            val id = cursor.getLong(imageColumnIndex)
-                            MediaStore.Images.Thumbnails.getThumbnail(context.contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND, null);
-                        }
-                    }*/
+                    val imageId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+                    val displayName: String =
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
+                    val imageUri: Uri =
+                            ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
+
+                    val columnIndex: Int = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                    val imagePath = cursor.getString(columnIndex)
                     imagePaths!!.add(imagePath)
                     i++
                     if (i > numberOfPictures) {

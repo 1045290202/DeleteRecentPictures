@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import com.github.piasy.biv.BigImageViewer
+import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.sjk.deleterecentpictures.utils.*
 
 
@@ -56,6 +58,8 @@ class App : Application() {
         recentImages = RecentImages
         shellUtil = ShellUtil
         appResources = resources
+
+        BigImageViewer.initialize(GlideImageLoader.with(context))
     }
     
 }

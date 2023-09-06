@@ -5,18 +5,19 @@ import android.content.SharedPreferences
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.bean.ImageInfoBean
 
 object DataSource {
-    
+
     val context: Context
         get() {
             return App.context
         }
-    
+
     fun getSP(): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(this.context)
     }
-    
+
     fun getNumberOfPictures(): Int {
         val str = this.getSP().getString("numberOfPictures", App.const.DEFAULT_NUMBER_OF_PICTURES.toString())
         var numberOfPictures: Int = if (str == null || str == "") App.const.DEFAULT_NUMBER_OF_PICTURES else str.toInt()
@@ -25,7 +26,7 @@ object DataSource {
         }
         return numberOfPictures
     }
-    
+
     fun getSelection(): String? {
         var selection: String? = null
         this.context.let {
@@ -40,7 +41,7 @@ object DataSource {
                 }
                 strings[2] -> {
                     val externalFilesDir = Environment.getExternalStorageDirectory()
-        
+
                     selection = if (externalFilesDir != null) {
                         "${externalFilesDir.absolutePath}/${this.getSP().getString("customizePath", "")}"
                     } else {
@@ -52,46 +53,49 @@ object DataSource {
         }
         return selection
     }
-    
+
     fun getSimplifiedPathInExternalStorage(completePath: String?): String? {
         return App.fileUtil.getSimplifiedPathInExternalStorage(completePath)
     }
-    
-    fun getRecentImagePaths(): MutableList<String?> {
-        return App.recentImages.imagePaths
+
+    /**
+     * 获取最近图片的信息
+     */
+    fun getRecentImageInfos(): MutableList<ImageInfoBean?> {
+        return App.recentImages.imageInfos
     }
-    
-    fun getCurrentImagePath(): String? {
-        return App.recentImages.currentImagePath
+
+    fun getCurrentImageInfo(): ImageInfoBean? {
+        return App.recentImages.currentImageInfo
     }
-    
-    fun getCurrentImagePathIndex(): Int {
-        return App.recentImages.currentImagePathIndex
+
+    fun getCurrentImageInfoIndex(): Int {
+        return App.recentImages.currentImageInfoIndex
     }
-    
+
     fun getImageChecks(): MutableList<Boolean> {
         return App.recentImages.imageChecks
     }
-    
-    fun getAllCheckedImagePaths(): MutableList<String?> {
-        val checkedImagePaths: MutableList<String?> = mutableListOf()
+
+    fun getAllCheckedImageInfos(): MutableList<ImageInfoBean?> {
+        val checkedImagePaths: MutableList<ImageInfoBean?> = ArrayList()
         for ((index, imageCheck) in this.getImageChecks().withIndex()) {
             if (!imageCheck) {
                 continue
             }
-            checkedImagePaths.add(this.getRecentImagePaths()[index])
+            checkedImagePaths.add(this.getRecentImageInfos()[index])
         }
         return checkedImagePaths
     }
-    
+
     fun getNavigationBarHeight(): Int {
-        val resourceId = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        val resourceId: Int = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return this.context.resources.getDimensionPixelSize(resourceId)
     }
-    
+
     fun getSortOrder(): String {
-        var sorterOrderType = App.imageScannerUtil.DATE_MODIFIED
-        
+        var sorterOrderType: String = App.imageScannerUtil.DATE_MODIFIED
+
         this.context.let {
             val strings = it.resources.getStringArray(R.array.sort_order)
             when (this.getSP().getString("sortOrder", strings[0])) {
@@ -103,10 +107,10 @@ object DataSource {
                 }
             }
         }
-        
+
         return sorterOrderType
     }
-    
+
     /**
      * 获取当前屏幕的旋转方向
      */

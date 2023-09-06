@@ -4,8 +4,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.view.View
-import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -110,14 +108,14 @@ object Output {
     fun showDeleteCurrentImageDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
         MaterialAlertDialogBuilder(App.currentActivity)
                 .setTitle("提示")
-                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImagePath()}")
+                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImageInfo()!!.path}")
                 .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
                 .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                 .show()
     }
     
     fun showDeleteCheckedImagesDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
-        val allCheckedImagePaths = this.dataSource.getAllCheckedImagePaths()
+        val allCheckedImagePaths = this.dataSource.getAllCheckedImageInfos()
 //        val items: MutableList<String> = mutableListOf()
         val stringBuilder: StringBuilder = StringBuilder()
         for ((i, imagePath) in allCheckedImagePaths.withIndex()) {
@@ -146,7 +144,7 @@ object Output {
     fun showPathButtonClickDialog() {
         MaterialAlertDialogBuilder(App.currentActivity)
                 .setTitle("当前图片路径")
-                .setMessage("${this.dataSource.getCurrentImagePath()}")
+                .setMessage("${this.dataSource.getCurrentImageInfo()}")
                 .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
                 .setNeutralButton("复制") { dialog: DialogInterface, _: Int ->
                     App.input.copyCurrentImagePath()

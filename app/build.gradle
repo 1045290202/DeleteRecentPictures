@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 33
+    buildToolsVersion '33.0.1'
     defaultConfig {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 22
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 29
         versionName "2.1.2"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -20,12 +20,18 @@ android {
     }
     compileOptions {
         sourceCompatibility = kotlin_version
-        targetCompatibility = kotlin_version
+        targetCompatibility = JavaVersion.VERSION_17
     }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
+    namespace 'com.sjk.deleterecentpictures'
+}
+
+repositories {
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    mavenCentral()
 }
 
 dependencies {
@@ -44,11 +50,10 @@ dependencies {
     implementation "androidx.core:core-ktx:1.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 //    implementation 'com.zxy.android:tiny:1.1.0'
-    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
-    implementation 'com.google.zxing:core:3.4.1'
-}
-repositories {
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-    mavenCentral()
+//    implementation "com.davemorrissey.labs:subsampling-scale-image-view:3.10.0"
+//    implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.22"
+    implementation "com.google.zxing:core:3.4.1"
+    implementation 'com.github.piasy:BigImageViewer:1.8.1'
+    implementation 'com.github.piasy:GlideImageLoader:1.8.1'
+    implementation 'com.github.piasy:GlideImageViewFactory:1.8.1'
 }

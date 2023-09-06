@@ -1,8 +1,6 @@
 package com.sjk.deleterecentpictures.activity.settings
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -94,6 +92,7 @@ class SettingsActivity : BaseActivity() {
                 }
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val intent = Intent()
         intent.putExtra("preferenceChanged", preferenceChanged)
@@ -187,13 +186,13 @@ class SettingsActivity : BaseActivity() {
                         val textView = view.findViewById<TextView>(R.id.text)
                         textView.movementMethod = LinkMovementMethod.getInstance()
                         textView.text = Html.fromHtml("<p>自定义路径需要省略外置存储目录，无需填写完整路径，如：<strong>Pictures/</strong></p>" +
-                                "<p>同时兼容了SQl语句中的通配符：<br>" +
+                                "<p>同时兼容了SQL语句中的通配符：<br>" +
                                 "&nbsp;&nbsp;&nbsp;&nbsp;<strong>_</strong>&nbsp;——&nbsp;仅替代一个字符；<br>" +
                                 "&nbsp;&nbsp;&nbsp;&nbsp;<strong>%</strong>&nbsp;——&nbsp;替代一个或多个字符；<br>" +
                                 "&nbsp;&nbsp;&nbsp;&nbsp;<strong>[charlist]</strong>&nbsp;——&nbsp;替代字符列中的任何单一字符；<br>" +
                                 "&nbsp;&nbsp;&nbsp;&nbsp;<strong>[^charlist]</strong>或<strong>[!charlist]</strong>&nbsp;——&nbsp;替代不在字符列中的任何单一字符；<br>" +
                                 "如果需要匹配_和%，可以在他们前面添加反斜杠（\\），如果需要匹配\\，则需要输入\\\\</p>" +
-                                "<a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>"
+                                "<a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>",
                         )
                         alertDialog.setView(view)
             
