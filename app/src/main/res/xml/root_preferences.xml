@@ -3,13 +3,13 @@
 
     <PreferenceCategory app:title="@string/general_settings_header">
 
-        <SwitchPreference
+        <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="true"
                 app:key="closeApp"
                 app:summary="如不关闭可以继续删除图片"
                 app:title="@string/close_app_title" />
 
-        <SwitchPreference
+        <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="false"
                 app:key="deleteDirectly"
                 app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除和多选删除）"
@@ -47,7 +47,7 @@
 <!--                app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"-->
 <!--                app:useSimpleSummaryProvider="false" />-->
         
-        <ListPreference
+        <rikka.preference.SimpleMenuPreference
                 app:defaultValue="1"
                 app:entries="@array/sort_order_name"
                 app:entryValues="@array/sort_order"
@@ -59,7 +59,7 @@
 
     <PreferenceCategory app:title="@string/path_header">
 
-        <ListPreference
+        <rikka.preference.SimpleMenuPreference
                 app:defaultValue="sdCard"
                 app:entries="@array/path_entries"
                 app:entryValues="@array/path_values"

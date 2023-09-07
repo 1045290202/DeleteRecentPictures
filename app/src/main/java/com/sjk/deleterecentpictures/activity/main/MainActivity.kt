@@ -448,10 +448,9 @@ internal class MainActivityViewPagerAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         instance = this
-        val viewPagerViewHolder = ViewPagerViewHolder(
-            LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.layout_main_view_pager_item, parent, false)
-        )
+        val viewPagerViewHolder = ViewPagerViewHolder(view)
         viewPagerViewHolders.add(viewPagerViewHolder)
         return viewPagerViewHolder
     }
@@ -461,83 +460,20 @@ internal class MainActivityViewPagerAdapter :
             holder.isChecked = this.imageChecks[position]
         }
 
-//        holder.imagePath = this.imagePaths[position]
-//        holder.imageUri = this.imageUris[position]
         holder.imageInfo = this.imageInfos[position]
-//        if (holder.imagePath == null) {
-//            holder.latestPictureGifImageView.visibility = View.GONE
-//            holder.gifSign.visibility = View.GONE
-//            holder.latestPictureImageView.visibility = View.GONE
-//            return
-//        }
-
-//        if (!App.fileUtil.existsFile(holder.imagePath)) {
-//            return
-//        }
-
-//        if (position < imageUris.size) {
-//            holder.isGif = FileUtil.isGifFile(holder.imagePath)
-//            if (holder.isGif) {
-//                holder.latestPictureGifImageView.visibility = View.VISIBLE
-//                holder.gifSign.visibility = View.VISIBLE
-//                holder.latestPictureImageView.visibility = View.GONE
-//
-//                return
-//            }
-//            holder.latestPictureGifImageView.visibility = View.GONE
-//            holder.gifSign.visibility = View.GONE
-//            holder.latestPictureImageView.visibility = View.VISIBLE
     }
-//    }
 
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
 
-//        holder.checkBox.isChecked = holder.isChecked
-
-//        if (!holder.isGif) {
         holder.imageView.cancel()
-//            return
-//        }
-//
-//        val gifDrawable = holder.latestPictureGifImageView.drawable as GifDrawable
-//        if (gifDrawable.isRecycled) {
-//            return
-//        }
-//
-//        gifDrawable.recycle()
     }
 
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
 
         holder.checkBox.isChecked = holder.isChecked
-//        if (holder.hasImage){
-//            return
-//        }
-
-//        if (holder.imagePath == null) {
-//            App.output.showToast("文件路径为空")
-//            return
-//        }
-
-//        if (!App.fileUtil.existsFile(holder.imagePath)) {
-//            App.output.showToast("文件不存在，可能已被其他软件删除")
-//            return
-//        }
-
-//        if (!holder.isGif) {
-//            holder.latestPictureImageView.setImage(ImageSource.uri(holder.imagePath!!))
-//            holder.latestPictureImageView.setImage(ImageSource.uri(holder.imageUri!!))
         holder.imageView.showImage(holder.imageInfo!!.uri)
-//            return
-//        }
-//
-//        val inputStream = App.context.contentResolver.openInputStream(holder.imageUri!!)
-//        val gifFromPath = GifDrawable(inputStream!!)
-//        holder.latestPictureGifImageView.setImageDrawable(GifDrawable(inputStream!!))
-//        gifFromPath.start()
-////        inputStream?.close()
     }
 
     override fun getItemCount(): Int {

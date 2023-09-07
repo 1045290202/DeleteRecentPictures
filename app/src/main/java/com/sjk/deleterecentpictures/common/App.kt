@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.github.piasy.biv.BigImageViewer
 import com.github.piasy.biv.loader.glide.GlideImageLoader
+import com.google.android.material.color.DynamicColors
 import com.sjk.deleterecentpictures.utils.*
 
 
@@ -59,6 +60,7 @@ class App : Application() {
         shellUtil = ShellUtil
         appResources = resources
 
+        DynamicColors.applyToActivitiesIfAvailable(this)
         BigImageViewer.initialize(GlideImageLoader.with(context))
     }
     

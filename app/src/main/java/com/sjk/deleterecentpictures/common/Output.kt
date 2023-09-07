@@ -7,6 +7,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
 import java.io.File
 
@@ -14,67 +15,80 @@ import java.io.File
 object Output {
     const val TAG: String = "Output"
     private val dataSource: DataSource = DataSource
-    
+
     fun showToast(content: CharSequence) {
         Toast.makeText(this.dataSource.context, content, Toast.LENGTH_SHORT).show()
     }
-    
+
     fun showToast(content: Int) {
         Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_SHORT).show()
     }
-    
+
     fun showToastLong(content: CharSequence) {
         Toast.makeText(this.dataSource.context, content, Toast.LENGTH_LONG).show()
     }
-    
+
     fun showToastLong(content: Int) {
         Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_LONG).show()
     }
-    
+
     fun openByOtherApp(filePath: String?): Boolean {
         if (filePath == null) {
             return false
         }
-        
+
         return this.openByOtherApp(File(filePath))
     }
-    
+
     fun openByOtherApp(file: File): Boolean {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-                
-                val uri = FileProvider.getUriForFile(App.context, App.context.packageName + ".provider", file)
+                intent.flags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+
+                val uri = FileProvider.getUriForFile(
+                    App.context,
+                    App.context.packageName + ".provider",
+                    file
+                )
                 intent.setDataAndType(uri, App.fileUtil.getMimeType(file.absolutePath))
             } else {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                intent.setDataAndType(Uri.fromFile(file), App.fileUtil.getMimeType(file.absolutePath))
+                intent.setDataAndType(
+                    Uri.fromFile(file),
+                    App.fileUtil.getMimeType(file.absolutePath)
+                )
             }
             App.context.startActivity(intent)
         } catch (e: Exception) {
             return false
         }
-        
+
         return true
     }
-    
+
     fun shareToOtherApp(filePath: String?): Boolean {
         if (filePath == null) {
             return false
         }
-        
+
         return this.shareToOtherApp(File(filePath))
     }
-    
+
     fun shareToOtherApp(file: File): Boolean {
         try {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = App.fileUtil.getMimeType(file.absolutePath)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-                
-                val uri = FileProvider.getUriForFile(App.context, App.context.packageName + ".provider", file)
+                intent.flags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+
+                val uri = FileProvider.getUriForFile(
+                    App.context,
+                    App.context.packageName + ".provider",
+                    file
+                )
                 intent.putExtra(Intent.EXTRA_STREAM, uri)
             } else {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -84,10 +98,10 @@ object Output {
         } catch (e: Exception) {
             return false
         }
-        
+
         return true
     }
-    
+
     fun openLinkWithBrowser(url: String): Boolean {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
@@ -100,55 +114,71 @@ object Output {
         }
         return true
     }
-    
+
     fun showImageLongClickDialog(filePath: String?) {
         ImageLongClickDialog.build(filePath = filePath).show()
     }
-    
+
     fun showDeleteCurrentImageDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
-        MaterialAlertDialogBuilder(App.currentActivity)
-                .setTitle("提示")
-                .setMessage("请确认是否删除\n${this.dataSource.getCurrentImageInfo()!!.path}")
-                .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
-                .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .show()
+        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity)
+            .setTitle("提示")
+            .setMessage("请确认是否删除\n${this.dataSource.getCurrentImageInfo()!!.path}")
+            .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int ->
+                positiveCallback(
+                    dialog,
+                    witch
+                )
+            }
+            .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .create()
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        alertDialog.show()
     }
-    
+
     fun showDeleteCheckedImagesDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
         val allCheckedImagePaths = this.dataSource.getAllCheckedImageInfos()
 //        val items: MutableList<String> = mutableListOf()
         val stringBuilder: StringBuilder = StringBuilder()
-        for ((i, imagePath) in allCheckedImagePaths.withIndex()) {
+        for ((i, imageInfo) in allCheckedImagePaths.withIndex()) {
             if (i > 0) {
                 stringBuilder.append("\n\n")
             }
-            if (imagePath == null) {
+            if (imageInfo == null) {
                 stringBuilder.append("图片路径为空")
 //                items.add("图片路径为空")
             } else {
-                stringBuilder.append("$imagePath")
-//                items.add("$imagePath")
+                stringBuilder.append("${imageInfo.path}")
+//                items.add("$imageInfo")
             }
         }
-        MaterialAlertDialogBuilder(App.currentActivity)
-                .setTitle("即将删除${allCheckedImagePaths.size}张图片")
-                .setMessage(stringBuilder.toString())
+        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity)
+            .setTitle("即将删除${allCheckedImagePaths.size}张图片")
+            .setMessage(stringBuilder.toString())
 //                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
 //                    this.showDeleteCheckedImagesDialog(positiveCallback)
 //                }
-                .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int -> positiveCallback(dialog, witch) }
-                .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .show()
+            .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int ->
+                positiveCallback(
+                    dialog,
+                    witch
+                )
+            }
+            .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .create()
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        alertDialog.show()
     }
-    
+
     fun showPathButtonClickDialog() {
-        MaterialAlertDialogBuilder(App.currentActivity)
-                .setTitle("当前图片路径")
-                .setMessage("${this.dataSource.getCurrentImageInfo()}")
-                .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
-                .setNeutralButton("复制") { dialog: DialogInterface, _: Int ->
-                    App.input.copyCurrentImagePath()
-                }
-                .show()
+        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity)
+            .setTitle("当前图片路径")
+            .setMessage("${this.dataSource.getCurrentImageInfo()!!.path}")
+            .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+            .setNeutralButton("复制") { dialog: DialogInterface, _: Int ->
+                App.input.copyCurrentImagePath()
+            }
+            .create()
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        alertDialog.show()
     }
 }
