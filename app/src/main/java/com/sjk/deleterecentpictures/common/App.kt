@@ -18,7 +18,7 @@ class App : Application() {
         lateinit var context: Context
         
         @SuppressLint("StaticFieldLeak")
-        lateinit var currentActivity: Activity
+        var currentActivity: Activity? = null
         lateinit var dataSource: DataSource
         lateinit var output: Output
         lateinit var input: Input

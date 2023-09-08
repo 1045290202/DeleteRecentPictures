@@ -22,6 +22,10 @@
       <option name="UNIFORM_INDENT" value="false" />
       <option name="INTERPOLATION_WRAP" value="1" />
     </VueCodeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
+    </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
       <indentOptions>
         <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
@@ -51,8 +55,22 @@
         <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
       </indentOptions>
     </codeStyleSettings>
+    <codeStyleSettings language="XML">
+      <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <indentOptions>
+        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+      </indentOptions>
+    </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+      <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="LINE_COMMENT_ADD_SPACE" value="true" />
+      <option name="LINE_COMMENT_ADD_SPACE_ON_REFORMAT" value="true" />
+      <indentOptions>
+        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+      </indentOptions>
     </codeStyleSettings>
   </code_scheme>
 </component>

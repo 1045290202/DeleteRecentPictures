@@ -6,24 +6,26 @@
     <string name="refresh">刷新</string>
     <string name="settings">设置</string>
     <string name="searching">查找中…</string>
-    
+    <string name="ok">好的</string>
+    <string name="disagree_and_exit">不同意且退出</string>
+    <string name="agree">同意</string>
+
     <string name="title_activity_settings2">Settings</string>
-    
+
+    <!-- region -->
+
     <!-- Preference Titles -->
     <string name="general_settings_header">一般设置</string>
     <string name="path_header">查询图片的路径</string>
     <string name="permission_header">权限设置</string>
-    <string name="about_header">关于（长按项目可以复制）</string>
-    
+    <string name="about_header">关于</string>
+
     <!-- General Settings Preferences -->
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="delete_directly_title">直接删除</string>
-    <string name="use_rm_command_title">使用rm指令删除</string>
-    <string name="thumbnail_size_title">缩略图大小</string>
     <string name="number_of_pictures_title">单次查看数量</string>
-    <string name="scan_type_title">媒体扫描方式</string>
     <string name="sort_order_title">排序方式</string>
-    
+
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>
     <string name="path_title">选择路径</string>
@@ -31,10 +33,16 @@
 
     <!-- Permission Preferences -->
     <string name="all_files_permission_title">所有文件访问权限</string>
-    
+
     <!-- About Preferences -->
     <string name="author_title">作者</string>
     <string name="github_title">在github上访问此项目</string>
     <string name="github_url">https://github.com/1045290202/DeleteRecentPictures</string>
+    <string name="user_agreement">用户协议</string>
+    <string name="privacy_policy">隐私政策</string>
+
+    <!-- endregion -->
+    
+    <string name="privacy_policy_content">《删除最近图片》是一款专门用于查看和删除Android设备（以下简称为设备）内最近存储图片的应用程序，帮助用户方便地删除设备内不再需要的最近的图片文件。为了保障用户的图片数据安全，本应用不会接入互联网。本隐私政策属于本应用不可或缺的一部分。\n\n1.信息说明：\n本应用不接入互联网且不会收集任何用户的任何隐私信息。本应用不会破坏设备的数据安全，也不会主动删除或分享图片。\n\n2.权限说明：\n本应用仅使用读取外部存储、写入外部存储和管理外部存储的权限。如果应用没有获取到上述权限，将无法提供任何服务。\n\n3.隐私政策的变更：\n我们保留修改本政策的权利，如果我们需要调整此隐私政策，我们会跟随新版本《删除最近图片》应用发布新的隐私政策。\n\n4.开源说明：\n本应用已开源，如果您有需要，可以在 设置 -> 关于 -> 在github上访问此项目 找到本应用的源代码。</string>
 
 </resources>

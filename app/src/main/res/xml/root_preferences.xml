@@ -1,51 +1,51 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    
     <PreferenceCategory app:title="@string/general_settings_header">
-
+        
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="true"
                 app:key="closeApp"
                 app:summary="如不关闭可以继续删除图片"
                 app:title="@string/close_app_title" />
-
+        
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="false"
                 app:key="deleteDirectly"
                 app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除和多选删除）"
                 app:title="@string/delete_directly_title" />
         
-<!--        <SwitchPreference-->
-<!--                app:defaultValue="false"-->
-<!--                app:key="useRMCommand"-->
-<!--                app:summary="当删除图片被系统拦截时，可打开此选项，程序将尝试使用&quot;rm -r&quot;指令删除图片，同时媒体扫描方式可能需要切换成ContentResolver"-->
-<!--                app:title="@string/use_rm_command_title" />-->
-
-<!--        <SeekBarPreference-->
-<!--                android:max="1024"-->
-<!--                app:defaultValue="512"-->
-<!--                app:key="thumbnailSize"-->
-<!--                app:min="128"-->
-<!--                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q及以上生效）"-->
-<!--                app:title="@string/thumbnail_size_title"-->
-<!--                app:useSimpleSummaryProvider="true" />-->
-
+        <!--        <SwitchPreference-->
+        <!--                app:defaultValue="false"-->
+        <!--                app:key="useRMCommand"-->
+        <!--                app:summary="当删除图片被系统拦截时，可打开此选项，程序将尝试使用&quot;rm -r&quot;指令删除图片，同时媒体扫描方式可能需要切换成ContentResolver"-->
+        <!--                app:title="@string/use_rm_command_title" />-->
+        
+        <!--        <SeekBarPreference-->
+        <!--                android:max="1024"-->
+        <!--                app:defaultValue="512"-->
+        <!--                app:key="thumbnailSize"-->
+        <!--                app:min="128"-->
+        <!--                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q及以上生效）"-->
+        <!--                app:title="@string/thumbnail_size_title"-->
+        <!--                app:useSimpleSummaryProvider="true" />-->
+        
         <EditTextPreference
                 app:defaultValue="10"
                 app:key="numberOfPictures"
                 app:dialogMessage="默认为10，不填写或填0都代表默认值"
                 app:summary="单次搜索最近图片的数量"
                 app:title="@string/number_of_pictures_title" />
-
-<!--        <ListPreference-->
-<!--                app:defaultValue="1"-->
-<!--                app:entries="@array/scan_type_name"-->
-<!--                app:entryValues="@array/scan_type"-->
-<!--                app:key="scanType"-->
-<!--                app:singleLineTitle="true"-->
-<!--                app:title="@string/scan_type_title"-->
-<!--                app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"-->
-<!--                app:useSimpleSummaryProvider="false" />-->
+        
+        <!--        <ListPreference-->
+        <!--                app:defaultValue="1"-->
+        <!--                app:entries="@array/scan_type_name"-->
+        <!--                app:entryValues="@array/scan_type"-->
+        <!--                app:key="scanType"-->
+        <!--                app:singleLineTitle="true"-->
+        <!--                app:title="@string/scan_type_title"-->
+        <!--                app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"-->
+        <!--                app:useSimpleSummaryProvider="false" />-->
         
         <rikka.preference.SimpleMenuPreference
                 app:defaultValue="1"
@@ -56,9 +56,9 @@
                 app:title="@string/sort_order_title"
                 app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
-
+    
     <PreferenceCategory app:title="@string/path_header">
-
+        
         <rikka.preference.SimpleMenuPreference
                 app:defaultValue="sdCard"
                 app:entries="@array/path_entries"
@@ -67,46 +67,51 @@
                 app:singleLineTitle="true"
                 app:title="@string/path_title"
                 app:useSimpleSummaryProvider="true" />
-
+        
         <EditTextPreference
                 app:dialogMessage="需要省略外置存储目录，如：Pictures/\n也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc"
                 app:key="customizePath"
                 app:title="@string/customize_path_title"
                 app:useSimpleSummaryProvider="true" />
-
+        
         <Preference
                 app:key="customizePathDescription"
                 app:summary="点击查看"
                 app:title="@string/customize_path_description_title" />
-
+    
     </PreferenceCategory>
-
+    
     <PreferenceCategory app:title="@string/permission_header">
-
+        
         <Preference
                 app:key="allFilesPermission"
                 app:singleLineTitle="true"
                 app:summary="仅Android 11及以上需要开启这个权限"
                 app:title="@string/all_files_permission_title" />
     </PreferenceCategory>
-
+    
     <PreferenceCategory app:title="@string/about_header">
-
+        
         <Preference
                 app:enableCopying="true"
                 app:key="author"
                 app:singleLineTitle="true"
                 app:summary="@string/author"
                 app:title="@string/author_title" />
-
+        
         <Preference
                 app:enableCopying="true"
                 app:key="github"
                 app:singleLineTitle="true"
                 app:summary="@string/github_url"
                 app:title="@string/github_title" />
+        
+        <Preference
+                app:key="privacyPolicy"
+                app:singleLineTitle="true"
+                app:title="@string/privacy_policy" />
     </PreferenceCategory>
-
+    
     <!--<PreferenceCategory app:title="@string/sync_header">
         
         <SwitchPreferenceCompat

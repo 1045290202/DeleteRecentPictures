@@ -21,6 +21,11 @@ open class BaseActivity : AppCompatActivity() {
         App.currentActivity = this
     }
     
+    override fun onDestroy() {
+        super.onDestroy()
+        App.currentActivity = null
+    }
+    
     protected fun getOutput(): Output {
         return App.output
     }

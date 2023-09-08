@@ -16,7 +16,7 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
     companion object {
         const val TAG: String = "ImageLongClickDialog"
         
-        fun build(activityContext: Activity = App.currentActivity, filePath: String?): ImageLongClickDialog {
+        fun build(activityContext: Activity = App.currentActivity!!, filePath: String?): ImageLongClickDialog {
             return ImageLongClickDialog(activityContext, filePath)
         }
     }
@@ -53,7 +53,7 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
                 val discern = Thread {
                     val content: String? = App.qrCodeUtil.decodeQRCode(filePath)
             
-                    App.currentActivity.runOnUiThread {
+                    App.currentActivity?.runOnUiThread {
                         if (content == null) {
                             App.output.showToast("未发现条形码（二维码）")
                             return@runOnUiThread

@@ -27,6 +27,7 @@ import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.ApkUtil
+import kotlin.system.exitProcess
 
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,7 +193,7 @@ class SettingsActivity : BaseActivity() {
                 }
 
                 "customizePathDescription" -> {
-                    val alertDialog = MaterialAlertDialogBuilder(App.currentActivity)
+                    val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
                         .setTitle(resources.getString(R.string.customize_path_description_title))
                         .create()
 
@@ -221,6 +222,10 @@ class SettingsActivity : BaseActivity() {
 
 
                     alertDialog.show()
+                }
+                
+                "privacyPolicy" -> {
+                    App.output.showPrivacyPolicyDialog()
                 }
 
                 else -> {

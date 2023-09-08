@@ -30,12 +30,12 @@
             
             <Button
                     android:id="@+id/positiveButton"
-                    style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                    style="@style/Widget.Material3.Button.TextButton.Dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginEnd="6dp"
-                    android:text="好的" />
+                    android:text="@string/ok" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
