@@ -65,7 +65,7 @@ class ImageActivity : BaseActivity() {
         //        window.setStatusBarColor(Color.TRANSPARENT); //设置状态栏为透明
 //        window.navigationBarColor = Color.parseColor("#44000000") //设置虚拟键为透明
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) { // 强制在屏幕安全区域显示内容（刘海屏等等）
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) { // 强制在屏幕安全区域显示内容（刘海屏等等）
             val lp = window.attributes
             lp.layoutInDisplayCutoutMode = LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
             window.attributes = lp
