@@ -4,6 +4,7 @@ package com.sjk.deleterecentpictures.activity.main
 import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
 //import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
+import androidx.core.app.ActivityCompat
 //import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,9 +47,9 @@ open class MainActivity : BaseActivity() {
         //    public static Bitmap theLatestImage;
         private val PERMISSIONS_STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+//                Manifest.permission.READ_EXTERNAL_STORAGE,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
             )
         } else {
             arrayOf(
@@ -133,14 +135,14 @@ open class MainActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == 0) {
-//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//                this.getOutput().showToast("未获取到存储权限")
-//                logW(TAG, "Storage permission not obtained")
-//                finish()
-//                return
-//            }
-//        }
+        if (requestCode == 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                this.getOutput().showToast("未获取到存储权限")
+                logW(TAG, "Storage permission not obtained")
+                finish()
+                return
+            }
+        }
 
         this.refreshAll()
     }
@@ -156,12 +158,12 @@ open class MainActivity : BaseActivity() {
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            PERMISSIONS_STORAGE.iterator().forEach {
-//                if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
-//                    return
-//                }
-//            }
+            PERMISSIONS_STORAGE.iterator().forEach {
+                if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
+                    return
+                }
+            }
 //            this.refreshAll()
 //            return
 //        }
@@ -421,8 +423,10 @@ open class MainActivity : BaseActivity() {
 
         if (this.getDataSource().getRecentImageInfos().size == 0) {
 //            this.getOutPut().showToast("未发现图片")
-            val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
-            latestPicturePathButton.text = "未发现图片"
+            this.runOnUiThread {
+                val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
+                latestPicturePathButton.text = "未发现图片"
+            }
         }
 //        this.viewPager.adapter = viewPagerAdapter
         this.runOnUiThread {
