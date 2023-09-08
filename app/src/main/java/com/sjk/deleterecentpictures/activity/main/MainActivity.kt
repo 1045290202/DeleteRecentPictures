@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 //import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
@@ -158,12 +159,12 @@ open class MainActivity : BaseActivity() {
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PERMISSIONS_STORAGE.iterator().forEach {
-                if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
-                    return
-                }
+        PERMISSIONS_STORAGE.iterator().forEach {
+            if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
+                return
             }
+        }
 //            this.refreshAll()
 //            return
 //        }
@@ -406,11 +407,13 @@ open class MainActivity : BaseActivity() {
         App.recentImages.clearImagePaths()
 
         var i = this.getDataSource().getNumberOfPictures()
+        if (i > 0) {
+            val imageInfo: ImageInfoBean? = App.imageScannerUtil.getCurrent()
+            imageInfo != null && this.getDataSource().getRecentImageInfos().add(imageInfo)
+            i--
+        }
         while (i-- > 0) {
             val imageInfo: ImageInfoBean = App.imageScannerUtil.getNext() ?: break
-            /*if (!App.fileUtil.existsFile(imagePath)) {
-                continue
-            }*/
             this.getDataSource().getRecentImageInfos().add(imageInfo)
         }
         for (index in this.viewPagerAdapter.imageInfos.indices) {
@@ -423,10 +426,7 @@ open class MainActivity : BaseActivity() {
 
         if (this.getDataSource().getRecentImageInfos().size == 0) {
 //            this.getOutPut().showToast("未发现图片")
-            this.runOnUiThread {
-                val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
-                latestPicturePathButton.text = "未发现图片"
-            }
+            this.getDataSource().getRecentImageInfos().add(ImageInfoBean())
         }
 //        this.viewPager.adapter = viewPagerAdapter
         this.runOnUiThread {
@@ -453,7 +453,7 @@ internal class MainActivityViewPagerAdapter :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         instance = this
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_main_view_pager_item, parent, false)
+            .inflate(R.layout.layout_main_view_pager_item, parent, false)
         val viewPagerViewHolder = ViewPagerViewHolder(view)
         viewPagerViewHolders.add(viewPagerViewHolder)
         return viewPagerViewHolder
@@ -476,7 +476,15 @@ internal class MainActivityViewPagerAdapter :
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
 
+        if (holder.imageInfo?.uri == null) {
+            holder.checkBox.visibility = View.GONE
+            holder.imageView.visibility = View.GONE
+            holder.imageView.cancel()
+            return
+        }
+        holder.checkBox.visibility = View.VISIBLE
         holder.checkBox.isChecked = holder.isChecked
+        holder.imageView.visibility = View.VISIBLE
         holder.imageView.showImage(holder.imageInfo!!.uri)
     }
 
@@ -515,15 +523,26 @@ internal class MainActivityViewPagerAdapter :
                 }*/
 
 //                App.globalData.setData("currentImagePath", this.imagePath)
+                if (this.imageInfo?.uri == null) {
+                    return@setOnClickListener
+                }
                 val intent = Intent(itemView.context, ImageActivity::class.java)
                 itemView.context.startActivity(intent)
             }
             this.openImageActivityButton.setOnLongClickListener {
+                if (this.imageInfo?.uri == null) {
+                    return@setOnLongClickListener true
+                }
+
                 App.output.showImageLongClickDialog(this.imageInfo!!.path)
 
                 return@setOnLongClickListener true
             }
             this.checkBox.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+                if (this.imageInfo?.uri == null) {
+                    return@setOnCheckedChangeListener
+                }
+
                 if (App.dataSource.getCurrentImageInfo() != this.imageInfo) {
                     return@setOnCheckedChangeListener
                 }
@@ -531,6 +550,10 @@ internal class MainActivityViewPagerAdapter :
                 instance.imageChecks[App.dataSource.getCurrentImageInfoIndex()] = isChecked
             }
             this.checkBox.setOnLongClickListener {
+                if (this.imageInfo?.uri == null) {
+                    return@setOnLongClickListener true
+                }
+
                 this@MainActivityViewPagerAdapter.setAllHolderChecked(false)
                 App.input.setAllImageChecksFalse()
                 App.output.showToast("已取消所有已选择图片")

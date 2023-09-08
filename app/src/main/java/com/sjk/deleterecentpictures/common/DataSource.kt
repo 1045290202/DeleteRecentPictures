@@ -58,6 +58,8 @@ object DataSource {
         return App.fileUtil.getSimplifiedPathInExternalStorage(completePath)
     }
 
+
+
     /**
      * 获取最近图片的信息
      */

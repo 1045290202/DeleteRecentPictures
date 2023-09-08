@@ -105,6 +105,9 @@ internal class ImageActivityViewPagerAdapter :
     override fun onViewAttachedToWindow(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
 
+        if (holder.imageInfo?.uri == null) {
+            return
+        }
         holder.imageView.showImage(holder.imageInfo!!.uri)
     }
 

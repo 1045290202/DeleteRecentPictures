@@ -80,23 +80,23 @@ object ImageScannerUtil {
     }
 
     fun getNext(): ImageInfoBean? {
-        val imageInfo: ImageInfoBean? = getCurrent()
         cursor?.let {
-            if (!it.isLast) {
-                it.moveToNext()
+            if (it.isLast) {
+                return null
             }
+            it.moveToNext()
         }
-        return imageInfo
+        return getCurrent()
     }
 
     fun getPrevious(): ImageInfoBean? {
-        val imageInfo: ImageInfoBean? = getCurrent()
         cursor?.let {
-            if (!it.isFirst) {
-                it.moveToPrevious()
+            if (it.isFirst) {
+                return null
             }
+            it.moveToPrevious()
         }
-        return imageInfo
+        return getCurrent()
     }
 
     fun isEnd(): Boolean {
