@@ -214,6 +214,7 @@ object Output {
                     exitProcess(0);
                 }.start()
             }
+            .setCancelable(false)
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
