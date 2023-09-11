@@ -5,6 +5,7 @@
         <!--        <item name="colorPrimary">?attr/colorPrimary</item>-->
         <!--        <item name="colorPrimaryDark">?attr/colorPrimaryDark</item>-->
         <!--        <item name="colorAccent">?attr/colorAccent</item>-->
+        <item name="iconTint">?android:attr/colorPrimary</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.Material3.DayNight.Dialog.MinWidth">
