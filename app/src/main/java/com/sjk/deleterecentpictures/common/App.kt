@@ -17,8 +17,6 @@ class App : Application() {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         
-        @SuppressLint("StaticFieldLeak")
-        var currentActivity: Activity? = null
         lateinit var dataSource: DataSource
         lateinit var output: Output
         lateinit var input: Input
@@ -34,6 +32,7 @@ class App : Application() {
         lateinit var recentImages: RecentImages
         lateinit var shellUtil: ShellUtil
         lateinit var appResources: Resources
+        lateinit var activityManager: ActivityManager
         
         val newEvent: Event
             get() {
@@ -59,6 +58,7 @@ class App : Application() {
         recentImages = RecentImages
         shellUtil = ShellUtil
         appResources = resources
+        activityManager = ActivityManager
 
         DynamicColors.applyToActivitiesIfAvailable(this)
         BigImageViewer.initialize(GlideImageLoader.with(context))

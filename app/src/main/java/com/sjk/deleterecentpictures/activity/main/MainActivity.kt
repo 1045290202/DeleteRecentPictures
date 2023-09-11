@@ -121,6 +121,12 @@ open class MainActivity : BaseActivity() {
     }
     
     @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        this.finish()
+    }
+    
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult: $requestCode $requestCode $data")
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {

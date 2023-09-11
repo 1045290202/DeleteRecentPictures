@@ -118,11 +118,14 @@ object Output {
     }
     
     fun showImageLongClickDialog(filePath: String?) {
-        ImageLongClickDialog.build(filePath = filePath).show()
+        ImageLongClickDialog.build(filePath = filePath)?.show()
     }
     
     fun showDeleteCurrentImageDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
-        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
+        if (App.activityManager.currentActivity == null) {
+            return
+        }
+        val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle("提示")
             .setMessage("请确认是否删除\n${this.dataSource.getCurrentImageInfo()!!.path}")
             .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int ->
@@ -153,7 +156,10 @@ object Output {
 //                items.add("$imageInfo")
             }
         }
-        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
+        if (App.activityManager.currentActivity == null) {
+            return
+        }
+        val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle("即将删除${allCheckedImagePaths.size}张图片")
             .setMessage(stringBuilder.toString())
 //                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
@@ -172,7 +178,10 @@ object Output {
     }
     
     fun showPathButtonClickDialog() {
-        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
+        if (App.activityManager.currentActivity == null) {
+            return
+        }
+        val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle("当前图片路径")
             .setMessage("${this.dataSource.getCurrentImageInfo()!!.path}")
             .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
@@ -188,10 +197,13 @@ object Output {
      * 显示隐私政策弹窗
      */
     fun showPrivacyPolicyDialog(callback: (() -> Unit)? = null) {
+        if (App.activityManager.currentActivity == null) {
+            return
+        }
         val resources = App.context.resources
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
         val editor = sharedPreferences.edit()
-        val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
+        val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle(resources.getString(R.string.privacy_policy))
             .setMessage(resources.getString(R.string.privacy_policy_content))
             .setPositiveButton(resources.getString(R.string.agree)) { dialog, which ->
@@ -204,15 +216,7 @@ object Output {
                 editor.putBoolean("privacyPolicyShowed", false)
                 editor.apply()
                 dialog.dismiss()
-                Thread {
-                    while (App.currentActivity != null) {
-                        App.currentActivity?.runOnUiThread {
-                            App.currentActivity?.finish()
-                        }
-                        Thread.sleep(100)
-                    }
-                    exitProcess(0);
-                }.start()
+                App.activityManager.finishAll()
             }
             .setCancelable(false)
             .create()

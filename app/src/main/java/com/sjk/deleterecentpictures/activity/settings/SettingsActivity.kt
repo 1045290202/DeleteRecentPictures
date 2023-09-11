@@ -193,7 +193,10 @@ class SettingsActivity : BaseActivity() {
                 }
 
                 "customizePathDescription" -> {
-                    val alertDialog = MaterialAlertDialogBuilder(App.currentActivity!!)
+                    if (App.activityManager.currentActivity == null) {
+                        return super.onPreferenceTreeClick(preference)
+                    }
+                    val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
                         .setTitle(resources.getString(R.string.customize_path_description_title))
                         .create()
 

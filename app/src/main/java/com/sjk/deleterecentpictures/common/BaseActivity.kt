@@ -1,6 +1,5 @@
 package com.sjk.deleterecentpictures.common
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -8,7 +7,7 @@ open class BaseActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.currentActivity = this
+        App.activityManager.push(this)
     }
     
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -18,12 +17,11 @@ open class BaseActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        App.currentActivity = this
     }
     
     override fun onDestroy() {
         super.onDestroy()
-        App.currentActivity = null
+        App.activityManager.remove(this)
     }
     
     protected fun getOutput(): Output {
