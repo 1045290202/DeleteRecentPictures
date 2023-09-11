@@ -15,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 // import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -40,6 +42,7 @@ open class MainActivity : BaseActivity() {
     private val viewPagerAdapter = MainActivityViewPagerAdapter()
     private val event: Event = App.newEvent
 //    private var viewPagerCurrentPosition = 0
+    private var hasAllFilesAccessPermission = true
     
     companion object {
         private const val TAG = "MainActivity"
@@ -70,13 +73,22 @@ open class MainActivity : BaseActivity() {
         }
     }
     
-    override fun onResume() {
-        super.onResume()
+    override fun onRestart() {
+        super.onRestart()
         if (viewPager == null) {
             return
         }
         if (this.viewPager?.currentItem != App.dataSource.getCurrentImageInfoIndex()) {
             this.viewPager?.setCurrentItem(App.dataSource.getCurrentImageInfoIndex(), false)
+        }
+        if (!this.hasAllFilesAccessPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                this.hasAllFilesAccessPermission = true
+                this.refreshAll()
+            } else {
+                this.getOutput().showToast("未获取到所有文件访问权限")
+                App.activityManager.finishAll()
+            }
         }
     }
     
@@ -152,7 +164,7 @@ open class MainActivity : BaseActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 this.getOutput().showToast("未获取到存储权限")
                 logW(TAG, "Storage permission not obtained")
-                finish()
+                App.activityManager.finishAll()
                 return
             }
         }
@@ -164,9 +176,11 @@ open class MainActivity : BaseActivity() {
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
+                this.hasAllFilesAccessPermission = false
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                 intent.data = Uri.parse("package:$packageName")
-                startActivityForResult(intent, 1)
+                // startActivityForResult(intent, 2)
+                startActivity(intent)
             }
         }
 
