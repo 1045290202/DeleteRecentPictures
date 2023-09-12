@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:insetLeft="@dimen/appcompat_dialog_background_inset"
         android:insetTop="@dimen/appcompat_dialog_background_inset"
         android:insetRight="@dimen/appcompat_dialog_background_inset"
-        android:insetBottom="@dimen/appcompat_dialog_background_inset">
+        android:insetBottom="@dimen/appcompat_dialog_background_inset"
+        tools:ignore="PrivateResource">
     <shape android:shape="rectangle">
         <corners android:radius="24dp" />
         <solid android:color="@android:color/system_neutral2_800" />
