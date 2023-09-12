@@ -1,22 +1,24 @@
 package com.sjk.deleterecentpictures.activity.common
 
 import android.app.Activity
-import android.content.Context
 import android.content.DialogInterface
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.logD
-import kotlin.concurrent.thread
 
 class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
-    private var dialogBuilder: MaterialAlertDialogBuilder
+    
+    private val activityContext: Activity
+    private val filePath: String?
     
     companion object {
         const val TAG: String = "ImageLongClickDialog"
         
-        fun build(activityContext: Activity? = App.activityManager.currentActivity, filePath: String?): ImageLongClickDialog? {
+        fun build(
+            activityContext: Activity? = App.activityManager.currentActivity,
+            filePath: String?
+        ): ImageLongClickDialog? {
             if (activityContext == null) {
                 return null
             }
@@ -25,65 +27,77 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
     }
     
     init {
-        this.dialogBuilder = MaterialAlertDialogBuilder(activityContext)
-                .setTitle("请选择你的操作")
-                .setItems(App.const.IMAGE_LONG_CLICK_DIALOG_ITEMS) { dialogInterface: DialogInterface, i: Int ->
-                    this.onImageLongClickDialogItemClick(dialogInterface, i, filePath)
-                }
-                .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+        this.activityContext = activityContext
+        this.filePath = filePath
     }
     
     fun show() {
-        val alertDialog = this.dialogBuilder.create()
+        val itemStrings: Array<String> =
+            App.const.IMAGE_LONG_CLICK_DIALOG_ITEMS.map { App.appResources.getString(it) }
+                .toTypedArray()
+        val alertDialog = MaterialAlertDialogBuilder(this.activityContext)
+            .setTitle(App.appResources.getString(R.string.choose_your_action))
+            .setItems(itemStrings) { dialogInterface: DialogInterface, i: Int ->
+                this.onImageLongClickDialogItemClick(dialogInterface, i, this.filePath)
+            }
+            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
     }
     
-    private fun onImageLongClickDialogItemClick(dialogInterface: DialogInterface, i: Int, filePath: String?) {
+    private fun onImageLongClickDialogItemClick(
+        dialogInterface: DialogInterface,
+        i: Int,
+        filePath: String?
+    ) {
         logD(TAG, "点击item $i")
         when (i) {
             0 -> {
                 if (!App.output.openByOtherApp(filePath)) {
-                    App.output.showToast("唤起打开方式失败")
+                    App.output.showToast(App.appResources.getString(R.string.failed_to_invoke_open_method))
                 }
             }
+            
             1 -> {
                 if (!App.output.shareToOtherApp(filePath)) {
-                    App.output.showToast("唤起分享方式失败")
+                    App.output.showToast(App.appResources.getString(R.string.failed_to_invoke_sharing_method))
                 }
             }
+            
             2 -> {
                 val discern = Thread {
                     val content: String? = App.qrCodeUtil.decodeQRCode(filePath)
-            
+                    
                     App.activityManager.currentActivity?.runOnUiThread {
                         if (content == null) {
-                            App.output.showToast("未发现条形码（二维码）")
+                            App.output.showToast(App.appResources.getString(R.string.barcode_or_qrcode_not_found))
                             return@runOnUiThread
                         }
-                        val alertDialog = MaterialAlertDialogBuilder(this.dialogBuilder.context)
-                            .setTitle("识别内容")
+                        val alertDialog = MaterialAlertDialogBuilder(this.activityContext)
+                            .setTitle(App.appResources.getString(R.string.recognized_content))
                             .setMessage("$content")
-                            .setNegativeButton("取消") { dialogInterface: DialogInterface, i: Int ->
+                            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialogInterface: DialogInterface, i: Int ->
                                 dialogInterface.cancel()
                             }
-                            .setNeutralButton("复制") { dialogInterface: DialogInterface, i: Int ->
+                            .setNeutralButton(App.appResources.getString(R.string.copy)) { dialogInterface: DialogInterface, i: Int ->
                                 App.clipboardUtil.setText(content)
-                                App.output.showToast("已复制到剪切板")
+                                App.output.showToast(App.appResources.getString(R.string.copied))
                             }
-                            .setPositiveButton("浏览器打开") { dialogInterface: DialogInterface, i: Int ->
+                            .setPositiveButton(App.appResources.getString(R.string.open_with_browser)) { dialogInterface: DialogInterface, i: Int ->
                                 if (!App.output.openLinkWithBrowser(content)) {
-                                    App.output.showToast("打开失败")
+                                    App.output.showToast(App.appResources.getString(R.string.open_failed))
                                 }
                             }
                             .create()
-
+                        
                         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
                         alertDialog.show()
                     }
                 }
                 discern.start()
             }
+            
             else -> {
             
             }

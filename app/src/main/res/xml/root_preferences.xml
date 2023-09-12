@@ -6,13 +6,13 @@
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="true"
                 app:key="closeApp"
-                app:summary="如不关闭可以继续删除图片"
+                app:summary="@string/close_app_summary"
                 app:title="@string/close_app_title" />
         
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="false"
                 app:key="deleteDirectly"
-                app:summary="是否允许轻触删除按钮直接删除（此选项不影响长按删除和多选删除）"
+                app:summary="@string/delete_directly_summary"
                 app:title="@string/delete_directly_title" />
         
         <!--        <SwitchPreference-->
@@ -33,8 +33,8 @@
         <EditTextPreference
                 app:defaultValue="10"
                 app:key="numberOfPictures"
-                app:dialogMessage="默认为10，不填写或填0都代表默认值"
-                app:summary="单次搜索最近图片的数量"
+                app:dialogMessage="@string/number_of_pictures_dialog_message"
+                app:summary="@string/number_of_pictures_summary"
                 app:title="@string/number_of_pictures_title" />
         
         <!--        <ListPreference-->
@@ -69,14 +69,14 @@
                 app:useSimpleSummaryProvider="true" />
         
         <EditTextPreference
-                app:dialogMessage="需要省略外置存储目录，如：Pictures/\n也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc"
+                app:dialogMessage="@string/customize_path_dialog_message"
                 app:key="customizePath"
                 app:title="@string/customize_path_title"
                 app:useSimpleSummaryProvider="true" />
         
         <Preference
                 app:key="customizePathDescription"
-                app:summary="点击查看"
+                app:summary="@string/customize_path_description_summary"
                 app:title="@string/customize_path_description_title" />
     
     </PreferenceCategory>
@@ -86,7 +86,7 @@
         <Preference
                 app:key="allFilesPermission"
                 app:singleLineTitle="true"
-                app:summary="仅Android 11及以上需要开启这个权限"
+                app:summary="@string/all_files_permission_summary"
                 app:title="@string/all_files_permission_title" />
     </PreferenceCategory>
     

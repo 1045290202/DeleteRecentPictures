@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.os.Build
+import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 
 object ShortcutUtil {
@@ -21,12 +22,12 @@ object ShortcutUtil {
                 val intent = Intent(context, SettingsActivity::class.java)
                 intent.action = Intent.ACTION_VIEW
                 val pinShortcutInfo = ShortcutInfo.Builder(context, "delete-directly-shortcut")
-                        .setShortLabel("直接删除最新图片")
+                        .setShortLabel(context.getString(R.string.delete_the_latest_pictures_directly))
                         .setIntent(intent)
                         .build()
                 val pinnedShortcutCallbackIntent = shortcutManager.createShortcutResultIntent(pinShortcutInfo)
                 val successCallback = PendingIntent.getBroadcast(context, 0,
-                        pinnedShortcutCallbackIntent, 0)
+                        pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE)
                 shortcutManager.requestPinShortcut(pinShortcutInfo,
                         successCallback.intentSender)
             }

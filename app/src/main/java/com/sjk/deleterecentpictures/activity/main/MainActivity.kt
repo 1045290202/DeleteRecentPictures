@@ -86,7 +86,7 @@ open class MainActivity : BaseActivity() {
                 this.hasAllFilesAccessPermission = true
                 this.refreshAll()
             } else {
-                this.getOutput().showToast("未获取到所有文件访问权限")
+                this.getOutput().showToast(this.getString(R.string.not_getting_manage_external_storage_permission))
                 App.activityManager.finishAll()
             }
         }

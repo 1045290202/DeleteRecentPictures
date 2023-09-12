@@ -126,15 +126,19 @@ object Output {
             return
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-            .setTitle("提示")
-            .setMessage("请确认是否删除\n${this.dataSource.getCurrentImageInfo()!!.path}")
-            .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int ->
+            .setTitle(App.appResources.getString(R.string.prompt))
+            .setMessage(
+                App.appResources.getString(
+                    R.string.delete_confirmation_prompt_single,
+                    this.dataSource.getCurrentImageInfo()!!.path
+                ))
+            .setPositiveButton(App.appResources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
                 positiveCallback(
                     dialog,
                     witch
                 )
             }
-            .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
@@ -146,10 +150,10 @@ object Output {
         val stringBuilder: StringBuilder = StringBuilder()
         for ((i, imageInfo) in allCheckedImagePaths.withIndex()) {
             if (i > 0) {
-                stringBuilder.append("\n\n")
+                stringBuilder.append(App.appResources.getString(R.string.backslash_n_x2))
             }
             if (imageInfo == null) {
-                stringBuilder.append("图片路径为空")
+                stringBuilder.append(App.appResources.getString(R.string.image_path_is_empty))
 //                items.add("图片路径为空")
             } else {
                 stringBuilder.append("${imageInfo.path}")
@@ -160,18 +164,22 @@ object Output {
             return
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-            .setTitle("即将删除${allCheckedImagePaths.size}张图片")
+            .setTitle(
+                App.appResources.getString(
+                    R.string.delete_confirmation_prompt,
+                    allCheckedImagePaths.size.toString()
+                ))
             .setMessage(stringBuilder.toString())
 //                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
 //                    this.showDeleteCheckedImagesDialog(positiveCallback)
 //                }
-            .setPositiveButton("确定") { dialog: DialogInterface?, witch: Int ->
+            .setPositiveButton(App.appResources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
                 positiveCallback(
                     dialog,
                     witch
                 )
             }
-            .setNegativeButton("取消") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
@@ -182,10 +190,10 @@ object Output {
             return
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-            .setTitle("当前图片路径")
+            .setTitle(App.appResources.getString(R.string.current_image_path))
             .setMessage("${this.dataSource.getCurrentImageInfo()!!.path}")
-            .setNegativeButton("关闭") { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
-            .setNeutralButton("复制") { dialog: DialogInterface, _: Int ->
+            .setNegativeButton(App.appResources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+            .setNeutralButton(App.appResources.getString(R.string.copy)) { dialog: DialogInterface, _: Int ->
                 App.input.copyCurrentImagePath()
             }
             .create()
