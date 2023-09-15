@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildToolsVersion "33.0.1"
     defaultConfig {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 34
         versionName "3.0.4"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
