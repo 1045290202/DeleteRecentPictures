@@ -9,27 +9,27 @@
         android:paddingBottom="8dp"
         tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
-
+    
     <androidx.core.widget.NestedScrollView
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp">
-
+        
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="6dp">
-
+            
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="2dp">
-
+                
                 <Button
                         android:id="@+id/latestPicturePathButton"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/Widget.Material3.Button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -41,7 +41,7 @@
                         android:singleLine="true"
                         android:paddingHorizontal="16dp"
                         android:text="@string/searching" />
-
+                
                 <Button
                         android:id="@+id/refreshButton"
                         style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -50,25 +50,33 @@
                         android:layout_marginStart="8dp"
                         android:text="@string/refresh" />
             </LinearLayout>
-
-            <LinearLayout
+            
+            <RelativeLayout
+                    android:id="@+id/imageViewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="280dp">
-
+                
                 <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/viewPager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-            </LinearLayout>
+                
+                <View
+                        android:id="@+id/viewPagerOverlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_below="@id/viewPager"
+                        android:visibility="invisible"/>
+            </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
+    
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="8dp"
             android:orientation="horizontal">
-
+        
         <Button
                 android:id="@+id/settingsButton"
                 style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -76,13 +84,13 @@
                 android:layout_height="wrap_content"
                 android:stateListAnimator="@null"
                 android:text="@string/settings" />
-
+        
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:orientation="horizontal">
-
+            
             <Button
                     android:id="@+id/cancelButton"
                     style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -90,10 +98,10 @@
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@null"
                     android:text="@string/cancel" />
-
+            
             <Button
                     android:id="@+id/deleteButton"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@null"

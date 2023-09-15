@@ -33,6 +33,7 @@ class App : Application() {
         lateinit var shellUtil: ShellUtil
         lateinit var appResources: Resources
         lateinit var activityManager: ActivityManager
+        lateinit var recycleBinManager: RecycleBinManager
         
         val newEvent: Event
             get() {
@@ -59,9 +60,14 @@ class App : Application() {
         shellUtil = ShellUtil
         appResources = resources
         activityManager = ActivityManager
-
+        recycleBinManager = RecycleBinManager
+        
         DynamicColors.applyToActivitiesIfAvailable(this)
         BigImageViewer.initialize(GlideImageLoader.with(context))
+    }
+    
+    override fun onTerminate() {
+        super.onTerminate()
     }
     
 }

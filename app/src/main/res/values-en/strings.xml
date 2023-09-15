@@ -23,7 +23,7 @@
     <string name="not_getting_manage_external_storage_permission">Not getting manage external storage permission</string>
     <string name="no_path">No path</string>
     <string name="delete_the_latest_pictures_directly">Delete the latest pictures directly</string>
-    <string name="searching">Searching...</string>
+    <string name="searching">Searching…</string>
     <string name="ok">OK</string>
     <string name="disagree_and_exit">Disagree and exit</string>
     <string name="agree">Agree</string>
@@ -51,7 +51,7 @@
     <string name="customize_path_description_summary">Click to view</string>
     <string name="all_files_permission_title">Manage permissions for external storage</string>
     <string name="all_files_permission_summary">Only Android 11 and above need to enable this permission</string>
-    <string name="author_title">developer</string>
+    <string name="author_title">Developer</string>
     <string name="github_title">Visit this repository on Github</string>
     <string name="user_agreement">User agreement</string>
     <string name="privacy_policy">Privacy policy</string>
@@ -59,4 +59,9 @@
     <string name="storage_permission_missing">Storage permission not obtained</string>
     <string name="refresh_successful">Refresh successful</string>
     <string name="refresh_successful_and_go_back">Refresh successfully and return to the first picture</string>
+    <string name="recycle_bin_created_successfully">Recycle bin created successfully</string>
+    <string name="recycle_bin_created_failed">Recycle bin created failed</string>
+    <string name="successfully_deleted">%1$s was deleted successfully</string>
+    <string name="picture_cannot_be_deleted">Picture cannot be deleted</string>
+    <string name="revoke">revoke</string>
 </resources>

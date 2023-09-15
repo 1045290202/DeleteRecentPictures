@@ -76,5 +76,10 @@
     <string name="storage_permission_missing">未获取到存储权限</string>
     <string name="refresh_successful">刷新成功</string>
     <string name="refresh_successful_and_go_back">刷新成功并返回第一张图片</string>
+    <string name="recycle_bin_created_successfully">创建回收站成功</string>
+    <string name="recycle_bin_created_failed">创建回收站失败</string>
+    <string name="successfully_deleted">%1$s删除成功</string>
+    <string name="picture_cannot_be_deleted">图片无法删除</string>
+    <string name="revoke">撤销</string>
 
 </resources>

@@ -28,8 +28,6 @@ import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.*
-import com.sjk.deleterecentpictures.utils.FileUtil
-import com.sjk.deleterecentpictures.utils.ImageScannerUtil
 import java.util.*
 
 
@@ -39,7 +37,8 @@ open class MainActivity : BaseActivity() {
     private var viewPager: ViewPager2? = null
     private val viewPagerAdapter = MainActivityViewPagerAdapter()
     private val event: Event = App.newEvent
-//    private var viewPagerCurrentPosition = 0
+    
+    //    private var viewPagerCurrentPosition = 0
     private var hasAllFilesAccessPermission = true
     
     companion object {
@@ -62,7 +61,6 @@ open class MainActivity : BaseActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         this.getOutput().tryShowPrivacyPolicyDialog {
             // 设置默认偏好
             PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
@@ -84,17 +82,19 @@ open class MainActivity : BaseActivity() {
                 this.hasAllFilesAccessPermission = true
                 this.refreshAll()
             } else {
-                this.getOutput().showToast(this.getString(R.string.not_getting_manage_external_storage_permission))
+                this.getOutput()
+                    .showToast(this.getString(R.string.not_getting_manage_external_storage_permission))
                 App.activityManager.finishAll()
             }
         }
     }
     
-    override fun finish() {
-        super.finish()
+    override fun onDestroy() {
+        super.onDestroy()
         App.recentImages.clearImagePaths()
         App.recentImages.clearImageChecks()
         App.imageScannerUtil.close()
+        App.recycleBinManager.deleteOldImageInRecycleBin()
     }
     
     private fun initView() {
@@ -296,7 +296,7 @@ open class MainActivity : BaseActivity() {
             val allCheckedImageInfos = App.dataSource.getAllCheckedImageInfos()
             for (imageInfo in allCheckedImageInfos) {
                 // 删除图片并判断
-                if (FileUtil.deleteImage(imageInfo)) {
+                if (App.fileUtil.deleteImage(imageInfo)) {
                     someDeleted = true
                 } else {
                     allDeleted = false
@@ -331,38 +331,21 @@ open class MainActivity : BaseActivity() {
         deleteButton.isEnabled = false
         
         Thread {
-//            val scanType: String = App.dataSource.getSP().getString("scanType", "1")!!
-
-//            if (!App.fileUtil.existsFile(this.getDataSource().getCurrentImageInfo())) {
-//                this.runOnUiThread {
-//                    App.output.showToast("文件不存在，删除失败")
-//                }
-//                ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, this.getDataSource().getCurrentImageInfo(), scanType.toInt()) { path: String, uri: Uri? ->
-//                    this.runOnUiThread {
-//                        this.refreshImages {
-//                            deleteButton.isEnabled = true
-//                            callback()
-//                        }
-//                    }
-//                }
-//                return@Thread
-//            }
-            
             // 删除图片并判断
-            if (FileUtil.deleteImage(App.dataSource.getCurrentImageInfo())) {
-                this.runOnUiThread {
-                    App.output.showToast(
-                        "${
-                            this.getDataSource().getCurrentImageInfo()!!.path
-                        }删除成功"
-                    )
-                }
-            } else {
-                this.runOnUiThread {
-                    App.output.showToast("图片无法删除")
-                }
-            }
+            // val deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
+            val deleted =
+                App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
             this.runOnUiThread {
+                if (!deleted) {
+                    App.output.showToast(this.getString(R.string.picture_cannot_be_deleted))
+                    return@runOnUiThread
+                }
+                App.output.showToast(
+                    this.getString(
+                        R.string.successfully_deleted,
+                        this.getDataSource().getCurrentImageInfo()!!.path
+                    )
+                )
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
                     callback()
                     this.finish()
@@ -371,6 +354,23 @@ open class MainActivity : BaseActivity() {
                 if (needToRefresh) {
                     this.refreshImages {
                         this.refreshCurrentImagePath()
+                    }
+                    this.getOutput().showSnackBarIndefinite(
+                        findViewById(R.id.viewPager),
+                        this.getString(
+                            R.string.successfully_deleted,
+                            this.getDataSource().getCurrentImageInfo()!!.path
+                        )
+                    ) {
+                        it.setAction(this.getString(R.string.revoke)) {
+                            // 撤回操作
+                            App.recycleBinManager.recover {
+                                this.refreshImages {
+                                    this.refreshCurrentImagePath()
+                                }
+                            }
+                        }
+                        it.setAnchorView(findViewById(R.id.viewPagerOverlay))
                     }
                 }
                 deleteButton.isEnabled = true
@@ -422,7 +422,7 @@ open class MainActivity : BaseActivity() {
     }
     
     private fun refreshImages(callback: () -> Unit = fun() {}) {
-        ImageScannerUtil.init(
+        App.imageScannerUtil.init(
             this,
             this.getDataSource().getSelection(),
             sortOrder = App.dataSource.getSortOrder()

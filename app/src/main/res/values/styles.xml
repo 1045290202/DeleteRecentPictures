@@ -6,6 +6,7 @@
         <!--        <item name="colorPrimaryDark">?attr/colorPrimaryDark</item>-->
         <!--        <item name="colorAccent">?attr/colorAccent</item>-->
         <item name="iconTint">?android:attr/colorPrimary</item>
+        <item name="snackbarStyle">@style/SnakebarTheme</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.Material3.DayNight.Dialog.MinWidth">
@@ -14,6 +15,7 @@
         <!--        <item name="colorAccent">@color/colorAccent</item>-->
         <!--        <item name="android:inAnimation">@anim/rd_dialog_enter</item>-->
         <!--        <item name="android:outAnimation">@anim/rd_dialog_exit</item>-->
+        <item name="snackbarStyle">@style/SnakebarTheme</item>
     </style>
 
     <style name="ImageActivityTheme" parent="AppTheme">
@@ -55,6 +57,10 @@
         <item name="windowMinWidthMajor">@dimen/abc_dialog_min_width_major</item>
         <item name="windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
+    
+    <style name="SnakebarTheme" parent="Widget.Material3.Snackbar">
+        <!--<item name="android:background">@drawable/dialog_background</item>-->
     </style>
 
 </resources>

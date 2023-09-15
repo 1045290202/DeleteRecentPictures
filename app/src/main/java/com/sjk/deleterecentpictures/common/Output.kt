@@ -4,10 +4,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
 import java.io.File
@@ -32,6 +34,12 @@ object Output {
     
     fun showToastLong(content: Int) {
         Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_LONG).show()
+    }
+    
+    fun showSnackBarIndefinite(view: View, content: CharSequence, onSnackBarCreate: ((it: Snackbar) -> Unit)?) {
+        val snackbar = Snackbar.make(view, content, Snackbar.LENGTH_INDEFINITE)
+        onSnackBarCreate?.invoke(snackbar)
+        snackbar.show()
     }
     
     fun openByOtherApp(filePath: String?): Boolean {
