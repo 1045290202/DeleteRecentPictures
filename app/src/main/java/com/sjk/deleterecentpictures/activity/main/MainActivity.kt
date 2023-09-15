@@ -15,8 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 // import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -162,7 +160,7 @@ open class MainActivity : BaseActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 0) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                this.getOutput().showToast("未获取到存储权限")
+                this.getOutput().showToast(this.getString(R.string.storage_permission_missing))
                 logW(TAG, "Storage permission not obtained")
                 App.activityManager.finishAll()
                 return
@@ -212,7 +210,7 @@ open class MainActivity : BaseActivity() {
             this.refreshAll {
                 App.input.setAllImageChecksFalse()
                 this.viewPagerAdapter.setAllHolderChecked(false)
-                App.output.showToast("刷新成功")
+                App.output.showToast(getString(R.string.refresh_successful))
             }
         }
         refreshButton.setOnLongClickListener {
@@ -220,7 +218,7 @@ open class MainActivity : BaseActivity() {
                 App.input.setAllImageChecksFalse()
                 this.viewPagerAdapter.setAllHolderChecked(false)
                 this.viewPager?.setCurrentItem(0, true)
-                App.output.showToast("刷新成功并返回第一张图片")
+                App.output.showToast(getString(R.string.refresh_successful_and_go_back))
             }
             true
         }

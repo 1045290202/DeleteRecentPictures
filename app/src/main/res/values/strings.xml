@@ -44,7 +44,7 @@
     <string name="all_files_permission_summary">仅Android 11及以上需要开启这个权限</string>
     
     <!-- About Preferences -->
-    <string name="author_title">作者</string>
+    <string name="author_title">开发者</string>
     <string name="github_title">在Github上访问此仓库</string>
     <string name="github_url" translatable="false">https://github.com/1045290202/DeleteRecentPictures</string>
     <string name="user_agreement">用户协议</string>
@@ -73,5 +73,8 @@
     <string name="no_path">无路径</string>
     <string name="delete_the_latest_pictures_directly">直接删除最新图片</string>
     <string name="searching">查找中…</string>
+    <string name="storage_permission_missing">未获取到存储权限</string>
+    <string name="refresh_successful">刷新成功</string>
+    <string name="refresh_successful_and_go_back">刷新成功并返回第一张图片</string>
 
 </resources>

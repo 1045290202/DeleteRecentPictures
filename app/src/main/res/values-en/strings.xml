@@ -51,9 +51,12 @@
     <string name="customize_path_description_summary">Click to view</string>
     <string name="all_files_permission_title">Manage permissions for external storage</string>
     <string name="all_files_permission_summary">Only Android 11 and above need to enable this permission</string>
-    <string name="author_title">Author</string>
+    <string name="author_title">developer</string>
     <string name="github_title">Visit this repository on Github</string>
     <string name="user_agreement">User agreement</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="privacy_policy_content"><![CDATA["Delete Recent Pictures" is an application specifically designed to view and delete recently stored pictures on Android devices (hereinafter referred to as devices), helping users conveniently delete recent picture files that are no longer needed in the device. In order to ensure the security of user\'s image data, this application will not access the Internet. This privacy policy is an integral part of this application.\n\n1.Information description：\nThis application does not connect to the Internet and does not collect any private information from any user. This app will not destroy the data security of the device, nor will it actively delete or share images.\n\n2.Permission description：\nThis application only uses permissions to read external storage, write external storage, and manage external storage. If the application does not obtain the above permissions, it will not be able to provide any services.\n\n3.Changes to Privacy Policy：\nWe reserve the right to modify this policy. If we need to adjust this privacy policy, we will release a new privacy policy following the new version of the "Delete Recent Pictures" application.\n\n4.Open source instructions：\nThis application is open source. If you need it, you can find the source code of this application in Settings -> About -> Access this project on github.]]></string>
+    <string name="storage_permission_missing">Storage permission not obtained</string>
+    <string name="refresh_successful">Refresh successful</string>
+    <string name="refresh_successful_and_go_back">Refresh successfully and return to the first picture</string>
 </resources>
