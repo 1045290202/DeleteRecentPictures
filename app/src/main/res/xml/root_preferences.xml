@@ -81,6 +81,15 @@
     
     </PreferenceCategory>
     
+    <PreferenceCategory app:title="@string/experimental_settings">
+        <rikka.material.preference.MaterialSwitchPreference
+                app:defaultValue="false"
+                app:key="undelete"
+                app:summary="@string/undelete_summary"
+                app:title="@string/undeleted_title" />
+    
+    </PreferenceCategory>
+    
     <PreferenceCategory app:title="@string/permission_header">
         
         <Preference

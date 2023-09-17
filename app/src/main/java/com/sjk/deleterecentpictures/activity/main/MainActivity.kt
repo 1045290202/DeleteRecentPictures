@@ -91,10 +91,14 @@ open class MainActivity : BaseActivity() {
     
     override fun onDestroy() {
         super.onDestroy()
+        App.recycleBinManager.deleteOldImageInRecycleBin()
+    }
+    
+    override fun finish() {
+        super.finish()
         App.recentImages.clearImagePaths()
         App.recentImages.clearImageChecks()
         App.imageScannerUtil.close()
-        App.recycleBinManager.deleteOldImageInRecycleBin()
     }
     
     private fun initView() {
@@ -230,7 +234,7 @@ open class MainActivity : BaseActivity() {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }*/
         val cancelButton = this.findViewById<Button>(R.id.cancelButton)
-        cancelButton.setOnClickListener { finish() }
+        cancelButton.setOnClickListener { this.finish() }
         
         // 删除按钮
         val deleteButton = this.findViewById<Button>(R.id.deleteButton)
@@ -305,47 +309,74 @@ open class MainActivity : BaseActivity() {
             this.runOnUiThread {
                 when {
                     allDeleted -> {
-                        App.output.showToast("已全部删除")
+                        App.output.showToast(this.getString(R.string.all_deleted))
                     }
                     
                     someDeleted -> {
-                        App.output.showToast("部分图片删除失败")
+                        App.output.showToast(this.getString(R.string.partial_deletion_failed))
                     }
                     
                     else -> {
-                        App.output.showToast("所有图片删除失败")
+                        App.output.showToast(this.getString(R.string.failed_to_delete_all))
                     }
                 }
+                
+                if (App.dataSource.getSP().getBoolean("closeApp", true)) {
+                    callback()
+                    this.finish()
+                    return@runOnUiThread
+                }
+                
+                if (needToRefresh) {
+                    this.refreshImages {
+                        this.refreshCurrentImagePath()
+                    }
+                }
+                
+                deleteButton.isEnabled = true
+                callback()
             }
-//            this.refreshMediaLibraryAfterDelete(needToRefresh, callback, allCheckedImageInfos)
         }.start()
     }
     
     private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: () -> Unit = fun() {}) {
-        if (this.getDataSource().getCurrentImageInfo()?.path == null) {
-            this.getOutput().showToast("没有获取到图片信息，删除失败")
+        if (this.getDataSource().getCurrentImageInfo()?.uri == null) {
+            this.getOutput()
+                .showToast(this.getString(R.string.delete_failed_because_no_information))
             return
         }
         
         val deleteButton: Button = findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
         
+        /**
+         * 显示已删除的toast
+         */
+        fun showDeletedToast() {
+            App.output.showToast(
+                this.getString(
+                    R.string.successfully_deleted,
+                    this.getDataSource().getCurrentImageInfo()!!.path
+                )
+            )
+        }
+        
         Thread {
             // 删除图片并判断
             // val deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
             val deleted =
                 App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
+            val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
             this.runOnUiThread {
                 if (!deleted) {
                     App.output.showToast(this.getString(R.string.picture_cannot_be_deleted))
                     return@runOnUiThread
                 }
-                App.output.showToast(
-                    this.getString(
-                        R.string.successfully_deleted,
-                        this.getDataSource().getCurrentImageInfo()!!.path
-                    )
-                )
+                
+                if (!undelete) {
+                    showDeletedToast()
+                }
+                
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
                     callback()
                     this.finish()
@@ -355,58 +386,34 @@ open class MainActivity : BaseActivity() {
                     this.refreshImages {
                         this.refreshCurrentImagePath()
                     }
-                    this.getOutput().showSnackBarIndefinite(
-                        findViewById(R.id.viewPager),
-                        this.getString(
-                            R.string.successfully_deleted,
-                            this.getDataSource().getCurrentImageInfo()!!.path
-                        )
-                    ) {
-                        it.setAction(this.getString(R.string.revoke)) {
-                            // 撤回操作
-                            App.recycleBinManager.recover(onSuccess = { path, uri ->
-                                this@MainActivity.refreshImages {
-                                    this@MainActivity.refreshCurrentImagePath()
-                                }
-                            })
+                    
+                    if (undelete) {
+                        this.getOutput().showSnackBarIndefinite(
+                            this.findViewById(R.id.viewPager),
+                            this.getString(
+                                R.string.successfully_deleted,
+                                this.getDataSource().getCurrentImageInfo()!!.path
+                            )
+                        ) {
+                            
+                            it.setAction(this.getString(R.string.revoke)) {
+                                // 撤回操作
+                                App.recycleBinManager.recover(onSuccess = { _, _ ->
+                                    this@MainActivity.refreshImages {
+                                        this@MainActivity.refreshCurrentImagePath()
+                                    }
+                                })
+                            }
+                            it.setAnchorView(findViewById(R.id.viewPagerOverlay))
                         }
-                        it.setAnchorView(findViewById(R.id.viewPagerOverlay))
                     }
                 }
                 deleteButton.isEnabled = true
                 callback()
             }
-//            this.refreshMediaLibraryAfterDelete(needToRefresh, callback, arrayListOf(this.getDataSource().getCurrentImageInfo()))
         }.start()
     }
 
-//    private fun refreshMediaLibraryAfterDelete(needToRefresh: Boolean = true, callback: () -> Unit, imagePaths: List<String?>) {
-//        val scanType: String = App.dataSource.getSP().getString("scanType", "1")!!
-//        val imagePathsSize = imagePaths.size
-//        for ((index, imagePath) in imagePaths.withIndex()) {
-//            ImageScannerUtil.refreshMediaLibraryByPath(applicationContext, imagePath, scanType.toInt()) { path: String, uri: Uri? ->
-//                if (index < imagePathsSize - 1) {
-//                    return@refreshMediaLibraryByPath
-//                }
-//                this.runOnUiThread {
-//                    if (App.dataSource.getSP().getBoolean("closeApp", true)) {
-//                        callback()
-//                        this.finish()
-//                        return@runOnUiThread
-//                    }
-//                    if (needToRefresh) {
-//                        this.refreshImages {
-//                            this.refreshCurrentImagePath()
-//                        }
-//                    }
-//                    val deleteButton: Button = findViewById(R.id.deleteButton)
-//                    deleteButton.isEnabled = true
-//                    callback()
-//                }
-//            }
-//        }
-//    }
-    
     private fun refreshAll(callback: () -> Unit = fun() {}) {
         Thread {
             this.refreshImages(callback)
