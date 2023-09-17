@@ -364,11 +364,11 @@ open class MainActivity : BaseActivity() {
                     ) {
                         it.setAction(this.getString(R.string.revoke)) {
                             // 撤回操作
-                            App.recycleBinManager.recover {
-                                this.refreshImages {
-                                    this.refreshCurrentImagePath()
+                            App.recycleBinManager.recover(onSuccess = { path, uri ->
+                                this@MainActivity.refreshImages {
+                                    this@MainActivity.refreshCurrentImagePath()
                                 }
-                            }
+                            })
                         }
                         it.setAnchorView(findViewById(R.id.viewPagerOverlay))
                     }

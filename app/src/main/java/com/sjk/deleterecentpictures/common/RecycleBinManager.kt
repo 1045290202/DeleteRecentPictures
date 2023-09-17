@@ -69,7 +69,7 @@ object RecycleBinManager {
     /**
      * 从回收站恢复图片
      */
-    fun recover(onSuccess: MediaScannerConnection.OnScanCompletedListener? = null, onFailed: (() -> Unit)? = null) {
+    fun recover(onSuccess: ((path: String, uri: Uri) -> Unit)? = null, onFailed: (() -> Unit)? = null) {
         if (this.deletedImageInfo == null) {
             onFailed?.invoke()
             return
@@ -87,7 +87,9 @@ object RecycleBinManager {
         App.fileUtil.deleteFile(newFile)
         this.deletedImageInfo = null
         // 更新媒体库
-        MediaScannerConnection.scanFile(App.context, arrayOf(oldFile.absolutePath), null, onSuccess)
+        MediaScannerConnection.scanFile(App.context, arrayOf(oldFile.absolutePath), null) { path, uri ->
+            onSuccess?.invoke(path, uri)
+        }
     }
     
 }
