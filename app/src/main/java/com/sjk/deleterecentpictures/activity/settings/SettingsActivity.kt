@@ -226,6 +226,7 @@ class SettingsActivity : BaseActivity() {
 
 
                     alertDialog.show()
+                    App.alertDialogUtil.enableMessageSelection(alertDialog, R.id.text)
                 }
                 
                 "privacyPolicy" -> {

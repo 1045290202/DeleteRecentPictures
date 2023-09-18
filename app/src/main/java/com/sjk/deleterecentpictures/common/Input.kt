@@ -25,4 +25,15 @@ object Input {
         App.output.showToast(App.appResources.getString(R.string.copied))
         return true
     }
+    
+    fun copyCurrentImageName(): Boolean {
+        if (App.dataSource.getCurrentImageInfo()?.path == null) {
+            App.output.showToast(App.appResources.getString(R.string.no_path))
+            return false
+        }
+
+        App.clipboardUtil.setText(App.dataSource.getFileNameByPath(App.dataSource.getCurrentImageInfo())!!)
+        App.output.showToast(App.appResources.getString(R.string.copied))
+        return true
+    }
 }

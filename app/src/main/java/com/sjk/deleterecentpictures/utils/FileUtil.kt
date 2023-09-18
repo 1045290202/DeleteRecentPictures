@@ -67,6 +67,14 @@ object FileUtil {
         return completePath
     }
     
+    fun getFileNameByPath(completePath: String?): String? {
+        if (completePath == null) {
+            return null
+        }
+        
+        return File(completePath).name
+    }
+    
     fun getMimeType(url: String?): String? {
         var type: String? = null
         val extension = MimeTypeMap.getFileExtensionFromUrl(url)

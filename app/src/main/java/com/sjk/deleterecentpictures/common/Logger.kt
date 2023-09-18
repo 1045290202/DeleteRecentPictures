@@ -30,14 +30,14 @@ fun log(vararg msgs: Any?) {
 }
 
 private object Logger {
-    @SuppressLint("SimpleDateFormat")
+    var df: SimpleDateFormat = SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]", Locale.getDefault())
+    
     private fun getLogTime(): String {
         if (!App.switch.ENABLE_LOG_TIME) {
             return ""
         }
         
-        val df = SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]")
-        return df.format(Date())
+        return this.df.format(Date())
     }
     
     

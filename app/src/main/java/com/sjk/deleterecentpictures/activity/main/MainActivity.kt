@@ -201,12 +201,12 @@ open class MainActivity : BaseActivity() {
     }
     
     private fun buttonClickEventBind() {
-        val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
-        latestPicturePathButton.setOnClickListener {
+        val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
+        currentPicturePathButton.setOnClickListener {
             App.output.showPathButtonClickDialog()
         }
-        latestPicturePathButton.setOnLongClickListener {
-            App.input.copyCurrentImagePath()
+        currentPicturePathButton.setOnLongClickListener {
+            App.input.copyCurrentImageName()
             true
         }
         val refreshButton = this.findViewById<Button>(R.id.refreshButton)
@@ -421,11 +421,9 @@ open class MainActivity : BaseActivity() {
     }
     
     private fun refreshCurrentImagePath() {
-//        this@MainActivity.getInput().setCurrentImagePathIndex(this.getDataSource().getCurrentImagePathIndex())
-        val latestPicturePathButton = findViewById<Button>(R.id.latestPicturePathButton)
-        latestPicturePathButton.text = this.getDataSource().getSimplifiedPathInExternalStorage(
-            this@MainActivity.getDataSource().getCurrentImageInfo()?.path
-        )
+        val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
+        currentPicturePathButton.text =
+            this.getDataSource().getFileNameByPath(this.getDataSource().getCurrentImageInfo())
     }
     
     private fun refreshImages(callback: () -> Unit = fun() {}) {
@@ -547,13 +545,6 @@ internal class MainActivityViewPagerAdapter :
         init {
             this.imageView.setImageViewFactory(GlideImageViewFactory())
             this.openImageActivityButton.setOnClickListener {
-                // 打开图片查看界面
-                /*if (!App.fileUtil.existsFile(this.imagePath)) {
-                    App.output.showToast("图片无法查看")
-                    return@setOnClickListener
-                }*/
-
-//                App.globalData.setData("currentImagePath", this.imagePath)
                 if (this.imageInfo?.uri == null) {
                     return@setOnClickListener
                 }

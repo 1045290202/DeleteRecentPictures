@@ -93,6 +93,7 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
                         
                         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
                         alertDialog.show()
+                        App.alertDialogUtil.enableMessageSelection(alertDialog)
                     }
                 }
                 discern.start()

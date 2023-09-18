@@ -28,7 +28,7 @@
                     android:layout_marginHorizontal="2dp">
                 
                 <Button
-                        android:id="@+id/latestPicturePathButton"
+                        android:id="@+id/currentPicturePathButton"
                         style="@style/Widget.Material3.Button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -150,6 +152,7 @@ object Output {
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
+        App.alertDialogUtil.enableMessageSelection(alertDialog)
     }
     
     fun showDeleteCheckedImagesDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
@@ -191,6 +194,7 @@ object Output {
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
+        App.alertDialogUtil.enableMessageSelection(alertDialog)
     }
     
     fun showPathButtonClickDialog() {
@@ -207,6 +211,7 @@ object Output {
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
+        App.alertDialogUtil.enableMessageSelection(alertDialog)
     }
     
     /**
@@ -238,6 +243,7 @@ object Output {
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
+        App.alertDialogUtil.enableMessageSelection(alertDialog)
     }
     
     /**
@@ -251,4 +257,5 @@ object Output {
         }
         this.showPrivacyPolicyDialog(callback)
     }
+    
 }

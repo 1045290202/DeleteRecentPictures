@@ -54,11 +54,13 @@ object DataSource {
         return selection
     }
 
-    fun getSimplifiedPathInExternalStorage(completePath: String?): String? {
-        return App.fileUtil.getSimplifiedPathInExternalStorage(completePath)
+    fun getSimplifiedPathInExternalStorage(imageInfo: ImageInfoBean?): String? {
+        return App.fileUtil.getSimplifiedPathInExternalStorage(imageInfo?.path)
     }
-
-
+    
+    fun getFileNameByPath(imageInfo: ImageInfoBean?): String? {
+        return App.fileUtil.getFileNameByPath(imageInfo?.path)
+    }
 
     /**
      * 获取最近图片的信息

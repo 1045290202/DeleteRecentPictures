@@ -1,7 +1,6 @@
 package com.sjk.deleterecentpictures.common
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
@@ -34,6 +33,7 @@ class App : Application() {
         lateinit var appResources: Resources
         lateinit var activityManager: ActivityManager
         lateinit var recycleBinManager: RecycleBinManager
+        lateinit var alertDialogUtil: AlertDialogUtil
         
         val newEvent: Event
             get() {
@@ -61,6 +61,7 @@ class App : Application() {
         appResources = resources
         activityManager = ActivityManager
         recycleBinManager = RecycleBinManager
+        alertDialogUtil = AlertDialogUtil
         
         DynamicColors.applyToActivitiesIfAvailable(this)
         BigImageViewer.initialize(GlideImageLoader.with(context))
