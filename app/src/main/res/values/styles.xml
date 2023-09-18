@@ -16,6 +16,7 @@
         <!--        <item name="android:inAnimation">@anim/rd_dialog_enter</item>-->
         <!--        <item name="android:outAnimation">@anim/rd_dialog_exit</item>-->
         <item name="snackbarStyle">@style/SnakebarTheme</item>
+        <item name="android:windowBackground">@drawable/activity_main_background</item>
     </style>
 
     <style name="ImageActivityTheme" parent="AppTheme">
