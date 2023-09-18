@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">?attr/colorPrimaryDark</color>
     <color name="colorAccent">?attr/colorAccent</color>
     <color name="colorSecondary">?attr/colorSecondary</color>
+    
+    <color name="ic_launcher_foreground">#FFFFFF</color>
+    <color name="ic_launcher_background">#64b5f6</color>
 </resources>
