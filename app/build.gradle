@@ -22,6 +22,9 @@ android {
         sourceCompatibility = kotlin_version
         targetCompatibility = JavaVersion.VERSION_17
     }
+    buildscript {
+
+    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -51,8 +54,9 @@ dependencies {
 //    implementation 'com.yanzhenjie:permission:2.0.3'
 //    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation "androidx.preference:preference-ktx:1.2.1"
-    implementation "androidx.core:core-ktx:1.10.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation 'androidx.annotation:annotation-jvm:1.7.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    implementation 'com.zxy.android:tiny:1.1.0'
 //    implementation "com.davemorrissey.labs:subsampling-scale-image-view:3.10.0"
 //    implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.22"

@@ -11,10 +11,14 @@ import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 // import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -32,7 +36,6 @@ import java.util.*
 
 
 open class MainActivity : BaseActivity() {
-    
     private var isLoaded = false
     private var viewPager: ViewPager2? = null
     private val viewPagerAdapter = MainActivityViewPagerAdapter()
@@ -40,6 +43,11 @@ open class MainActivity : BaseActivity() {
     
     //    private var viewPagerCurrentPosition = 0
     private var hasAllFilesAccessPermission = true
+    
+    // 菜单配置
+    private val menuConfig = mapOf<Int, () -> Any>(
+        R.id.action_refresh to { this.onMenuItemActionRefreshClick() },
+    )
     
     companion object {
         private const val TAG = "MainActivity"
@@ -101,12 +109,43 @@ open class MainActivity : BaseActivity() {
         App.imageScannerUtil.close()
     }
     
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        this.menuInflater.inflate(R.menu.menu_main_activity, menu)
+        return true
+    }
+    
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (!this.menuConfig.containsKey(item.itemId)) {
+            return super.onOptionsItemSelected(item)
+        }
+        return this.menuConfig[item.itemId]?.invoke() != false
+    }
+    
+    private fun onMenuItemActionRefreshClick() {
+        this.refreshAll {
+            App.input.setAllImageChecksFalse()
+            this.viewPagerAdapter.setAllHolderChecked(false)
+            App.output.showToast(this.getString(R.string.refresh_successful))
+        }
+    }
+    
+    private fun onMenuItemActionRefreshLongClick() {
+        this.refreshAll {
+            App.input.setAllImageChecksFalse()
+            this.viewPagerAdapter.setAllHolderChecked(false)
+            this.viewPager?.setCurrentItem(0, true)
+            App.output.showToast(this.getString(R.string.refresh_successful_and_go_back))
+        }
+    }
+    
     private fun initView() {
-        setContentView(R.layout.activity_main)
-        buttonClickEventBind()
+        this.setContentView(R.layout.activity_main)
+        this.setTitle(R.string.app_name)
+        this.setSupportActionBar(findViewById(R.id.toolbar))
+        this.buttonClickEventBind()
         
         this.viewPager = this.findViewById(R.id.viewPager)
-        this.viewPager!!.adapter = viewPagerAdapter
+        this.viewPager!!.adapter = this.viewPagerAdapter
         this.viewPagerAdapter.imageInfos = App.dataSource.getRecentImageInfos()
         this.viewPagerAdapter.imageChecks = App.dataSource.getImageChecks()
         this.viewPager!!.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -214,7 +253,7 @@ open class MainActivity : BaseActivity() {
             this.refreshAll {
                 App.input.setAllImageChecksFalse()
                 this.viewPagerAdapter.setAllHolderChecked(false)
-                App.output.showToast(getString(R.string.refresh_successful))
+                App.output.showToast(this.getString(R.string.refresh_successful))
             }
         }
         refreshButton.setOnLongClickListener {
@@ -222,7 +261,7 @@ open class MainActivity : BaseActivity() {
                 App.input.setAllImageChecksFalse()
                 this.viewPagerAdapter.setAllHolderChecked(false)
                 this.viewPager?.setCurrentItem(0, true)
-                App.output.showToast(getString(R.string.refresh_successful_and_go_back))
+                App.output.showToast(this.getString(R.string.refresh_successful_and_go_back))
             }
             true
         }
@@ -395,8 +434,7 @@ open class MainActivity : BaseActivity() {
                                 this.getDataSource().getCurrentImageInfo()!!.path
                             )
                         ) {
-                            
-                            it.setAction(this.getString(R.string.revoke)) {
+                            it.setAction(R.string.revoke) {
                                 // 撤回操作
                                 App.recycleBinManager.recover(onSuccess = { _, _ ->
                                     this@MainActivity.refreshImages {
@@ -413,7 +451,7 @@ open class MainActivity : BaseActivity() {
             }
         }.start()
     }
-
+    
     private fun refreshAll(callback: () -> Unit = fun() {}) {
         Thread {
             this.refreshImages(callback)

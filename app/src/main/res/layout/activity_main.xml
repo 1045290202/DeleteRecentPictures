@@ -5,10 +5,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="8dp"
+        android:paddingTop="0dp"
         android:paddingBottom="8dp"
         tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
+    
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:title="@string/app_name" />
     
     <androidx.core.widget.NestedScrollView
             android:layout_weight="1"
@@ -48,6 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
+                        android:visibility="gone"
                         android:text="@string/refresh" />
             </LinearLayout>
             
@@ -66,7 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_below="@id/viewPager"
-                        android:visibility="invisible"/>
+                        android:visibility="invisible" />
             </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
