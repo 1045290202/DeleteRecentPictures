@@ -1,7 +1,11 @@
 package com.sjk.deleterecentpictures.common
 
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import com.sjk.deleterecentpictures.bean.DeletedImageInfoBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
@@ -15,7 +19,7 @@ object RecycleBinManager {
     
     val recyclePath: String
         get() {
-            return "${App.context.filesDir.absolutePath}/recycle"
+            return App.context.getExternalFilesDir("recycle")!!.absolutePath
         }
     
     var deletedImageInfo: DeletedImageInfoBean? = null
@@ -57,13 +61,12 @@ object RecycleBinManager {
         if (!App.fileUtil.existsFile(oldFile)) {
             return false
         }
-        if (!App.fileUtil.existsFile(oldFile.copyTo(newFile, true))) {
+        val moved = oldFile.renameTo(newFile)
+        if (!moved) {
             return false
         }
-        this.deleteOldImageInRecycleBin()
-        val deleted = App.fileUtil.deleteImage(imageInfo)
-        this.deletedImageInfo = DeletedImageInfoBean(oldFile, newFile)
-        return deleted
+        this.deletedImageInfo = DeletedImageInfoBean(oldFile, newFile, imageInfo)
+        return true
     }
     
     /**
@@ -80,16 +83,48 @@ object RecycleBinManager {
             onFailed?.invoke()
             return
         }
-        if (!App.fileUtil.existsFile(newFile.copyTo(oldFile, true))) {
+        val moved = newFile.renameTo(oldFile)
+        if (!moved) {
             onFailed?.invoke()
             return
         }
-        App.fileUtil.deleteFile(newFile)
-        this.deletedImageInfo = null
+        
         // 更新媒体库
         MediaScannerConnection.scanFile(App.context, arrayOf(oldFile.absolutePath), null) { path, uri ->
             onSuccess?.invoke(path, uri)
         }
+        // this.updateMediaScan(App.context, this.deletedImageInfo!!.info, onSuccess, onFailed)
+        this.deletedImageInfo = null
+    }
+    
+    fun updateMediaScan(
+        context: Context,
+        imageInfo: ImageInfoBean?,
+        onSuccess: ((path: String, uri: Uri) -> Unit)? = null,
+        onFailed: (() -> Unit)? = null
+    ) {
+        if (imageInfo?.uri == null || imageInfo.path == null) {
+            onFailed?.invoke()
+            return
+        }
+        
+        val contentResolver: ContentResolver = context.contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DATE_MODIFIED, imageInfo.dateModified)
+            put(MediaStore.Images.Media.DATE_ADDED, imageInfo.dateAdded)
+        }
+        
+        val uri: Uri = MediaStore.Files.getContentUri("external")
+        val selection = "${MediaStore.Files.FileColumns.DATA}=?"
+        val selectionArgs = arrayOf(imageInfo.path)
+        
+        val updatedRows = contentResolver.update(uri, contentValues, selection, selectionArgs)
+        
+        if (updatedRows == 0) {
+            contentValues.put(MediaStore.Files.FileColumns.DATA, imageInfo.path)
+            contentResolver.insert(uri, contentValues)
+        }
+        onSuccess?.invoke(imageInfo.path, imageInfo.uri)
     }
     
 }

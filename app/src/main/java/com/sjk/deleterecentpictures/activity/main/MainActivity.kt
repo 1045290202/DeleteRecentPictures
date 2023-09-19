@@ -361,6 +361,7 @@ open class MainActivity : BaseActivity() {
                 }
                 
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
+                    deleteButton.isEnabled = true
                     callback()
                     this.finish()
                     return@runOnUiThread
@@ -401,14 +402,22 @@ open class MainActivity : BaseActivity() {
         }
         
         Thread {
-            // 删除图片并判断
-            // val deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
-            val deleted =
-                App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
             val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
+            // 删除图片并判断
+            var deleted = false
+            if (undelete) { // 可撤销的时候移动到回收站
+                deleted =
+                    App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
+                if (deleted) {
+                    App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
+                }
+            } else {
+                deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
+            }
             this.runOnUiThread {
                 if (!deleted) {
                     App.output.showToast(this.getString(R.string.picture_cannot_be_deleted))
+                    deleteButton.isEnabled = true
                     return@runOnUiThread
                 }
                 
@@ -417,6 +426,7 @@ open class MainActivity : BaseActivity() {
                 }
                 
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
+                    deleteButton.isEnabled = true
                     callback()
                     this.finish()
                     return@runOnUiThread
@@ -431,7 +441,8 @@ open class MainActivity : BaseActivity() {
                             this.findViewById(R.id.viewPager),
                             this.getString(
                                 R.string.successfully_deleted,
-                                this.getDataSource().getCurrentImageInfo()!!.path
+                                // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
+                                App.recycleBinManager.deletedImageInfo?.info?.path
                             )
                         ) {
                             it.setAction(R.string.revoke) {

@@ -5,4 +5,5 @@ import java.io.File
 data class DeletedImageInfoBean(
     val oldFile: File,
     val newFile: File,
+    val info: ImageInfoBean?,
 )

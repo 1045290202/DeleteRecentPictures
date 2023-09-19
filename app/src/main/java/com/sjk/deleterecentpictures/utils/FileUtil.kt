@@ -39,7 +39,7 @@ object FileUtil {
     /**
      * 删除文件，不允许删除文件夹
      */
-    fun deleteFile(file: File?, ): Boolean {
+    fun deleteFile(file: File?): Boolean {
         if (file == null) {
             return false
         }

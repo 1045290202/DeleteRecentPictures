@@ -62,8 +62,8 @@ object ImageScannerUtil {
             arrayOf(
                 MediaStore.MediaColumns._ID,
                 MediaStore.MediaColumns.DATA,
-                // MediaStore.MediaColumns.DATE_ADDED,
-                // MediaStore.MediaColumns.DATE_MODIFIED,
+                MediaStore.MediaColumns.DATE_ADDED,
+                MediaStore.MediaColumns.DATE_MODIFIED,
                 // MediaStore.MediaColumns.DISPLAY_NAME,
                 // MediaStore.MediaColumns.MIME_TYPE
             ),
@@ -87,7 +87,13 @@ object ImageScannerUtil {
                     imageId,
                 )
                 
-                ImageInfoBean(imagePath, imageUri, imageId)
+                val columnIndexDateAdded: Int = it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+                val dateAdded = it.getLong(columnIndexDateAdded)
+                
+                val columnIndexDateModified: Int = it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+                val dateModified = it.getLong(columnIndexDateModified)
+                
+                ImageInfoBean(imagePath, imageUri, imageId, dateAdded, dateModified)
             } catch (e: CursorIndexOutOfBoundsException) {
                 null
             }

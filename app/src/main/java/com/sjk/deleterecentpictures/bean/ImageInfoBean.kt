@@ -6,4 +6,6 @@ data class ImageInfoBean(
     val path: String? = null,
     val uri: Uri? = null,
     val id: Long? = null,
+    val dateAdded: Long? = null,
+    val dateModified: Long? = null,
 )
