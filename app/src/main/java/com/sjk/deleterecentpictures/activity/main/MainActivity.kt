@@ -17,8 +17,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
-import androidx.annotation.IdRes
-import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 // import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -33,6 +31,7 @@ import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.*
 import java.util.*
+import kotlin.math.max
 
 
 open class MainActivity : BaseActivity() {
@@ -72,8 +71,8 @@ open class MainActivity : BaseActivity() {
         this.getOutput().tryShowPrivacyPolicyDialog {
             // 设置默认偏好
             PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
-            initView()
-            requestWritePermission()
+            this.initView()
+            this.requestWritePermission()
         }
     }
     
@@ -248,6 +247,7 @@ open class MainActivity : BaseActivity() {
             App.input.copyCurrentImageName()
             true
         }
+        
         val refreshButton = this.findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener {
             this.refreshAll {
@@ -265,13 +265,7 @@ open class MainActivity : BaseActivity() {
             }
             true
         }
-        /*val openImageActivityButton = findViewById<Button>(R.id.openImageActivityButton)
-        openImageActivityButton.setOnClickListener {
-            //打开图片查看界面
-            val intent = Intent(applicationContext, ImageActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }*/
+        
         val cancelButton = this.findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { this.finish() }
         
@@ -404,7 +398,7 @@ open class MainActivity : BaseActivity() {
         Thread {
             val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
             // 删除图片并判断
-            var deleted = false
+            val deleted: Boolean
             if (undelete) { // 可撤销的时候移动到回收站
                 deleted =
                     App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
@@ -475,6 +469,9 @@ open class MainActivity : BaseActivity() {
             this.getDataSource().getFileNameByPath(this.getDataSource().getCurrentImageInfo())
     }
     
+    /**
+     * 刷新图片
+     */
     private fun refreshImages(callback: () -> Unit = fun() {}) {
         App.imageScannerUtil.init(
             this,
@@ -485,30 +482,27 @@ open class MainActivity : BaseActivity() {
         App.recentImages.clearImagePaths()
         
         var i = this.getDataSource().getNumberOfPictures()
-        if (i > 0) {
-            val imageInfo: ImageInfoBean? = App.imageScannerUtil.getCurrent()
-            imageInfo != null && this.getDataSource().getRecentImageInfos().add(imageInfo)
-            i--
-        }
-        while (i-- > 0) {
-            val imageInfo: ImageInfoBean = App.imageScannerUtil.getNext() ?: break
+        val maxI = i
+        while (i > 0) {
+            val imageInfo: ImageInfoBean = (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext()) ?: break
             this.getDataSource().getRecentImageInfos().add(imageInfo)
+            i--
         }
         for (index in this.viewPagerAdapter.imageInfos.indices) {
             this.viewPagerAdapter.imageChecks.add(false)
         }
-        /*for (i in 0..this.getDataSource().getNumberOfPictures()) {
-            val imagePath = App.imageScannerUtil.getNext() ?: break
-            this.viewPagerAdapter.imagePaths.add(imagePath)
-        }*/
         
         if (this.getDataSource().getRecentImageInfos().size == 0) {
 //            this.getOutPut().showToast("未发现图片")
             this.getDataSource().getRecentImageInfos().add(ImageInfoBean())
         }
-//        this.viewPager.adapter = viewPagerAdapter
+        
         this.runOnUiThread {
             this.viewPagerAdapter.notifyDataSetChanged()
+            val currentIndex = this.getDataSource().getCurrentImageInfoIndex()
+            if (currentIndex >= this.getDataSource().getRecentImageInfos().size) {
+                this.viewPager?.setCurrentItem(max(currentIndex - 1, 0), false)
+            }
             this.refreshCurrentImagePath()
             callback()
         }
