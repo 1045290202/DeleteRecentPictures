@@ -30,6 +30,12 @@ import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.math.max
 
@@ -362,7 +368,7 @@ open class MainActivity : BaseActivity() {
                 }
                 
                 if (needToRefresh) {
-                    this.refreshImages {
+                    this.refreshAll {
                         this.refreshCurrentImagePath()
                     }
                 }
@@ -373,7 +379,60 @@ open class MainActivity : BaseActivity() {
         }.start()
     }
     
-    private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: () -> Unit = fun() {}) {
+    /**
+     * 显示已删除的Toast
+     */
+    private fun showDeletedToast() {
+        App.output.showToast(
+            this.getString(
+                R.string.successfully_deleted,
+                this.getDataSource().getCurrentImageInfo()!!.path
+            )
+        )
+    }
+    
+    /**
+     * 显示已删除的SnackBar
+     */
+    private fun showDeletedSnackBar() {
+        this.getOutput().showSnackBarIndefinite(
+            this.findViewById(R.id.viewPager),
+            this.getString(
+                R.string.successfully_deleted,
+                // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
+                App.recycleBinManager.deletedImageInfo?.info?.path
+            )
+        ) {
+            it.setAction(R.string.revoke) {
+                // 撤回操作
+                App.recycleBinManager.recover(onSuccess = { _, _ ->
+                    this@MainActivity.refreshAll {
+                        this@MainActivity.refreshCurrentImagePath()
+                    }
+                })
+            }
+            it.setAnchorView(findViewById(R.id.viewPagerOverlay))
+        }
+    }
+    
+    /**
+     * 删除图片，返回成功或者失败
+     */
+    private fun deleteImage(undelete: Boolean): Boolean {
+        val deleted: Boolean
+        if (undelete) { // 可撤销的时候移动到回收站
+            deleted =
+                App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
+            if (deleted) {
+                App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
+            }
+        } else {
+            deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
+        }
+        return deleted;
+    }
+    
+    private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: (() -> Unit)?) {
         if (this.getDataSource().getCurrentImageInfo()?.uri == null) {
             this.getOutput()
                 .showToast(this.getString(R.string.delete_failed_because_no_information))
@@ -383,31 +442,10 @@ open class MainActivity : BaseActivity() {
         val deleteButton: Button = findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
         
-        /**
-         * 显示已删除的toast
-         */
-        fun showDeletedToast() {
-            App.output.showToast(
-                this.getString(
-                    R.string.successfully_deleted,
-                    this.getDataSource().getCurrentImageInfo()!!.path
-                )
-            )
-        }
-        
         Thread {
             val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
             // 删除图片并判断
-            val deleted: Boolean
-            if (undelete) { // 可撤销的时候移动到回收站
-                deleted =
-                    App.recycleBinManager.moveToRecycleBin(App.dataSource.getCurrentImageInfo())
-                if (deleted) {
-                    App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
-                }
-            } else {
-                deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
-            }
+            val deleted: Boolean = deleteImage(undelete)
             this.runOnUiThread {
                 if (!deleted) {
                     App.output.showToast(this.getString(R.string.picture_cannot_be_deleted))
@@ -421,46 +459,27 @@ open class MainActivity : BaseActivity() {
                 
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
                     deleteButton.isEnabled = true
-                    callback()
+                    callback?.invoke()
                     this.finish()
                     return@runOnUiThread
                 }
                 if (needToRefresh) {
-                    this.refreshImages {
+                    this.refreshAll {
                         this.refreshCurrentImagePath()
                     }
                     
                     if (undelete) {
-                        this.getOutput().showSnackBarIndefinite(
-                            this.findViewById(R.id.viewPager),
-                            this.getString(
-                                R.string.successfully_deleted,
-                                // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
-                                App.recycleBinManager.deletedImageInfo?.info?.path
-                            )
-                        ) {
-                            it.setAction(R.string.revoke) {
-                                // 撤回操作
-                                App.recycleBinManager.recover(onSuccess = { _, _ ->
-                                    this@MainActivity.refreshImages {
-                                        this@MainActivity.refreshCurrentImagePath()
-                                    }
-                                })
-                            }
-                            it.setAnchorView(findViewById(R.id.viewPagerOverlay))
-                        }
+                        showDeletedSnackBar()
                     }
                 }
                 deleteButton.isEnabled = true
-                callback()
+                callback?.invoke()
             }
         }.start()
     }
     
     private fun refreshAll(callback: () -> Unit = fun() {}) {
-        Thread {
-            this.refreshImages(callback)
-        }.start()
+        this.refreshImages(callback)
     }
     
     private fun refreshCurrentImagePath() {
@@ -473,41 +492,43 @@ open class MainActivity : BaseActivity() {
      * 刷新图片
      */
     private fun refreshImages(callback: () -> Unit = fun() {}) {
-        App.imageScannerUtil.init(
-            this,
-            this.getDataSource().getSelection(),
-            sortOrder = App.dataSource.getSortOrder()
-        )
+        Thread {
+            App.imageScannerUtil.init(
+                this,
+                this.getDataSource().getSelection(),
+                sortOrder = App.dataSource.getSortOrder()
+            )
 //        App.recentImages.resetCurrentImagePathIndex()
-        App.recentImages.clearImagePaths()
-        
-        var i = this.getDataSource().getNumberOfPictures()
-        val maxI = i
-        while (i > 0) {
-            val imageInfo: ImageInfoBean =
-                (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
-                    ?: break
-            this.getDataSource().getRecentImageInfos().add(imageInfo)
-            i--
-        }
-        for (index in this.viewPagerAdapter.imageInfos.indices) {
-            this.viewPagerAdapter.imageChecks.add(false)
-        }
-        
-        if (this.getDataSource().getRecentImageInfos().size == 0) {
-//            this.getOutPut().showToast("未发现图片")
-            this.getDataSource().getRecentImageInfos().add(ImageInfoBean())
-        }
-        
-        this.runOnUiThread {
-            this.viewPagerAdapter.notifyDataSetChanged()
-            val currentIndex = this.getDataSource().getCurrentImageInfoIndex()
-            if (currentIndex >= this.getDataSource().getRecentImageInfos().size) {
-                this.viewPager?.setCurrentItem(max(currentIndex - 1, 0), false)
+            App.recentImages.clearImagePaths()
+            
+            var i = this.getDataSource().getNumberOfPictures()
+            val maxI = i
+            while (i > 0) {
+                val imageInfo: ImageInfoBean =
+                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
+                        ?: break
+                this.getDataSource().getRecentImageInfos().add(imageInfo)
+                i--
             }
-            this.refreshCurrentImagePath()
-            callback()
-        }
+            for (index in this.viewPagerAdapter.imageInfos.indices) {
+                this.viewPagerAdapter.imageChecks.add(false)
+            }
+            
+            if (this.getDataSource().getRecentImageInfos().size == 0) {
+//            this.getOutPut().showToast("未发现图片")
+                this.getDataSource().getRecentImageInfos().add(ImageInfoBean())
+            }
+            
+            this.runOnUiThread {
+                this.viewPagerAdapter.notifyDataSetChanged()
+                val currentIndex = this.getDataSource().getCurrentImageInfoIndex()
+                if (currentIndex >= this.getDataSource().getRecentImageInfos().size) {
+                    this.viewPager?.setCurrentItem(max(currentIndex - 1, 0), false)
+                }
+                this.refreshCurrentImagePath()
+                callback()
+            }
+        }.start()
     }
     
 }
