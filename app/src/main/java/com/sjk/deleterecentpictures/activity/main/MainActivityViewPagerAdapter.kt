@@ -18,7 +18,7 @@ import com.sjk.deleterecentpictures.common.Event
 import java.util.ArrayList
 
 class MainActivityViewPagerAdapter :
-    RecyclerView.Adapter<MainActivityViewPagerAdapter.ViewPagerViewHolder>() {
+    RecyclerView.Adapter<ViewPagerViewHolder>() {
     
     companion object {
         private const val TAG = "MainActivityViewPagerAdapter"
@@ -85,53 +85,55 @@ class MainActivityViewPagerAdapter :
         }
     }
     
-    inner class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
-        val imageView: BigImageView = itemView.findViewById(R.id.imageView)
-        private val openImageActivityButton =
-            itemView.findViewById<Button>(R.id.openImageActivityButton)
-        var imageInfo: ImageInfoBean? = null
-        var isChecked: Boolean = false
-        
-        init {
-            this.imageView.setImageViewFactory(GlideImageViewFactory())
-            this.openImageActivityButton.setOnClickListener {
-                if (this.imageInfo?.uri == null) {
-                    return@setOnClickListener
-                }
-                val intent = Intent(itemView.context, ImageActivity::class.java)
-                itemView.context.startActivity(intent)
+}
+
+class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
+    val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    private val openImageActivityButton =
+        itemView.findViewById<Button>(R.id.openImageActivityButton)
+    var imageInfo: ImageInfoBean? = null
+    var isChecked: Boolean = false
+    
+    init {
+        this.imageView.setImageViewFactory(GlideImageViewFactory())
+        this.openImageActivityButton.setOnClickListener {
+            if (this.imageInfo?.uri == null) {
+                return@setOnClickListener
             }
-            this.openImageActivityButton.setOnLongClickListener {
-                if (this.imageInfo?.uri == null) {
-                    return@setOnLongClickListener true
-                }
-                
-                App.output.showImageLongClickDialog(this.imageInfo!!.path)
-                
+            val intent = Intent(itemView.context, ImageActivity::class.java)
+            itemView.context.startActivity(intent)
+        }
+        this.openImageActivityButton.setOnLongClickListener {
+            if (this.imageInfo?.uri == null) {
                 return@setOnLongClickListener true
             }
-            this.checkBox.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
-                if (this.imageInfo?.uri == null) {
-                    return@setOnCheckedChangeListener
-                }
-                
-                if (App.dataSource.getCurrentImageInfo() != this.imageInfo) {
-                    return@setOnCheckedChangeListener
-                }
-                this.isChecked = isChecked
-                instance.imageChecks[App.dataSource.getCurrentImageInfoIndex()] = isChecked
+            
+            App.output.showImageLongClickDialog(this.imageInfo!!.path)
+            
+            return@setOnLongClickListener true
+        }
+        this.checkBox.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
+            if (this.imageInfo?.uri == null) {
+                return@setOnCheckedChangeListener
             }
-            this.checkBox.setOnLongClickListener {
-                if (this.imageInfo?.uri == null) {
-                    return@setOnLongClickListener true
-                }
-                
-                this@MainActivityViewPagerAdapter.setAllHolderChecked(false)
-                App.input.setAllImageChecksFalse()
-                App.output.showToast("已取消所有已选择图片")
-                true
+            
+            if (App.dataSource.getCurrentImageInfo() != this.imageInfo) {
+                return@setOnCheckedChangeListener
             }
+            this.isChecked = isChecked
+            MainActivityViewPagerAdapter.instance.imageChecks[App.dataSource.getCurrentImageInfoIndex()] =
+                isChecked
+        }
+        this.checkBox.setOnLongClickListener {
+            if (this.imageInfo?.uri == null) {
+                return@setOnLongClickListener true
+            }
+            
+            MainActivityViewPagerAdapter.instance.setAllHolderChecked(false)
+            App.input.setAllImageChecksFalse()
+            App.output.showToast("已取消所有已选择图片")
+            true
         }
     }
 }

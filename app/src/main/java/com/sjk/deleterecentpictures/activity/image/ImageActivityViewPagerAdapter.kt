@@ -12,10 +12,10 @@ import com.sjk.deleterecentpictures.common.App
 import java.util.ArrayList
 
 class ImageActivityViewPagerAdapter :
-    RecyclerView.Adapter<ImageActivityViewPagerAdapter.ViewPagerViewHolder>() {
+    RecyclerView.Adapter<ViewPagerViewHolder>() {
     private var viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
     var imageInfos: List<ImageInfoBean?> = ArrayList()
-
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         val viewPagerViewHolder = ViewPagerViewHolder(
             LayoutInflater.from(parent.context)
@@ -24,47 +24,46 @@ class ImageActivityViewPagerAdapter :
         viewPagerViewHolders.add(viewPagerViewHolder)
         return viewPagerViewHolder
     }
-
+    
     override fun onBindViewHolder(
-        holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder,
+        holder: ViewPagerViewHolder,
         position: Int
     ) {
         holder.imageInfo = imageInfos[position]
     }
-
-    override fun onViewDetachedFromWindow(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder) {
+    
+    override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
-
+        
         holder.imageView.cancel()
     }
-
-    override fun onViewAttachedToWindow(holder: ImageActivityViewPagerAdapter.ViewPagerViewHolder) {
+    
+    override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
-
+        
         if (holder.imageInfo?.uri == null) {
             return
         }
         holder.imageView.showImage(holder.imageInfo!!.uri)
     }
-
+    
     override fun getItemCount(): Int {
         return this.imageInfos.size
     }
+    
+}
 
-    inner class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imageView: BigImageView = itemView.findViewById(R.id.imageView)
-        var imageInfo: ImageInfoBean? = null
-
-        init {
-            this.imageView.setImageViewFactory(GlideImageViewFactory())
-            this.imageView.setOnLongClickListener {
-                App.output.showImageLongClickDialog(this.imageInfo!!.path)
-
-                return@setOnLongClickListener true
-            }
+class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    var imageInfo: ImageInfoBean? = null
+    
+    init {
+        this.imageView.setImageViewFactory(GlideImageViewFactory())
+        this.imageView.setOnLongClickListener {
+            App.output.showImageLongClickDialog(this.imageInfo!!.path)
+            
+            return@setOnLongClickListener true
         }
-
-
     }
-
+    
 }
