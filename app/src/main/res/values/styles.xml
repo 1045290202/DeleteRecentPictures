@@ -11,6 +11,7 @@
         <item name="android:windowBackground">@drawable/activity_main_background</item>
         <!--<item name="android:windowTitleStyle">@style/MaterialAlertDialog.Material3.Title.Panel</item>-->
         <item name="windowNoTitle">true</item>
+        <item name="buttonStyle">@style/Widget.Material3.Button</item>
     </style>
     
     <style name="ImageActivityTheme" parent="AppTheme">
@@ -58,4 +59,12 @@
         <!--<item name="android:background">@drawable/dialog_background</item>-->
     </style>
     
+    <style name="SnakebarTheme.Button" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="colorOnContainer">?attr/colorPrimaryInverse</item>
+        <item name="android:textColor">?attr/colorPrimaryInverse</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
 </resources>

@@ -61,6 +61,10 @@ object DataSource {
     fun getFileNameByPath(imageInfo: ImageInfoBean?): String? {
         return App.fileUtil.getFileNameByPath(imageInfo?.path)
     }
+    
+    fun getFileNameByPath(path: String?): String? {
+        return App.fileUtil.getFileNameByPath(path)
+    }
 
     /**
      * 获取最近图片的信息

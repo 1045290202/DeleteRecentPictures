@@ -63,25 +63,18 @@
                         android:text="@string/refresh" />
             </LinearLayout>
             
-            <RelativeLayout
-                    android:id="@+id/imageViewContainer"
+            <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="280dp">
-                
-                <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/viewPager"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                
-                <View
-                        android:id="@+id/viewPagerOverlay"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_below="@id/viewPager"
-                        android:visibility="invisible" />
-            </RelativeLayout>
+                    android:layout_height="wrap_content" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    
+    <View
+            android:id="@+id/viewPagerOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:visibility="invisible" />
     
     <LinearLayout
             android:layout_width="match_parent"

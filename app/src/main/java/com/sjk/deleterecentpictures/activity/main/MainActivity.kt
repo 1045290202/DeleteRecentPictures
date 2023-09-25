@@ -2,19 +2,24 @@ package com.sjk.deleterecentpictures.activity.main
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
@@ -376,15 +381,18 @@ open class MainActivity : BaseActivity() {
     /**
      * 显示已删除的SnackBar
      */
+    @SuppressLint("RestrictedApi", "MissingInflatedId", "InflateParams")
     private fun showDeletedSnackBar() {
         this.getOutput().showSnackBarIndefinite(
             this.findViewById(R.id.viewPager),
             this.getString(
                 R.string.successfully_deleted,
                 // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
-                App.recycleBinManager.deletedImageInfo?.info?.path
-            )
+                this.getDataSource()
+                    .getFileNameByPath(App.recycleBinManager.deletedImageInfo?.info?.path)
+            ) + "   " // fixme 加点空格，防止最后一个字无法显示，原因未知
         ) {
+            val sb = it
             it.setAction(R.string.revoke) {
                 // 撤回操作
                 App.recycleBinManager.recover(onSuccess = { _, _ ->
@@ -393,7 +401,29 @@ open class MainActivity : BaseActivity() {
                     }
                 })
             }
-            it.setAnchorView(findViewById(R.id.viewPagerOverlay))
+            it.setAnchorView(this.findViewById(R.id.viewPagerOverlay))
+            val textView =
+                it.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+            textView.isSingleLine = true
+            textView.maxWidth = 0 // maxWidth设置成0可以，防止snackbar占满屏幕的宽度，原因未知
+            textView.ellipsize = TextUtils.TruncateAt.MIDDLE
+            
+            val snackbarContentLayout = it.view as Snackbar.SnackbarLayout
+            val viewGroup = snackbarContentLayout.getChildAt(0) as ViewGroup
+            val customView = this@MainActivity.layoutInflater.inflate(
+                R.layout.layout_deleted_snackbar_buttons,
+                null
+            )
+            viewGroup.addView(customView)
+            val closeButton = customView.findViewById<Button>(R.id.closeButton)
+            closeButton.setOnClickListener {
+                Thread {
+                    App.recycleBinManager.deleteOldImageInRecycleBin()
+                    this@MainActivity.runOnUiThread {
+                        sb.dismiss()
+                    }
+                }.start()
+            }
         }
     }
     
