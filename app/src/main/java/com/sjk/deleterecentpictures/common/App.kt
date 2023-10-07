@@ -66,6 +66,7 @@ class App : Application() {
         timeUtil = TimeUtil
         
         DynamicColors.applyToActivitiesIfAvailable(this)
+        recycleBinManager.clearRecycleBin()
         BigImageViewer.initialize(GlideImageLoader.with(context))
     }
     

@@ -30,9 +30,9 @@ object FileUtil {
             return false
         }
         return App.context.contentResolver.delete(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                "${MediaStore.Images.Media._ID} = ?",
-                arrayOf(imageInfo.id.toString())
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            "${MediaStore.Images.Media._ID} = ?",
+            arrayOf(imageInfo.id.toString())
         ) > 0
     }
     
@@ -60,7 +60,8 @@ object FileUtil {
             return null
         }
         
-        val externalStorageDirectory: String = Environment.getExternalStorageDirectory().absolutePath
+        val externalStorageDirectory: String =
+            Environment.getExternalStorageDirectory().absolutePath
         if (completePath.indexOf(externalStorageDirectory) == 0) {
             return completePath.replaceFirst(externalStorageDirectory, "")
         }
@@ -84,6 +85,31 @@ object FileUtil {
         return type
     }
     
+    fun clearFolder(folderPath: String?, excludes: Set<String>? = null): Boolean {
+        if (folderPath == null) {
+            return false
+        }
+        
+        val folder = File(folderPath)
+        if (!folder.exists()) {
+            return true
+        }
+        
+        if (!folder.isDirectory) {
+            return false
+        }
+        
+        val files = folder.listFiles() ?: return true
+        
+        for (file in files) {
+            if (excludes != null && excludes.contains(file.name)) {
+                continue
+            }
+            file.delete()
+        }
+        return true
+    }
+    
     /**
      * 创建文件夹
      */
@@ -100,6 +126,29 @@ object FileUtil {
             true
         } else {
             folder.mkdirs()
+        }
+    }
+    
+    /**
+     * 创建文件
+     */
+    fun createFile(filePath: String?): Boolean {
+        if (filePath == null) {
+            return false
+        }
+        
+        val file = File(filePath)
+        if (file.exists() && file.isDirectory) {
+            file.delete()
+        }
+        return if (file.exists()) {
+            true
+        } else {
+            try {
+                file.createNewFile()
+            } catch (e: Exception) {
+                false
+            }
         }
     }
     

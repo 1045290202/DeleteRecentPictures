@@ -5,12 +5,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import com.sjk.deleterecentpictures.bean.DeletedImageInfoBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.R
+import kotlinx.coroutines.InternalCoroutinesApi
 import java.io.File
+import kotlinx.coroutines.internal.synchronized
 
 /**
  * 回收站管理器，用于删除图片后将图片移动到回收站，并且可以从回收站恢复图片
@@ -31,6 +32,10 @@ object RecycleBinManager {
         return App.fileUtil.createFolder(this.recyclePath)
     }
     
+    fun createNoMediaFile(): Boolean {
+        return App.fileUtil.createFile("${this.recyclePath}/.nomedia")
+    }
+    
     /**
      * 删除回收站内的旧图片
      */
@@ -44,6 +49,39 @@ object RecycleBinManager {
     }
     
     /**
+     * 清空回收站
+     */
+    fun clearRecycleBin(): Boolean {
+        val folderPath = this.recyclePath
+        val excludes = setOf(".nomedia")
+        if (this.deletedImageInfo?.newFile?.name != null) {
+            excludes.plus(this.deletedImageInfo!!.newFile.name)
+        }
+        
+        val folder = File(folderPath)
+        if (!folder.exists()) {
+            return true
+        }
+        
+        if (!folder.isDirectory) {
+            return false
+        }
+        
+        val files = folder.listFiles() ?: return true
+        
+        Thread {
+            Thread.sleep(1000)
+            for (file in files) {
+                if (excludes.contains(file.name)) { // 不删除 .nomedia 文件和最新删除的图片，最新删除的图片单独处理是为了防止异步操作出问题
+                    continue
+                }
+                file.delete()
+            }
+        }.start()
+        return true
+    }
+    
+    /**
      * 将图片移动到回收站
      */
     fun moveToRecycleBin(imageInfo: ImageInfoBean?): Boolean {
@@ -52,6 +90,11 @@ object RecycleBinManager {
         }
         val recycleBinFolderCreated = this.createRecycleBinFolder()
         if (!recycleBinFolderCreated) {
+            App.output.showToast(App.context.getString(R.string.recycle_bin_created_failed))
+            return false
+        }
+        val noMediaFileCreated = this.createNoMediaFile()
+        if (!noMediaFileCreated) {
             App.output.showToast(App.context.getString(R.string.recycle_bin_created_failed))
             return false
         }
@@ -72,7 +115,10 @@ object RecycleBinManager {
     /**
      * 从回收站恢复图片
      */
-    fun recover(onSuccess: ((path: String, uri: Uri) -> Unit)? = null, onFailed: (() -> Unit)? = null) {
+    fun recover(
+        onSuccess: ((path: String, uri: Uri) -> Unit)? = null,
+        onFailed: (() -> Unit)? = null
+    ) {
         if (this.deletedImageInfo == null) {
             onFailed?.invoke()
             return
@@ -90,7 +136,11 @@ object RecycleBinManager {
         }
         
         // 更新媒体库
-        MediaScannerConnection.scanFile(App.context, arrayOf(oldFile.absolutePath), null) { path, uri ->
+        MediaScannerConnection.scanFile(
+            App.context,
+            arrayOf(oldFile.absolutePath),
+            null
+        ) { path, uri ->
             onSuccess?.invoke(path, uri)
         }
         // this.updateMediaScan(App.context, this.deletedImageInfo!!.info, onSuccess, onFailed)
