@@ -88,5 +88,15 @@
     <string name="experimental_settings">实验性设置</string>
     <string name="undelete_summary">可以撤销误删除的一张图片。开启自动关闭的时候将无法撤销</string>
     <string name="undeleted_title">撤销删除</string>
+    <string name="image_details">图片详情</string>
+    <string name="image_path">路径</string>
+    <string name="image_name">名称</string>
+    <string name="image_size">大小</string>
+    <string name="image_width">宽度</string>
+    <string name="image_height">高度</string>
+    <string name="image_mime_type">媒体类型</string>
+    <string name="image_date_added">创建时间</string>
+    <string name="image_date_modified">修改时间</string>
+    <string name="format_colon">：</string>
 
 </resources>

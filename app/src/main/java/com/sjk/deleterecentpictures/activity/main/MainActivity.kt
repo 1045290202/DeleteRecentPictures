@@ -38,6 +38,7 @@ open class MainActivity : BaseActivity() {
     // 菜单配置
     private val menuConfig = mapOf<Int, () -> Any>(
         R.id.action_refresh to { this.onMenuItemActionRefreshClick() },
+        R.id.action_details to { this.getOutput().showImageDetailsDialog(this.getDataSource().getCurrentImageInfo()) },
     )
     
     companion object {
@@ -233,7 +234,7 @@ open class MainActivity : BaseActivity() {
     private fun buttonClickEventBind() {
         val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
         currentPicturePathButton.setOnClickListener {
-            App.output.showPathButtonClickDialog()
+            App.output.showImageDetailsDialog(App.dataSource.getCurrentImageInfo())
         }
         currentPicturePathButton.setOnLongClickListener {
             App.input.copyCurrentImageName()

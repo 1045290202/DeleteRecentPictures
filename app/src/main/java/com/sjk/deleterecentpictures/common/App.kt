@@ -34,6 +34,7 @@ class App : Application() {
         lateinit var activityManager: ActivityManager
         lateinit var recycleBinManager: RecycleBinManager
         lateinit var alertDialogUtil: AlertDialogUtil
+        lateinit var timeUtil: TimeUtil
         
         val newEvent: Event
             get() {
@@ -62,6 +63,7 @@ class App : Application() {
         activityManager = ActivityManager
         recycleBinManager = RecycleBinManager
         alertDialogUtil = AlertDialogUtil
+        timeUtil = TimeUtil
         
         DynamicColors.applyToActivitiesIfAvailable(this)
         BigImageViewer.initialize(GlideImageLoader.with(context))

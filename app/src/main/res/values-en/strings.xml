@@ -71,4 +71,14 @@
     <string name="experimental_settings">Experimental settings</string>
     <string name="undelete_summary">You can undo a picture that was deleted by mistake. When automatic shutdown is enabled, it cannot be revoked</string>
     <string name="undeleted_title">Undeleted</string>
+    <string name="image_details">Image details</string>
+    <string name="image_path">Path</string>
+    <string name="image_name">Name</string>
+    <string name="image_size">Size</string>
+    <string name="image_width">Width</string>
+    <string name="image_height">Height</string>
+    <string name="image_mime_type">Mime type</string>
+    <string name="image_date_added">Added time</string>
+    <string name="image_date_modified">Modified time</string>
+    <string name="format_colon">: </string>
 </resources>

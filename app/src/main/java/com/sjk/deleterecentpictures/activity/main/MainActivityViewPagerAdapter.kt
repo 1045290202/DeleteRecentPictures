@@ -90,6 +90,7 @@ class MainActivityViewPagerAdapter :
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
     val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val detailsButton: Button = itemView.findViewById(R.id.imageDetailsButton)
     private val openImageActivityButton =
         itemView.findViewById<Button>(R.id.openImageActivityButton)
     var imageInfo: ImageInfoBean? = null
@@ -134,6 +135,12 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             App.input.setAllImageChecksFalse()
             App.output.showToast("已取消所有已选择图片")
             true
+        }
+        this.detailsButton.setOnClickListener {
+            if (this.imageInfo?.uri == null) {
+                return@setOnClickListener
+            }
+            App.output.showImageDetailsDialog(this.imageInfo)
         }
     }
 }

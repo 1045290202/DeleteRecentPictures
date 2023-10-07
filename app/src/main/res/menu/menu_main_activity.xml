@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+            android:visible="false"
+            android:id="@+id/action_details"
+            android:title="@string/image_details"
+            android:icon="@drawable/ic_info"
+            android:showAsAction="ifRoom" />
+    
     <item
             android:id="@+id/action_refresh"
             android:icon="@drawable/ic_refresh"
             android:title="@string/refresh"
             android:showAsAction="ifRoom" />
-    
+
 </menu>

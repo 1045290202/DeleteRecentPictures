@@ -4,18 +4,20 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.text.Html
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
+import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import java.io.File
-import kotlin.system.exitProcess
+import kotlin.Pair
+import android.text.format.Formatter
+import android.util.TypedValue
 
 
 object Output {
@@ -38,7 +40,11 @@ object Output {
         Toast.makeText(this.dataSource.context, content.toString(), Toast.LENGTH_LONG).show()
     }
     
-    fun showSnackBarIndefinite(view: View, content: CharSequence, onSnackBarCreate: ((it: Snackbar) -> Unit)?) {
+    fun showSnackBarIndefinite(
+        view: View,
+        content: CharSequence,
+        onSnackBarCreate: ((it: Snackbar) -> Unit)?
+    ) {
         val snackbar = Snackbar.make(view, content, Snackbar.LENGTH_INDEFINITE)
         onSnackBarCreate?.invoke(snackbar)
         snackbar.show()
@@ -141,7 +147,8 @@ object Output {
                 App.appResources.getString(
                     R.string.delete_confirmation_prompt_single,
                     this.dataSource.getCurrentImageInfo()!!.path
-                ))
+                )
+            )
             .setPositiveButton(App.appResources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
                 positiveCallback(
                     dialog,
@@ -179,7 +186,8 @@ object Output {
                 App.appResources.getString(
                     R.string.delete_confirmation_prompt,
                     allCheckedImagePaths.size.toString()
-                ))
+                )
+            )
             .setMessage(stringBuilder.toString())
 //                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
 //                    this.showDeleteCheckedImagesDialog(positiveCallback)
@@ -256,6 +264,83 @@ object Output {
             return
         }
         this.showPrivacyPolicyDialog(callback)
+    }
+    
+    /**
+     * 显示图片详情弹窗
+     */
+    fun showImageDetailsDialog(imageInfo: ImageInfoBean?) {
+        Thread {
+            val imageDetails = this.dataSource.getImageDetails(imageInfo) ?: return@Thread
+            
+            val configs = arrayOf(
+                Pair(R.string.image_name, imageDetails.displayName),
+                Pair(R.string.image_path, imageDetails.data),
+                Pair(R.string.image_size, Formatter.formatFileSize(App.context, imageDetails.size)),
+                Pair(R.string.image_width, imageDetails.width.toString()),
+                Pair(R.string.image_height, imageDetails.height.toString()),
+                Pair(
+                    R.string.image_date_added,
+                    App.timeUtil.formatTimestampToSystemDefaultFormat(imageDetails.dateAdded * 1000),
+                ),
+                Pair(
+                    R.string.image_date_modified,
+                    App.timeUtil.formatTimestampToSystemDefaultFormat(imageDetails.dateModified * 1000),
+                ),
+                Pair(R.string.image_mime_type, imageDetails.mimeType),
+            )
+            
+            App.activityManager.currentActivity!!.runOnUiThread {
+                if (App.activityManager.currentActivity == null) {
+                    return@runOnUiThread
+                }
+                
+                fun getListTitleColor(): String {
+                    val typedValue = TypedValue()
+                    App.activityManager.currentActivity!!.theme.resolveAttribute(
+                        R.attr.colorAccent,
+                        typedValue,
+                        true
+                    )
+                    return "#" + Integer.toHexString(typedValue.data).substring(2)
+                }
+                
+                val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
+                    .setTitle(App.appResources.getString(R.string.image_details))
+                    .setItems(
+                        configs.map {
+                            // val str =
+                            //     App.appResources.getString(it.first) + App.appResources.getString(
+                            //         R.string.format_colon
+                            //     ) + it.second
+                            val str = """
+                                <pre><font color="${getListTitleColor()}"><strong>${
+                                App.appResources.getString(
+                                    it.first
+                                )
+                            }${
+                                App.appResources.getString(
+                                    R.string.format_colon
+                                )
+                            }</strong></font>${it.second}</pre>
+                            """.trimIndent()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Html.fromHtml(str, Html.FROM_HTML_MODE_COMPACT)
+                            } else {
+                                Html.fromHtml(str)
+                            }
+                        }.toTypedArray()
+                    ) { _: DialogInterface?, _: Int -> }
+                    .setPositiveButton(App.appResources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+                    .create()
+                alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+                alertDialog.show()
+                App.alertDialogUtil.disableAutoDismissWhenItemClick(alertDialog) { adapterView, view, i, l ->
+                    App.clipboardUtil.setText(configs[i].second)
+                    App.output.showToast(App.appResources.getString(R.string.copied))
+                }
+            }
+        }.start()
     }
     
 }

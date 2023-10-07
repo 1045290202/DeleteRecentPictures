@@ -4,13 +4,10 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
-import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
+import com.sjk.deleterecentpictures.bean.ImageDetailBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
-import com.sjk.deleterecentpictures.common.DataSource
 import java.io.File
 
 
@@ -56,6 +53,12 @@ object ImageScannerUtil {
         this.cursor?.moveToFirst()
     }
     
+    /**
+     * 查询图片
+     * @param context
+     * @param realSelection
+     * @param sortOrder
+     */
     private fun getQuery(context: Context, realSelection: String?, sortOrder: String): Cursor? {
         return context.contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -67,6 +70,28 @@ object ImageScannerUtil {
                 // MediaStore.MediaColumns.DISPLAY_NAME,
                 // MediaStore.MediaColumns.MIME_TYPE
             ),
+            realSelection,
+            null, // selectionArgs,
+            "$sortOrder DESC",
+        )
+    }
+    
+    /**
+     * 查询图片
+     * @param context
+     * @param projection
+     * @param realSelection
+     * @param sortOrder
+     */
+    private fun getQuery(
+        context: Context,
+        projection: Array<String>,
+        realSelection: String?,
+        sortOrder: String
+    ): Cursor? {
+        return context.contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
             realSelection,
             null, // selectionArgs,
             "$sortOrder DESC",
@@ -87,10 +112,12 @@ object ImageScannerUtil {
                     imageId,
                 )
                 
-                val columnIndexDateAdded: Int = it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+                val columnIndexDateAdded: Int =
+                    it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
                 val dateAdded = it.getLong(columnIndexDateAdded)
                 
-                val columnIndexDateModified: Int = it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+                val columnIndexDateModified: Int =
+                    it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
                 val dateModified = it.getLong(columnIndexDateModified)
                 
                 ImageInfoBean(imagePath, imageUri, imageId, dateAdded, dateModified)
@@ -133,4 +160,80 @@ object ImageScannerUtil {
         this.cursor?.close()
         this.cursor = null
     }
+    
+    /**
+     * 通过图片的uri，获取图片的详细信息
+     */
+    fun getImageDetails(context: Context, imageId: Long): ImageDetailBean? {
+        val projection = arrayOf(
+            MediaStore.MediaColumns._ID,
+            // 路径
+            MediaStore.MediaColumns.DATA,
+            // 创建时间
+            MediaStore.MediaColumns.DATE_ADDED,
+            // 修改时间
+            MediaStore.MediaColumns.DATE_MODIFIED,
+            // 文件名
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            // 媒体类型
+            MediaStore.MediaColumns.MIME_TYPE,
+            // 大小
+            MediaStore.MediaColumns.SIZE,
+            // 宽
+            MediaStore.MediaColumns.WIDTH,
+            // 高
+            MediaStore.MediaColumns.HEIGHT,
+        )
+        val cursor = getQuery(
+            context,
+            projection,
+            "${MediaStore.MediaColumns._ID} = '${imageId}'",
+            MediaStore.Files.FileColumns.DATE_MODIFIED,
+        )
+        cursor?.let {
+            if (it.moveToFirst()) {
+                val columnIndexData: Int = it.getColumnIndex(MediaStore.MediaColumns.DATA)
+                val imagePath = it.getString(columnIndexData)
+
+                val columnIndexDateAdded: Int =
+                    it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+                val dateAdded = it.getLong(columnIndexDateAdded)
+
+                val columnIndexDateModified: Int =
+                    it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+                val dateModified = it.getLong(columnIndexDateModified)
+
+                val columnIndexDisplayName: Int =
+                    it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                val displayName = it.getString(columnIndexDisplayName)
+
+                val columnIndexMimeType: Int = it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)
+                val mimeType = it.getString(columnIndexMimeType)
+
+                val columnIndexSize: Int = it.getColumnIndex(MediaStore.MediaColumns.SIZE)
+                val size = it.getLong(columnIndexSize)
+
+                val columnIndexWidth: Int = it.getColumnIndex(MediaStore.MediaColumns.WIDTH)
+                val width = it.getInt(columnIndexWidth)
+
+                val columnIndexHeight: Int = it.getColumnIndex(MediaStore.MediaColumns.HEIGHT)
+                val height = it.getInt(columnIndexHeight)
+                
+                it.close()
+
+                return ImageDetailBean(
+                    imagePath,
+                    dateAdded,
+                    dateModified,
+                    displayName,
+                    mimeType,
+                    size,
+                    width,
+                    height,
+                )
+            }
+        }
+        return null
+    }
+    
 }

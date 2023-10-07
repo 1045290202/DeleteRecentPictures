@@ -4,13 +4,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="2dp">
-
+    
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:layout_centerHorizontal="true"
             android:padding="10dp">
-
+        
         <com.github.piasy.biv.view.BigImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
@@ -22,21 +22,41 @@
                 app:failureImageInitScaleType="center"
                 app:optimizeDisplay="false" />
     </RelativeLayout>
-
-    <Button
+    
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/openImageActivityButton"
             style="@style/ImageBorder"
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:maxHeight="280dp"
             android:alpha="0.8" />
-
-    <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/checkbox"
-            style="@style/Widget.Material3.CompoundButton.RadioButton"
-            android:layout_height="56dp"
-            android:layout_width="48dp"
+    
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true">
+        
+        <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/checkbox"
+                style="@style/Widget.Material3.CompoundButton.CheckBox"
+                android:layout_height="48dp"
+                android:layout_width="48dp" />
+        
+        <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
+                android:id="@+id/imageDetailsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:icon="@drawable/ic_info"
+                app:iconSize="24dp"
+                app:iconPadding="0dp"
+                app:iconGravity="textStart"
+                app:iconTint="?attr/colorOnBackground"
+                style="@style/Widget.Material3.Button.IconButton" />
+    
+    </LinearLayout>
 
 </RelativeLayout>

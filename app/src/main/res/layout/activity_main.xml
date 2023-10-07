@@ -5,8 +5,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="0dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
     
@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="2dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
@@ -38,7 +38,7 @@
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="2dp">
                 
-                <Button
+                <com.google.android.material.button.MaterialButton
                         android:id="@+id/currentPicturePathButton"
                         style="@style/Widget.Material3.Button"
                         android:layout_width="0dp"
@@ -51,9 +51,10 @@
                         android:textSize="14sp"
                         android:singleLine="true"
                         android:paddingHorizontal="16dp"
-                        android:text="@string/searching" />
+                        android:text="@string/searching"
+                        app:icon="@drawable/ic_info" />
                 
-                <Button
+                <com.google.android.material.button.MaterialButton
                         android:id="@+id/refreshButton"
                         style="@style/Widget.Material3.Button.TextButton.Dialog"
                         android:layout_width="wrap_content"
@@ -80,9 +81,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="8dp"
+            android:layout_marginTop="2dp"
             android:orientation="horizontal">
         
-        <Button
+        <com.google.android.material.button.MaterialButton
                 android:id="@+id/settingsButton"
                 style="@style/Widget.Material3.Button.TextButton.Dialog"
                 android:layout_width="wrap_content"
@@ -96,7 +98,7 @@
                 android:gravity="end"
                 android:orientation="horizontal">
             
-            <Button
+            <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancelButton"
                     style="@style/Widget.Material3.Button.TextButton.Dialog"
                     android:layout_width="wrap_content"
@@ -104,7 +106,7 @@
                     android:stateListAnimator="@null"
                     android:text="@string/cancel" />
             
-            <Button
+            <com.google.android.material.button.MaterialButton
                     android:id="@+id/deleteButton"
                     style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"

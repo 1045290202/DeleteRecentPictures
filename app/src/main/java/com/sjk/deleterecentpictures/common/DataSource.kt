@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.bean.ImageDetailBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 
 object DataSource {
@@ -124,5 +125,15 @@ object DataSource {
      */
     fun getCurrentScreenOrientation(): Int {
         return App.appResources.configuration.orientation
+    }
+    
+    /**
+     * 获取图片的详细信息
+     */
+    fun getImageDetails(imageInfoBean: ImageInfoBean?): ImageDetailBean? {
+        if (imageInfoBean?.id == null) {
+            return null
+        }
+        return App.imageScannerUtil.getImageDetails(App.context, imageInfoBean.id)
     }
 }
