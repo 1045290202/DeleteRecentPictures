@@ -49,7 +49,7 @@
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="false"
                 android:screenOrientation="user"
-                android:theme="@style/ImageActivityTheme" /> <!-- @style/DialogTheme -->
+                android:theme="@style/ImageActivityTheme" />
         <activity
                 android:name=".activity.main.MainActivity"
                 android:excludeFromRecents="true"

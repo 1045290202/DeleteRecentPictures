@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -173,7 +172,7 @@ open class MainActivity : BaseActivity() {
     
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d(TAG, "onActivityResult: $requestCode $requestCode $data")
+        logD(TAG, "onActivityResult: $requestCode $requestCode $data")
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
             val result = data.getBooleanExtra("preferenceChanged", false)
             if (result) {
