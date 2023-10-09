@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -390,23 +391,23 @@ open class MainActivity : BaseActivity() {
                 // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
                 this.getDataSource()
                     .getFileNameByPath(App.recycleBinManager.deletedImageInfo?.info?.path)
-            ) + "   " // fixme 加点空格，防止最后一个字无法显示，原因未知
+            )
         ) {
             val sb = it
-            it.setAction(R.string.revoke) {
-                // 撤回操作
-                App.recycleBinManager.recover(onSuccess = { _, _ ->
-                    this@MainActivity.refreshAll {
-                        this@MainActivity.refreshCurrentImagePath()
-                    }
-                })
-            }
             it.setAnchorView(this.findViewById(R.id.viewPagerOverlay))
-            val textView =
+            
+            val snackbarTextView =
                 it.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-            textView.isSingleLine = true
-            textView.maxWidth = 0 // maxWidth设置成0可以，防止snackbar占满屏幕的宽度，原因未知
-            textView.ellipsize = TextUtils.TruncateAt.MIDDLE
+            snackbarTextView.isSingleLine = true
+            snackbarTextView.maxWidth = 0 // maxWidth设置成0可以，防止snackbar占满屏幕的宽度，原因未知
+            snackbarTextView.ellipsize = TextUtils.TruncateAt.MIDDLE
+            // 设置layoutWeight为1
+            snackbarTextView.layoutParams = snackbarTextView.layoutParams.apply {
+                (this as LinearLayout.LayoutParams).weight = 1f
+            }
+            snackbarTextView.setOnClickListener {
+                this@MainActivity.getOutput().showToast("${App.recycleBinManager.deletedImageInfo?.info?.path}")
+            }
             
             val snackbarContentLayout = it.view as Snackbar.SnackbarLayout
             val viewGroup = snackbarContentLayout.getChildAt(0) as ViewGroup
@@ -415,6 +416,7 @@ open class MainActivity : BaseActivity() {
                 null
             )
             viewGroup.addView(customView)
+            
             val closeButton = customView.findViewById<Button>(R.id.closeButton)
             closeButton.setOnClickListener {
                 Thread {
@@ -422,6 +424,19 @@ open class MainActivity : BaseActivity() {
                     this@MainActivity.runOnUiThread {
                         sb.dismiss()
                     }
+                }.start()
+            }
+            
+            val revokeButton = customView.findViewById<Button>(R.id.revokeButton)
+            revokeButton.setOnClickListener {
+                // 撤回操作
+                Thread {
+                    App.recycleBinManager.recover(onSuccess = { _, _ ->
+                        this@MainActivity.refreshAll {
+                            this@MainActivity.refreshCurrentImagePath()
+                            sb.dismiss()
+                        }
+                    })
                 }.start()
             }
         }
