@@ -133,7 +133,7 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             
             MainActivityViewPagerAdapter.instance.setAllHolderChecked(false)
             App.input.setAllImageChecksFalse()
-            App.output.showToast("已取消所有已选择图片")
+            App.output.showToast(App.context.getString(R.string.all_selected_images_deselected))
             true
         }
         this.detailsButton.setOnClickListener {

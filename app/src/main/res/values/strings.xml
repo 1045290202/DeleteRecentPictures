@@ -98,5 +98,8 @@
     <string name="image_date_added">创建时间</string>
     <string name="image_date_modified">修改时间</string>
     <string name="format_colon">：</string>
+    <string name="use_default_selection_because_error">无法获取外置存储位置, 替换为默认查询</string>
+    <string name="all_selected_images_deselected">已取消所有已选择图片</string>
+    <string name="settings_reloaded">已重新加载设置</string>
 
 </resources>

@@ -46,7 +46,7 @@ object DataSource {
                     selection = if (externalFilesDir != null) {
                         "${externalFilesDir.absolutePath}/${this.getSP().getString("customizePath", "")}"
                     } else {
-                        App.output.showToast("无法获取外置存储位置, 替换为默认查询")
+                        App.output.showToast(this.context.getString(R.string.use_default_selection_because_error))
                         null
                     }
                 }

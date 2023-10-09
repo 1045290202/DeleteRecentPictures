@@ -179,7 +179,7 @@ open class MainActivity : BaseActivity() {
             if (result) {
                 this.startActivity(Intent(this@MainActivity, MainActivity::class.java))
                 this.finish()
-                this.getOutput().showToast("已重新加载设置")
+                this.getOutput().showToast(this.getString(R.string.settings_reloaded))
             }
         }/* else {
 //            Toast.makeText(this, "无返回值", Toast.LENGTH_SHORT).show();

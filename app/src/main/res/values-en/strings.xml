@@ -81,4 +81,7 @@
     <string name="image_date_added">Added time</string>
     <string name="image_date_modified">Modified time</string>
     <string name="format_colon">: </string>
+    <string name="use_default_selection_because_error">Unable to obtain external storage location, replace with default query</string>
+    <string name="all_selected_images_deselected">All selected images deselected</string>
+    <string name="settings_reloaded">Settings reloaded</string>
 </resources>
