@@ -12,7 +12,7 @@ object DataSource {
 
     val context: Context
         get() {
-            return App.context
+            return App.applicationContext
         }
 
     fun getSP(): SharedPreferences {
@@ -124,7 +124,7 @@ object DataSource {
      * 获取当前屏幕的旋转方向
      */
     fun getCurrentScreenOrientation(): Int {
-        return App.appResources.configuration.orientation
+        return App.resources.configuration.orientation
     }
     
     /**
@@ -134,6 +134,6 @@ object DataSource {
         if (imageInfoBean?.id == null) {
             return null
         }
-        return App.imageScannerUtil.getImageDetails(App.context, imageInfoBean.id)
+        return App.imageScannerUtil.getImageDetails(App.applicationContext, imageInfoBean.id)
     }
 }

@@ -8,8 +8,8 @@ import com.sjk.deleterecentpictures.common.App
 
 object ClipboardUtil {
     fun setText(text: String) {
-        val clipboard = App.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(App.context.resources.getString(R.string.app_name), text)
+        val clipboard = App.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(App.applicationContext.resources.getString(R.string.app_name), text)
         clipboard.setPrimaryClip(clip)
     }
 }

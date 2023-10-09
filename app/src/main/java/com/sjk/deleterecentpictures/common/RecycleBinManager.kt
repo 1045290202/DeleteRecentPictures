@@ -9,9 +9,7 @@ import android.provider.MediaStore
 import com.sjk.deleterecentpictures.bean.DeletedImageInfoBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.R
-import kotlinx.coroutines.InternalCoroutinesApi
 import java.io.File
-import kotlinx.coroutines.internal.synchronized
 
 /**
  * 回收站管理器，用于删除图片后将图片移动到回收站，并且可以从回收站恢复图片
@@ -20,7 +18,7 @@ object RecycleBinManager {
     
     val recyclePath: String
         get() {
-            return App.context.getExternalFilesDir("recycle")!!.absolutePath
+            return App.applicationContext.getExternalFilesDir("recycle")!!.absolutePath
         }
     
     var deletedImageInfo: DeletedImageInfoBean? = null
@@ -90,12 +88,12 @@ object RecycleBinManager {
         }
         val recycleBinFolderCreated = this.createRecycleBinFolder()
         if (!recycleBinFolderCreated) {
-            App.output.showToast(App.context.getString(R.string.recycle_bin_created_failed))
+            App.output.showToast(App.applicationContext.getString(R.string.recycle_bin_created_failed))
             return false
         }
         val noMediaFileCreated = this.createNoMediaFile()
         if (!noMediaFileCreated) {
-            App.output.showToast(App.context.getString(R.string.recycle_bin_created_failed))
+            App.output.showToast(App.applicationContext.getString(R.string.recycle_bin_created_failed))
             return false
         }
         // 移动图片，新名称为：原名称_时间戳
@@ -137,7 +135,7 @@ object RecycleBinManager {
         
         // 更新媒体库
         MediaScannerConnection.scanFile(
-            App.context,
+            App.applicationContext,
             arrayOf(oldFile.absolutePath),
             null
         ) { path, uri ->

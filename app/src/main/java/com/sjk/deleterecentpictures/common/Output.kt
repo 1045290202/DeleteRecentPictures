@@ -66,8 +66,8 @@ object Output {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
                 
                 val uri = FileProvider.getUriForFile(
-                    App.context,
-                    App.context.packageName + ".provider",
+                    App.applicationContext,
+                    App.applicationContext.packageName + ".provider",
                     file
                 )
                 intent.setDataAndType(uri, App.fileUtil.getMimeType(file.absolutePath))
@@ -78,7 +78,7 @@ object Output {
                     App.fileUtil.getMimeType(file.absolutePath)
                 )
             }
-            App.context.startActivity(intent)
+            App.applicationContext.startActivity(intent)
         } catch (e: Exception) {
             return false
         }
@@ -103,8 +103,8 @@ object Output {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
                 
                 val uri = FileProvider.getUriForFile(
-                    App.context,
-                    App.context.packageName + ".provider",
+                    App.applicationContext,
+                    App.applicationContext.packageName + ".provider",
                     file
                 )
                 intent.putExtra(Intent.EXTRA_STREAM, uri)
@@ -112,7 +112,7 @@ object Output {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
             }
-            App.context.startActivity(intent)
+            App.applicationContext.startActivity(intent)
         } catch (e: Exception) {
             return false
         }
@@ -125,7 +125,7 @@ object Output {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            App.context.startActivity(intent)
+            App.applicationContext.startActivity(intent)
         } catch (e: Exception) {
             logE(TAG, e.stackTraceToString())
             return false
@@ -142,20 +142,20 @@ object Output {
             return
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-            .setTitle(App.appResources.getString(R.string.prompt))
+            .setTitle(App.resources.getString(R.string.prompt))
             .setMessage(
-                App.appResources.getString(
+                App.resources.getString(
                     R.string.delete_confirmation_prompt_single,
                     this.dataSource.getCurrentImageInfo()!!.path
                 )
             )
-            .setPositiveButton(App.appResources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
+            .setPositiveButton(App.resources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
                 positiveCallback(
                     dialog,
                     witch
                 )
             }
-            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setNegativeButton(App.resources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
@@ -168,10 +168,10 @@ object Output {
         val stringBuilder: StringBuilder = StringBuilder()
         for ((i, imageInfo) in allCheckedImagePaths.withIndex()) {
             if (i > 0) {
-                stringBuilder.append(App.appResources.getString(R.string.backslash_n_x2))
+                stringBuilder.append(App.resources.getString(R.string.backslash_n_x2))
             }
             if (imageInfo == null) {
-                stringBuilder.append(App.appResources.getString(R.string.image_path_is_empty))
+                stringBuilder.append(App.resources.getString(R.string.image_path_is_empty))
 //                items.add("图片路径为空")
             } else {
                 stringBuilder.append("${imageInfo.path}")
@@ -183,7 +183,7 @@ object Output {
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle(
-                App.appResources.getString(
+                App.resources.getString(
                     R.string.delete_confirmation_prompt,
                     allCheckedImagePaths.size.toString()
                 )
@@ -192,13 +192,13 @@ object Output {
 //                .setItems(items.toTypedArray()) { dialog: DialogInterface?, witch: Int ->
 //                    this.showDeleteCheckedImagesDialog(positiveCallback)
 //                }
-            .setPositiveButton(App.appResources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
+            .setPositiveButton(App.resources.getString(R.string.determine)) { dialog: DialogInterface?, witch: Int ->
                 positiveCallback(
                     dialog,
                     witch
                 )
             }
-            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setNegativeButton(App.resources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
@@ -210,10 +210,10 @@ object Output {
             return
         }
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-            .setTitle(App.appResources.getString(R.string.current_image_path))
+            .setTitle(App.resources.getString(R.string.current_image_path))
             .setMessage("${this.dataSource.getCurrentImageInfo()!!.path}")
-            .setNegativeButton(App.appResources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
-            .setNeutralButton(App.appResources.getString(R.string.copy)) { dialog: DialogInterface, _: Int ->
+            .setNegativeButton(App.resources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+            .setNeutralButton(App.resources.getString(R.string.copy)) { dialog: DialogInterface, _: Int ->
                 App.input.copyCurrentImagePath()
             }
             .create()
@@ -229,8 +229,8 @@ object Output {
         if (App.activityManager.currentActivity == null) {
             return
         }
-        val resources = App.context.resources
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
+        val resources = App.applicationContext.resources
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
         val editor = sharedPreferences.edit()
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle(resources.getString(R.string.privacy_policy))
@@ -258,7 +258,7 @@ object Output {
      * 尝试显示隐私政策弹窗，如果之前显示过了，就不显示了
      */
     fun tryShowPrivacyPolicyDialog(callback: (() -> Unit)? = null) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
         if (sharedPreferences.getBoolean("privacyPolicyShowed", false)) {
             callback?.invoke()
             return
@@ -276,7 +276,7 @@ object Output {
             val configs = arrayOf(
                 Pair(R.string.image_name, imageDetails.displayName),
                 Pair(R.string.image_path, imageDetails.data),
-                Pair(R.string.image_size, Formatter.formatFileSize(App.context, imageDetails.size)),
+                Pair(R.string.image_size, Formatter.formatFileSize(App.applicationContext, imageDetails.size)),
                 Pair(R.string.image_width, imageDetails.width.toString()),
                 Pair(R.string.image_height, imageDetails.height.toString()),
                 Pair(
@@ -306,7 +306,7 @@ object Output {
                 }
                 
                 val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-                    .setTitle(App.appResources.getString(R.string.image_details))
+                    .setTitle(App.resources.getString(R.string.image_details))
                     .setItems(
                         configs.map {
                             // val str =
@@ -315,11 +315,11 @@ object Output {
                             //     ) + it.second
                             val str = """
                                 <pre><font color="${getListTitleColor()}"><strong>${
-                                App.appResources.getString(
+                                App.resources.getString(
                                     it.first
                                 )
                             }${
-                                App.appResources.getString(
+                                App.resources.getString(
                                     R.string.format_colon
                                 )
                             }</strong></font>${it.second}</pre>
@@ -331,13 +331,13 @@ object Output {
                             }
                         }.toTypedArray()
                     ) { _: DialogInterface?, _: Int -> }
-                    .setPositiveButton(App.appResources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
+                    .setPositiveButton(App.resources.getString(R.string.close)) { dialog: DialogInterface?, witch: Int -> dialog?.cancel() }
                     .create()
                 alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
                 alertDialog.show()
                 App.alertDialogUtil.disableAutoDismissWhenItemClick(alertDialog) { adapterView, view, i, l ->
                     App.clipboardUtil.setText(configs[i].second)
-                    App.output.showToast(App.appResources.getString(R.string.copied))
+                    App.output.showToast(App.resources.getString(R.string.copied))
                 }
             }
         }.start()

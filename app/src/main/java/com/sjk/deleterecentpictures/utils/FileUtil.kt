@@ -29,7 +29,7 @@ object FileUtil {
         if (imageInfo?.id == null) {
             return false
         }
-        return App.context.contentResolver.delete(
+        return App.applicationContext.contentResolver.delete(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             "${MediaStore.Images.Media._ID} = ?",
             arrayOf(imageInfo.id.toString())

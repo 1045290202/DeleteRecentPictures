@@ -33,14 +33,14 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
     
     fun show() {
         val itemStrings: Array<String> =
-            App.const.IMAGE_LONG_CLICK_DIALOG_ITEMS.map { App.appResources.getString(it) }
+            App.const.IMAGE_LONG_CLICK_DIALOG_ITEMS.map { App.resources.getString(it) }
                 .toTypedArray()
         val alertDialog = MaterialAlertDialogBuilder(this.activityContext)
-            .setTitle(App.appResources.getString(R.string.choose_your_action))
+            .setTitle(App.resources.getString(R.string.choose_your_action))
             .setItems(itemStrings) { dialogInterface: DialogInterface, i: Int ->
                 this.onImageLongClickDialogItemClick(dialogInterface, i, this.filePath)
             }
-            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setNegativeButton(App.resources.getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             .create()
         alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
@@ -55,13 +55,13 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
         when (i) {
             0 -> {
                 if (!App.output.openByOtherApp(filePath)) {
-                    App.output.showToast(App.appResources.getString(R.string.failed_to_invoke_open_method))
+                    App.output.showToast(App.resources.getString(R.string.failed_to_invoke_open_method))
                 }
             }
             
             1 -> {
                 if (!App.output.shareToOtherApp(filePath)) {
-                    App.output.showToast(App.appResources.getString(R.string.failed_to_invoke_sharing_method))
+                    App.output.showToast(App.resources.getString(R.string.failed_to_invoke_sharing_method))
                 }
             }
             
@@ -71,22 +71,22 @@ class ImageLongClickDialog(activityContext: Activity, filePath: String?) {
                     
                     App.activityManager.currentActivity?.runOnUiThread {
                         if (content == null) {
-                            App.output.showToast(App.appResources.getString(R.string.barcode_or_qrcode_not_found))
+                            App.output.showToast(App.resources.getString(R.string.barcode_or_qrcode_not_found))
                             return@runOnUiThread
                         }
                         val alertDialog = MaterialAlertDialogBuilder(this.activityContext)
-                            .setTitle(App.appResources.getString(R.string.recognized_content))
+                            .setTitle(App.resources.getString(R.string.recognized_content))
                             .setMessage("$content")
-                            .setNegativeButton(App.appResources.getString(R.string.cancel)) { dialogInterface: DialogInterface, i: Int ->
+                            .setNegativeButton(App.resources.getString(R.string.cancel)) { dialogInterface: DialogInterface, i: Int ->
                                 dialogInterface.cancel()
                             }
-                            .setNeutralButton(App.appResources.getString(R.string.copy)) { dialogInterface: DialogInterface, i: Int ->
+                            .setNeutralButton(App.resources.getString(R.string.copy)) { dialogInterface: DialogInterface, i: Int ->
                                 App.clipboardUtil.setText(content)
-                                App.output.showToast(App.appResources.getString(R.string.copied))
+                                App.output.showToast(App.resources.getString(R.string.copied))
                             }
-                            .setPositiveButton(App.appResources.getString(R.string.open_with_browser)) { dialogInterface: DialogInterface, i: Int ->
+                            .setPositiveButton(App.resources.getString(R.string.open_with_browser)) { dialogInterface: DialogInterface, i: Int ->
                                 if (!App.output.openLinkWithBrowser(content)) {
-                                    App.output.showToast(App.appResources.getString(R.string.open_failed))
+                                    App.output.showToast(App.resources.getString(R.string.open_failed))
                                 }
                             }
                             .create()

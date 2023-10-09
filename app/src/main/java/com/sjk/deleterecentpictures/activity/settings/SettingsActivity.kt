@@ -27,7 +27,6 @@ import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.ApkUtil
-import kotlin.system.exitProcess
 
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +141,7 @@ class SettingsActivity : BaseActivity() {
                         return@OnPreferenceClickListener true
                     }
                     val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = Uri.parse("package:${App.context.packageName}")
+                    intent.data = Uri.parse("package:${App.applicationContext.packageName}")
                     startActivity(intent)
                     true
                 }

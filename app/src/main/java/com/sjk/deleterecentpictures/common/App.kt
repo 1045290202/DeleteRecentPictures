@@ -1,6 +1,5 @@
 package com.sjk.deleterecentpictures.common
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
@@ -13,29 +12,81 @@ import com.sjk.deleterecentpictures.utils.*
 class App : Application() {
     
     companion object {
-        @SuppressLint("StaticFieldLeak")
-        lateinit var context: Context
+        lateinit var applicationContext: Context
+        lateinit var resources: Resources
         
-        lateinit var dataSource: DataSource
-        lateinit var output: Output
-        lateinit var input: Input
-        lateinit var const: Const
-        lateinit var switch: Switch
-        lateinit var globalData: GlobalData
-        lateinit var apkUtil: ApkUtil
-        lateinit var clipboardUtil: ClipboardUtil
-        lateinit var densityUtil: DensityUtil
-        lateinit var fileUtil: FileUtil
-        lateinit var imageScannerUtil: ImageScannerUtil
-        lateinit var qrCodeUtil: QRCodeUtil
-        lateinit var recentImages: RecentImages
-        lateinit var shellUtil: ShellUtil
-        lateinit var appResources: Resources
-        lateinit var activityManager: ActivityManager
-        lateinit var recycleBinManager: RecycleBinManager
-        lateinit var alertDialogUtil: AlertDialogUtil
-        lateinit var timeUtil: TimeUtil
-        
+        val dataSource: DataSource
+            get() {
+                return DataSource
+            }
+        val output: Output
+            get() {
+                return Output
+            }
+        val input: Input
+            get() {
+                return Input
+            }
+        val const: Const
+            get() {
+                return Const
+            }
+        val switch: Switch
+            get() {
+                return Switch
+            }
+        val globalData: GlobalData
+            get() {
+                return GlobalData
+            }
+        val apkUtil: ApkUtil
+            get() {
+                return ApkUtil
+            }
+        val clipboardUtil: ClipboardUtil
+            get() {
+                return ClipboardUtil
+            }
+        val densityUtil: DensityUtil
+            get() {
+                return DensityUtil
+            }
+        val fileUtil: FileUtil
+            get() {
+                return FileUtil
+            }
+        val imageScannerUtil: ImageScannerUtil
+            get() {
+                return ImageScannerUtil
+            }
+        val qrCodeUtil: QRCodeUtil
+            get() {
+                return QRCodeUtil
+            }
+        val recentImages: RecentImages
+            get() {
+                return RecentImages
+            }
+        val shellUtil: ShellUtil
+            get() {
+                return ShellUtil
+            }
+        val activityManager: ActivityManager
+            get() {
+                return ActivityManager
+            }
+        val recycleBinManager: RecycleBinManager
+            get() {
+                return RecycleBinManager
+            }
+        val alertDialogUtil: AlertDialogUtil
+            get() {
+                return AlertDialogUtil
+            }
+        val timeUtil: TimeUtil
+            get() {
+                return TimeUtil
+            }
         val newEvent: Event
             get() {
                 return Event()
@@ -44,34 +95,12 @@ class App : Application() {
     
     override fun onCreate() {
         super.onCreate()
-        context = applicationContext
-        dataSource = DataSource
-        output = Output
-        input = Input
-        const = Const
-        switch = Switch
-        globalData = GlobalData
-        apkUtil = ApkUtil
-        clipboardUtil = ClipboardUtil
-        densityUtil = DensityUtil
-        fileUtil = FileUtil
-        imageScannerUtil = ImageScannerUtil
-        qrCodeUtil = QRCodeUtil
-        recentImages = RecentImages
-        shellUtil = ShellUtil
-        appResources = resources
-        activityManager = ActivityManager
-        recycleBinManager = RecycleBinManager
-        alertDialogUtil = AlertDialogUtil
-        timeUtil = TimeUtil
+        App.applicationContext = this.applicationContext
+        App.resources = this.resources
         
         DynamicColors.applyToActivitiesIfAvailable(this)
         recycleBinManager.clearRecycleBin()
-        BigImageViewer.initialize(GlideImageLoader.with(context))
-    }
-    
-    override fun onTerminate() {
-        super.onTerminate()
+        BigImageViewer.initialize(GlideImageLoader.with(applicationContext))
     }
     
 }
