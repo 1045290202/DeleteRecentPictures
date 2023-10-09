@@ -60,7 +60,7 @@ dependencies {
 //    implementation 'com.zxy.android:tiny:1.1.0'
 //    implementation "com.davemorrissey.labs:subsampling-scale-image-view:3.10.0"
 //    implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.22"
-    implementation "com.google.zxing:core:3.4.1"
+    implementation "com.google.zxing:core:3.5.2"
     implementation "com.github.piasy:BigImageViewer:1.8.1"
     implementation "com.github.piasy:GlideImageLoader:1.8.1"
     implementation "com.github.piasy:GlideImageViewFactory:1.8.1"

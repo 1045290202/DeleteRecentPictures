@@ -1,3 +1,7 @@
+/**
+ * Description: 二维码工具类，使用了zxing库
+ */
+
 package com.sjk.deleterecentpictures.utils
 
 import android.graphics.Bitmap
@@ -5,57 +9,82 @@ import android.graphics.BitmapFactory
 import com.google.zxing.*
 import com.google.zxing.common.GlobalHistogramBinarizer
 import com.google.zxing.common.HybridBinarizer
+import java.io.FileInputStream
 import java.util.*
 
 
 object QRCodeUtil {
     private val hints: Map<DecodeHintType, Any> = EnumMap(DecodeHintType::class.java)
     
-    fun decodeQRCode(picturePath: String?): String? {
-        return this.decodeQRCode(this.getDecodeAbleBitmap(picturePath))
+    /**
+     * 二维码解码
+     */
+    fun decodeQRCode(filePath: String?): String? {
+        return this.decodeQRCode(this.getDecodeAbleBitmap(filePath))
     }
     
+    /**
+     * 二维码解码
+     */
     fun decodeQRCode(bitmap: Bitmap?): String? {
         if (bitmap == null) {
             return null
         }
-    
+        
+        val width = bitmap.width
+        val height = bitmap.height
+        val pixels = IntArray(width * height)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        
         var result: Result?
-        var source: RGBLuminanceSource? = null
+        val source: RGBLuminanceSource?
+        var invertedSource: InvertedLuminanceSource? = null
         return try {
-            val width = bitmap.width
-            val height = bitmap.height
-            val pixels = IntArray(width * height)
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
             source = RGBLuminanceSource(width, height, pixels)
-            result = MultiFormatReader().decode(BinaryBitmap(HybridBinarizer(source)), this.hints)
-            result.text
+            result = this.decodeQRCodeWithHybridBinarizer(source)
+            if (result == null) {
+                invertedSource = InvertedLuminanceSource(source)
+                result = this.decodeQRCodeWithHybridBinarizer(invertedSource)
+            }
+            if (result == null) {
+                result = this.decodeQRCodeWithGlobalHistogramBinarizer(source)
+            }
+            if (result == null) {
+                result = this.decodeQRCodeWithGlobalHistogramBinarizer(invertedSource!!)
+            }
+            result?.text
         } catch (e: Exception) {
             e.printStackTrace()
-            if (source != null) {
-                try {
-                    result = MultiFormatReader().decode(BinaryBitmap(GlobalHistogramBinarizer(source)), this.hints)
-                    return result.text
-                } catch (e2: Throwable) {
-                    e2.printStackTrace()
-                }
-            }
             null
         }
     }
     
-    private fun getDecodeAbleBitmap(picturePath: String?): Bitmap? {
+    private fun decodeQRCodeWithHybridBinarizer(source: LuminanceSource): Result? {
         return try {
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            BitmapFactory.decodeFile(picturePath, options)
-            var sampleSize = options.outHeight / 400
-            if (sampleSize <= 0) {
-                sampleSize = 1
-            }
-            options.inSampleSize = sampleSize
-            options.inJustDecodeBounds = false
-            BitmapFactory.decodeFile(picturePath, options)
+            val binarizer = HybridBinarizer(source)
+            val binaryBitmap = BinaryBitmap(binarizer)
+            MultiFormatReader().decode(binaryBitmap, this.hints)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    
+    private fun decodeQRCodeWithGlobalHistogramBinarizer(source: LuminanceSource): Result? {
+        return try {
+            val binarizer = GlobalHistogramBinarizer(source)
+            val binaryBitmap = BinaryBitmap(binarizer)
+            MultiFormatReader().decode(binaryBitmap, this.hints)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    
+    private fun getDecodeAbleBitmap(filePath: String?): Bitmap? {
+        return try {
+            val fileInputStream = FileInputStream(filePath)
+            BitmapFactory.decodeStream(fileInputStream)
         } catch (e: Exception) {
             null
         }
