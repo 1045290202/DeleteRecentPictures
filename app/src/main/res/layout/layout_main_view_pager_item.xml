@@ -18,7 +18,7 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:maxHeight="280dp"
-                app:failureImage="@drawable/outline_image_not_supported_24"
+                app:failureImage="@drawable/ic_delete_image"
                 app:failureImageInitScaleType="center"
                 app:optimizeDisplay="false" />
     </RelativeLayout>

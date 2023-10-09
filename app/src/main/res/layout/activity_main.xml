@@ -90,6 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stateListAnimator="@null"
+                app:icon="@drawable/ic_settings"
                 android:text="@string/settings" />
         
         <LinearLayout
@@ -113,6 +114,7 @@
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@null"
                     android:layout_marginStart="8dp"
+                    app:icon="@drawable/ic_delete_image"
                     android:text="@string/delete" />
         </LinearLayout>
     </LinearLayout>
