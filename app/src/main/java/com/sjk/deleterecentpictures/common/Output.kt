@@ -43,7 +43,7 @@ object Output {
     fun showSnackBarIndefinite(
         view: View,
         content: CharSequence,
-        onSnackBarCreate: ((it: Snackbar) -> Unit)?
+        onSnackBarCreate: ((it: Snackbar) -> Unit)?,
     ) {
         val snackbar = Snackbar.make(view, content, Snackbar.LENGTH_INDEFINITE)
         onSnackBarCreate?.invoke(snackbar)
@@ -51,15 +51,15 @@ object Output {
     }
     
     fun openByOtherApp(filePath: String?): Boolean {
-        if (filePath == null) {
-            return false
+        return if (filePath == null) {
+            false
+        } else {
+            this.openByOtherApp(File(filePath))
         }
-        
-        return this.openByOtherApp(File(filePath))
     }
     
     fun openByOtherApp(file: File): Boolean {
-        try {
+        return try {
             val intent = Intent(Intent.ACTION_VIEW)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.flags =
@@ -75,27 +75,29 @@ object Output {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 intent.setDataAndType(
                     Uri.fromFile(file),
-                    App.fileUtil.getMimeType(file.absolutePath)
+                    App.fileUtil.getMimeType(file.absolutePath),
                 )
             }
-            App.applicationContext.startActivity(intent)
+            if (App.activityManager.currentActivity == null) {
+                return false
+            }
+            App.activityManager.currentActivity?.startActivity(intent)
+            true
         } catch (e: Exception) {
-            return false
+            false
         }
-        
-        return true
     }
     
     fun shareToOtherApp(filePath: String?): Boolean {
-        if (filePath == null) {
-            return false
+        return if (filePath == null) {
+            false
+        } else {
+            this.shareToOtherApp(File(filePath))
         }
-        
-        return this.shareToOtherApp(File(filePath))
     }
     
     fun shareToOtherApp(file: File): Boolean {
-        try {
+        return try {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = App.fileUtil.getMimeType(file.absolutePath)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -112,12 +114,19 @@ object Output {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
             }
-            App.applicationContext.startActivity(intent)
+            if (App.activityManager.currentActivity == null) {
+                return false
+            }
+            App.activityManager.currentActivity?.startActivity(
+                Intent.createChooser(
+                    intent,
+                    App.resources.getString(R.string.share),
+                ),
+            )
+            true
         } catch (e: Exception) {
-            return false
+            false
         }
-        
-        return true
     }
     
     fun openLinkWithBrowser(url: String): Boolean {
@@ -230,7 +239,8 @@ object Output {
             return
         }
         val resources = App.applicationContext.resources
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
         val editor = sharedPreferences.edit()
         val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
             .setTitle(resources.getString(R.string.privacy_policy))
@@ -258,7 +268,8 @@ object Output {
      * 尝试显示隐私政策弹窗，如果之前显示过了，就不显示了
      */
     fun tryShowPrivacyPolicyDialog(callback: (() -> Unit)? = null) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(App.applicationContext)
         if (sharedPreferences.getBoolean("privacyPolicyShowed", false)) {
             callback?.invoke()
             return
@@ -276,7 +287,10 @@ object Output {
             val configs = arrayOf(
                 Pair(R.string.image_name, imageDetails.displayName),
                 Pair(R.string.image_path, imageDetails.data),
-                Pair(R.string.image_size, Formatter.formatFileSize(App.applicationContext, imageDetails.size)),
+                Pair(
+                    R.string.image_size,
+                    Formatter.formatFileSize(App.applicationContext, imageDetails.size)
+                ),
                 Pair(R.string.image_width, imageDetails.width.toString()),
                 Pair(R.string.image_height, imageDetails.height.toString()),
                 Pair(
