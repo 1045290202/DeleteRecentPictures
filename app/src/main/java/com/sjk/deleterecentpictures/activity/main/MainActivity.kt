@@ -532,8 +532,7 @@ open class MainActivity : BaseActivity() {
             val maxI = i
             while (i > 0) {
                 val imageInfo: ImageInfoBean =
-                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
-                        ?: break
+                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext()) ?: break
                 this.getDataSource().getRecentImageInfos().add(imageInfo)
                 i--
             }

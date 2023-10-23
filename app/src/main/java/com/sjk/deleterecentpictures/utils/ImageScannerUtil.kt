@@ -60,19 +60,15 @@ object ImageScannerUtil {
      * @param sortOrder
      */
     private fun getQuery(context: Context, realSelection: String?, sortOrder: String): Cursor? {
-        return context.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            arrayOf(
+        return this.getQuery(
+            context, arrayOf(
                 MediaStore.MediaColumns._ID,
                 MediaStore.MediaColumns.DATA,
                 MediaStore.MediaColumns.DATE_ADDED,
                 MediaStore.MediaColumns.DATE_MODIFIED,
-                // MediaStore.MediaColumns.DISPLAY_NAME,
-                // MediaStore.MediaColumns.MIME_TYPE
             ),
             realSelection,
-            null, // selectionArgs,
-            "$sortOrder DESC",
+            sortOrder,
         )
     }
     
