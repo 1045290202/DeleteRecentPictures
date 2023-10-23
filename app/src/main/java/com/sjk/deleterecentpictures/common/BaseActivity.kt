@@ -10,11 +10,6 @@ open class BaseActivity : AppCompatActivity() {
         App.activityManager.push(this)
     }
     
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-//        this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
-    }
-    
     override fun onResume() {
         super.onResume()
     }

@@ -54,7 +54,9 @@ class ImageActivityViewPagerAdapter :
 }
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
+    val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
     var imageInfo: ImageInfoBean? = null
     
     init {
@@ -62,6 +64,18 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         this.imageView.setOnLongClickListener {
             App.output.showImageLongClickDialog(this.imageInfo!!.path)
             
+            return@setOnLongClickListener true
+        }
+        // this.preventClickLeftView.setOnClickListener {
+        //
+        // }
+        this.preventClickLeftView.setOnLongClickListener {
+            return@setOnLongClickListener true
+        }
+        // this.preventClickRightView.setOnClickListener {
+        //
+        // }
+        this.preventClickRightView.setOnLongClickListener {
             return@setOnLongClickListener true
         }
     }
