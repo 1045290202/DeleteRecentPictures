@@ -19,7 +19,6 @@
 
     <View
             android:id="@+id/preventClickLeftView"
-            android:background="@android:color/black"
             android:layout_alignParentLeft="true"
             android:layout_width="16dp"
             android:layout_height="match_parent" />
