@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -136,6 +137,7 @@ open class MainActivity : BaseActivity() {
         this.setTitle(R.string.app_name)
         this.setSupportActionBar(findViewById(R.id.toolbar))
         this.buttonClickEventBind()
+        ScrollButtonManager.init(this)
         
         this.viewPager = this.findViewById(R.id.viewPager)
         this.viewPager!!.adapter = this.viewPagerAdapter
@@ -191,7 +193,7 @@ open class MainActivity : BaseActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 0) {
@@ -303,12 +305,14 @@ open class MainActivity : BaseActivity() {
             }
             true
         }
-        val settingsButton = findViewById<Button>(R.id.settingsButton)
+        
+        val settingsButton = this.findViewById<Button>(R.id.settingsButton)
         settingsButton.setOnClickListener {
             val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-            startActivityForResult(intent, 1)
+            this.startActivityForResult(intent, 1)
         }
     }
+    
     
     private fun arePicturesChecked(): Boolean {
         return App.dataSource.getAllCheckedImageInfos().size != 0
@@ -316,7 +320,7 @@ open class MainActivity : BaseActivity() {
     
     private fun deleteCheckedImages(
         needToRefresh: Boolean = true,
-        callback: () -> Unit = fun() {}
+        callback: () -> Unit = fun() {},
     ) {
         val deleteButton: Button = findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
@@ -513,6 +517,7 @@ open class MainActivity : BaseActivity() {
         val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
         currentPicturePathButton.text =
             this.getDataSource().getFileNameByPath(this.getDataSource().getCurrentImageInfo())
+                ?: this.getText(R.string.no_path)
     }
     
     /**
@@ -540,11 +545,6 @@ open class MainActivity : BaseActivity() {
                 this.viewPagerAdapter.imageChecks.add(false)
             }
             
-            if (this.getDataSource().getRecentImageInfos().size == 0) {
-//            this.getOutPut().showToast("未发现图片")
-                this.getDataSource().getRecentImageInfos().add(ImageInfoBean())
-            }
-            
             this.runOnUiThread {
                 this.viewPagerAdapter.notifyDataSetChanged()
                 val currentIndex = this.getDataSource().getCurrentImageInfoIndex()
@@ -555,6 +555,14 @@ open class MainActivity : BaseActivity() {
                 callback()
             }
         }.start()
+    }
+    
+    fun jumpToNextImage() {
+        this.viewPager?.setCurrentItem(this.viewPager?.currentItem?.plus(1) ?: 0, true)
+    }
+    
+    fun jumpToPreviousImage() {
+        this.viewPager?.setCurrentItem(this.viewPager?.currentItem?.minus(1) ?: 0, true)
     }
     
 }

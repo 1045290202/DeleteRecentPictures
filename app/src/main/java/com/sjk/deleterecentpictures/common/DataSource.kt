@@ -21,7 +21,11 @@ object DataSource {
 
     fun getNumberOfPictures(): Int {
         val str = this.getSP().getString("numberOfPictures", App.const.DEFAULT_NUMBER_OF_PICTURES.toString())
-        var numberOfPictures: Int = if (str == null || str == "") App.const.DEFAULT_NUMBER_OF_PICTURES else str.toInt()
+        var numberOfPictures: Int = try {
+            if (str == null || str == "") App.const.DEFAULT_NUMBER_OF_PICTURES else str.toInt()
+        } catch (e: NumberFormatException) {
+            App.const.DEFAULT_NUMBER_OF_PICTURES
+        }
         if (numberOfPictures == 0) {
             numberOfPictures = Const.DEFAULT_NUMBER_OF_PICTURES
         }

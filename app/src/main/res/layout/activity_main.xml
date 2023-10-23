@@ -9,7 +9,7 @@
         android:paddingBottom="14dp"
         tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
-    
+
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -20,24 +20,24 @@
             android:layout_marginEnd="8dp"
             app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:title="@string/app_name" />
-    
+
     <androidx.core.widget.NestedScrollView
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp">
-        
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="6dp">
-            
+
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="2dp">
-                
+
                 <com.google.android.material.button.MaterialButton
                         android:id="@+id/currentPicturePathButton"
                         style="@style/Widget.Material3.Button"
@@ -53,7 +53,7 @@
                         android:paddingHorizontal="16dp"
                         android:text="@string/searching"
                         app:icon="@drawable/ic_info" />
-                
+
                 <com.google.android.material.button.MaterialButton
                         android:id="@+id/refreshButton"
                         style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -63,27 +63,57 @@
                         android:visibility="gone"
                         android:text="@string/refresh" />
             </LinearLayout>
-            
-            <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager"
+
+            <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="@dimen/image_height">
+
+                <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/previousButton"
+                        app:icon="@drawable/arrow_left"
+                        android:layout_width="64dp"
+                        android:layout_height="128dp"
+                        app:iconSize="24dp"
+                        app:iconPadding="0dp"
+                        app:iconGravity="textStart"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true" />
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nextButton"
+                        app:icon="@drawable/arrow_right"
+                        android:layout_width="64dp"
+                        android:layout_height="128dp"
+                        app:iconSize="24dp"
+                        app:iconPadding="0dp"
+                        app:iconGravity="textStart"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true" />
+
+            </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    
+
     <View
             android:id="@+id/viewPagerOverlay"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:visibility="invisible" />
-    
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="8dp"
             android:layout_marginTop="2dp"
             android:orientation="horizontal">
-        
+
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/settingsButton"
                 style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -92,13 +122,13 @@
                 android:stateListAnimator="@null"
                 app:icon="@drawable/ic_settings"
                 android:text="@string/settings" />
-        
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:orientation="horizontal">
-            
+
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancelButton"
                     style="@style/Widget.Material3.Button.TextButton.Dialog"
@@ -106,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@null"
                     android:text="@string/cancel" />
-            
+
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/deleteButton"
                     style="@style/Widget.Material3.Button"

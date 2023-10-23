@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.piasy.biv.view.BigImageView
 import com.github.piasy.biv.view.GlideImageViewFactory
@@ -41,10 +42,13 @@ class MainActivityViewPagerAdapter :
     
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
         if (this.imageChecks.size > 0) {
-            holder.isChecked = this.imageChecks[position]
+            holder.isChecked = if (position < this.imageInfos.size) this.imageChecks[position] else false
         }
-        
-        holder.imageInfo = this.imageInfos[position]
+        holder.imageInfo = if (position < this.imageInfos.size) {
+            this.imageInfos[position]
+        } else {
+            null
+        }
     }
     
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
@@ -60,16 +64,18 @@ class MainActivityViewPagerAdapter :
             holder.checkBox.visibility = View.GONE
             holder.imageView.visibility = View.GONE
             holder.imageView.cancel()
+            holder.emptyView.visibility = View.VISIBLE
             return
         }
         holder.checkBox.visibility = View.VISIBLE
         holder.checkBox.isChecked = holder.isChecked
         holder.imageView.visibility = View.VISIBLE
         holder.imageView.showImage(holder.imageInfo!!.uri)
+        holder.emptyView.visibility = View.GONE
     }
     
     override fun getItemCount(): Int {
-        return this.imageInfos.size
+        return this.imageInfos.size + 1
     }
     
     fun setHolderChecked(position: Int, isChecked: Boolean) {
@@ -90,6 +96,7 @@ class MainActivityViewPagerAdapter :
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
     val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val emptyView: View = itemView.findViewById(R.id.emptyView)
     val detailsButton: Button = itemView.findViewById(R.id.imageDetailsButton)
     private val openImageActivityButton =
         itemView.findViewById<Button>(R.id.openImageActivityButton)

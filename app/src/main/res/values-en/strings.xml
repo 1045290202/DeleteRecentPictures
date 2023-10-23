@@ -84,4 +84,5 @@
     <string name="use_default_selection_because_error">Unable to obtain external storage location, replace with default query</string>
     <string name="all_selected_images_deselected">All selected images deselected</string>
     <string name="settings_reloaded">Settings reloaded</string>
+    <string name="no_more">No more</string>
 </resources>
