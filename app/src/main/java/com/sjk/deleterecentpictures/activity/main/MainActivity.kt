@@ -391,7 +391,7 @@ open class MainActivity : BaseActivity() {
                 // 由于上面刷新了媒体信息，所以这里只能从回收站拿到刚才删掉的媒体信息
                 this.getDataSource()
                     .getFileNameByPath(App.recycleBinManager.deletedImageInfo?.info?.path)
-            )
+            ) + "  ",
         ) {
             val sb = it
             it.setAnchorView(this.findViewById(R.id.viewPagerOverlay))
