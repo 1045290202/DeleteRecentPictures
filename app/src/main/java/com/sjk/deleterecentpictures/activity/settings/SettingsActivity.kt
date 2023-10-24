@@ -35,21 +35,20 @@ class SettingsActivity : BaseActivity() {
         preferenceChanged = false
 //        dayNightModeChange(resources.configuration, false)
         setContentView(R.layout.activity_settings2)
-        supportFragmentManager
+        this.supportFragmentManager
             .beginTransaction()
             .replace(R.id.settings, SettingsFragment())
             .commitNow()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-        bindSharedPreferenceEvent()
+        this.setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        this.bindSharedPreferenceEvent()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                this.onBackPressed()
             }
 
             else -> {
@@ -58,35 +57,35 @@ class SettingsActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    /**
-     * 设置日夜切换
-     *
-     * @param config config
-     */
-    private fun dayNightModeChange(config: Configuration, change: Boolean) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        val dayNightMode = config.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        if (dayNightMode == Configuration.UI_MODE_NIGHT_YES) {
-//            Log.d(TAG, "onCreate: " + "夜间模式");
-//            setTheme(R.style.SettingsActivityDarkTheme)
-            window.statusBarColor = android.R.attr.colorPrimary
-        } else if (dayNightMode == Configuration.UI_MODE_NIGHT_NO) {
-//            Log.d(TAG, "onCreate: " + "非夜间模式");
-//            setTheme(R.style.SettingsActivityLightTheme)
-            window.statusBarColor = ContextCompat.getColor(
-                this,
-                android.R.color.white
-            ) //resources.getColor(android.R.color.white)
-            var ui = window.decorView.systemUiVisibility
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ui = ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
-            window.decorView.systemUiVisibility = ui
-        }
-        if (change) {
-            recreate()
-        }
-    }
+//    /**
+//     * 设置日夜切换
+//     *
+//     * @param config config
+//     */
+//     private fun dayNightModeChange(config: Configuration, change: Boolean) {
+//         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+//         val dayNightMode = config.uiMode and Configuration.UI_MODE_NIGHT_MASK
+//         if (dayNightMode == Configuration.UI_MODE_NIGHT_YES) {
+// //            Log.d(TAG, "onCreate: " + "夜间模式");
+// //            setTheme(R.style.SettingsActivityDarkTheme)
+//             window.statusBarColor = android.R.attr.colorPrimary
+//         } else if (dayNightMode == Configuration.UI_MODE_NIGHT_NO) {
+// //            Log.d(TAG, "onCreate: " + "非夜间模式");
+// //            setTheme(R.style.SettingsActivityLightTheme)
+//             window.statusBarColor = ContextCompat.getColor(
+//                 this,
+//                 android.R.color.white
+//             ) //resources.getColor(android.R.color.white)
+//             var ui = window.decorView.systemUiVisibility
+//             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                 ui = ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//             }
+//             window.decorView.systemUiVisibility = ui
+//         }
+//         if (change) {
+//             recreate()
+//         }
+//     }
 
     /**
      * 绑定SharedPreference事件
@@ -103,14 +102,14 @@ class SettingsActivity : BaseActivity() {
     override fun onBackPressed() {
         val intent = Intent()
         intent.putExtra("preferenceChanged", preferenceChanged)
-        setResult(Activity.RESULT_OK, intent)
+        this.setResult(Activity.RESULT_OK, intent)
         super.onBackPressed()
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            bindPreferenceEvent()
+            this.setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            this.bindPreferenceEvent()
         }
 
         /**
@@ -129,12 +128,13 @@ class SettingsActivity : BaseActivity() {
 
             val numberOfPicturesPreference = findPreference<EditTextPreference>("numberOfPictures")
             numberOfPicturesPreference?.apply {
-                setOnBindEditTextListener {
+                this.setOnBindEditTextListener {
                     it.inputType = InputType.TYPE_CLASS_NUMBER
                 }
             }
 
             val allFilesPermissionPreference = findPreference<Preference>("allFilesPermission")
+            allFilesPermissionPreference?.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
             allFilesPermissionPreference?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener { preference: Preference ->
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -142,7 +142,7 @@ class SettingsActivity : BaseActivity() {
                     }
                     val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                     intent.data = Uri.parse("package:${App.applicationContext.packageName}")
-                    startActivity(intent)
+                    this.startActivity(intent)
                     true
                 }
 
@@ -180,7 +180,7 @@ class SettingsActivity : BaseActivity() {
                             Uri.parse("https://www.coolapk.com/u/458995")
                         )
                     }
-                    startActivity(intent)
+                    this.startActivity(intent)
                 }
 
                 "github" -> {
@@ -188,7 +188,7 @@ class SettingsActivity : BaseActivity() {
                         Intent.ACTION_VIEW,
                         Uri.parse(resources.getString(R.string.github_url))
                     )
-                    startActivity(intent)
+                    this.startActivity(intent)
                 }
 
                 "customizePathDescription" -> {
