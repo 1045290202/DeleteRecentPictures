@@ -7,7 +7,7 @@
     
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:padding="10dp">
         
@@ -17,7 +17,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
-                android:maxHeight="@dimen/image_height"
                 app:failureImage="@drawable/ic_delete_image"
                 app:failureImageInitScaleType="center"
                 app:optimizeDisplay="false" />
@@ -48,8 +47,7 @@
             android:id="@+id/openImageActivityButton"
             style="@style/ImageBorder"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
-            android:maxHeight="@dimen/image_height"
+            android:layout_height="match_parent"
             android:alpha="0.8" />
 
     <LinearLayout

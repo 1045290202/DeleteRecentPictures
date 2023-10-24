@@ -126,14 +126,14 @@ class SettingsActivity : BaseActivity() {
                 }
             }*/
 
-            val numberOfPicturesPreference = findPreference<EditTextPreference>("numberOfPictures")
+            val numberOfPicturesPreference = this.findPreference<EditTextPreference>("numberOfPictures")
             numberOfPicturesPreference?.apply {
                 this.setOnBindEditTextListener {
                     it.inputType = InputType.TYPE_CLASS_NUMBER
                 }
             }
 
-            val allFilesPermissionPreference = findPreference<Preference>("allFilesPermission")
+            val allFilesPermissionPreference = this.findPreference<Preference>("allFilesPermission")
             allFilesPermissionPreference?.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
             allFilesPermissionPreference?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener { preference: Preference ->
@@ -145,6 +145,9 @@ class SettingsActivity : BaseActivity() {
                     this.startActivity(intent)
                     true
                 }
+            
+            val enableMultiWindowLayoutPreference = this.findPreference<Preference>("enableMultiWindowLayout")
+            enableMultiWindowLayoutPreference?.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
             /*EditTextPreference customizePathPreference = findPreference("customizePath");
             if (customizePathPreference != null) {

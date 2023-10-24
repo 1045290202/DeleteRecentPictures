@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
-    
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
             android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -12,7 +12,7 @@
     <uses-permission
             android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
             tools:ignore="ScopedStorage" />
-    
+
     <application
             android:name=".common.App"
             android:allowBackup="true"
@@ -27,7 +27,7 @@
             android:enableOnBackInvokedCallback="false"
             tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
             android:dataExtractionRules="@xml/data_extraction_rules">
-        
+
         <service
                 android:name=".service.QuickSettingOpenService"
                 android:icon="@drawable/ic_delete_image"
@@ -38,33 +38,35 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        
+
         <activity
                 android:name=".activity.settings.SettingsActivity"
                 android:excludeFromRecents="false"
                 android:screenOrientation="user"
                 android:theme="@style/SettingsActivityTheme"
-                android:configChanges="orientation|screenSize"
-                android:exported="true" />
+                android:resizeableActivity="true"
+                android:configChanges="orientation|screenSize" />
         <activity
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="false"
                 android:screenOrientation="user"
+                android:resizeableActivity="true"
                 android:theme="@style/ImageActivityTheme" />
         <activity
                 android:name=".activity.main.MainActivity"
                 android:excludeFromRecents="true"
                 android:exported="true"
                 android:screenOrientation="behind"
-                android:configChanges="orientation|screenSize"
+                android:enableOnBackInvokedCallback="true"
+                android:resizeableActivity="true"
                 android:theme="@style/DialogTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="${applicationId}.provider"

@@ -85,4 +85,6 @@
     <string name="all_selected_images_deselected">All selected images deselected</string>
     <string name="settings_reloaded">Settings reloaded</string>
     <string name="no_more">No more</string>
+    <string name="enable_multi_window_layout_summary">There may be some display problems</string>
+    <string name="enable_multi_window_layout_title">Use exclusive layouts in multi-window mode</string>
 </resources>

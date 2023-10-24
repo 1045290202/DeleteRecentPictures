@@ -12,6 +12,13 @@
         <!--<item name="android:windowTitleStyle">@style/MaterialAlertDialog.Material3.Title.Panel</item>-->
         <item name="windowNoTitle">true</item>
         <item name="buttonStyle">@style/Widget.Material3.Button</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="MultiWindowTheme" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="windowNoTitle">true</item>
+        <item name="buttonStyle">@style/Widget.Material3.Button</item>
+        <item name="snackbarStyle">@style/SnakebarTheme</item>
     </style>
     
     <style name="ImageActivityTheme" parent="AppTheme">

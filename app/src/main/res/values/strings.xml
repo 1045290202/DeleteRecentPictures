@@ -102,5 +102,7 @@
     <string name="all_selected_images_deselected">已取消所有已选择图片</string>
     <string name="settings_reloaded">已重新加载设置</string>
     <string name="no_more">没有更多了</string>
+    <string name="enable_multi_window_layout_summary">可能会出现一些显示上的问题</string>
+    <string name="enable_multi_window_layout_title">多窗口模式下使用专属的布局</string>
 
 </resources>

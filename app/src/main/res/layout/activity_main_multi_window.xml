@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        tools:context=".activity.main.MainActivity"
+        tools:ignore="UseCompoundDrawables">
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:title="@string/app_name" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:paddingHorizontal="6dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="2dp">
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/currentPicturePathButton"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:gravity="center"
+                    android:stateListAnimator="@null"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/searching"
+                    app:icon="@drawable/ic_info" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/refreshButton"
+                    style="@style/Widget.Material3.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"
+                    android:text="@string/refresh" />
+        </LinearLayout>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <!-- 图片的ViewPager -->
+            <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/previousButton"
+                    app:icon="@drawable/arrow_left"
+                    android:layout_width="64dp"
+                    android:layout_height="128dp"
+                    app:iconSize="24dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textStart"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/nextButton"
+                    app:icon="@drawable/arrow_right"
+                    android:layout_width="64dp"
+                    android:layout_height="128dp"
+                    app:iconSize="24dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textStart"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+            android:id="@+id/viewPagerOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:visibility="invisible" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="8dp"
+            android:layout_marginTop="2dp">
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/settingsButton"
+                style="@style/Widget.Material3.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:icon="@drawable/ic_settings"
+                android:text="@string/settings" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteButton"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:icon="@drawable/ic_delete_image"
+                android:text="@string/delete" />
+
+        <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
+                android:id="@+id/cancelButton"
+                style="@style/Widget.Material3.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                app:layout_constraintEnd_toStartOf="@id/deleteButton"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/cancel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

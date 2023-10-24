@@ -6,18 +6,20 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
@@ -96,6 +98,13 @@ open class MainActivity : BaseActivity() {
         App.recycleBinManager.deleteOldImageInRecycleBin()
     }
     
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+        }
+        this.recreate()
+    }
+    
     override fun finish() {
         super.finish()
         App.recentImages.clearImagePaths()
@@ -132,10 +141,28 @@ open class MainActivity : BaseActivity() {
         }
     }
     
+    /**
+     * 初始化视图
+     */
     private fun initView() {
-        this.setContentView(R.layout.activity_main)
+        val enableMultiWindowLayout = this.getDataSource().getSP().getBoolean("enableMultiWindowLayout", false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && enableMultiWindowLayout && this.isInMultiWindowMode) {
+            // 用于清除切换成弹窗主题时顶部出现色块的问题
+            this.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            this.window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+            
+            this.setTheme(R.style.MultiWindowTheme)
+            this.setContentView(R.layout.activity_main_multi_window)
+        } else {
+            this.window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            
+            this.setTheme(R.style.DialogTheme)
+            this.setContentView(R.layout.activity_main)
+        }
+        
+        // this.setContentView(R.layout.activity_main)
         this.setTitle(R.string.app_name)
-        this.setSupportActionBar(findViewById(R.id.toolbar))
+        this.setSupportActionBar(this.findViewById(R.id.toolbar))
         this.buttonClickEventBind()
         ScrollButtonManager.init(this)
         
@@ -209,7 +236,6 @@ open class MainActivity : BaseActivity() {
     }
     
     private fun requestWritePermission() {
-        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 this.hasAllFilesAccessPermission = false
@@ -268,7 +294,7 @@ open class MainActivity : BaseActivity() {
         // 删除按钮
         val deleteButton = this.findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
-            if (this.arePicturesChecked()) {
+            if (this.hasPicturesChecked()) {
                 App.output.showDeleteCheckedImagesDialog(positiveCallback = { dialogInterface: DialogInterface?, witch: Int ->
                     this.deleteCheckedImages {
                         App.input.setAllImageChecksFalse()
@@ -294,7 +320,7 @@ open class MainActivity : BaseActivity() {
             }
         }
         deleteButton.setOnLongClickListener {
-            if (this.arePicturesChecked()) {
+            if (this.hasPicturesChecked()) {
                 this.deleteCheckedImages {
                     this.finish()
                 }
@@ -313,8 +339,7 @@ open class MainActivity : BaseActivity() {
         }
     }
     
-    
-    private fun arePicturesChecked(): Boolean {
+    private fun hasPicturesChecked(): Boolean {
         return App.dataSource.getAllCheckedImageInfos().size != 0
     }
     

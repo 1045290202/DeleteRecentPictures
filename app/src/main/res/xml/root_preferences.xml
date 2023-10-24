@@ -87,7 +87,12 @@
                 app:key="undelete"
                 app:summary="@string/undelete_summary"
                 app:title="@string/undeleted_title" />
-    
+
+        <rikka.material.preference.MaterialSwitchPreference
+                app:defaultValue="false"
+                app:key="enableMultiWindowLayout"
+                app:summary="@string/enable_multi_window_layout_summary"
+                app:title="@string/enable_multi_window_layout_title" />
     </PreferenceCategory>
     
     <PreferenceCategory app:title="@string/permission_header">
