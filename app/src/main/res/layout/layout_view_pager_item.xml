@@ -19,13 +19,13 @@
 
     <View
             android:id="@+id/preventClickLeftView"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_width="16dp"
             android:layout_height="match_parent" />
 
     <View
             android:id="@+id/preventClickRightView"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_width="16dp"
             android:layout_height="match_parent" />
 </RelativeLayout>

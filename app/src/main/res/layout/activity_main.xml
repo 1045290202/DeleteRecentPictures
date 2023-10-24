@@ -82,7 +82,7 @@
                         app:iconPadding="0dp"
                         app:iconGravity="textStart"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true" />
 
                 <com.google.android.material.button.MaterialButton
@@ -94,7 +94,7 @@
                         app:iconPadding="0dp"
                         app:iconGravity="textStart"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true" />
 
             </RelativeLayout>
@@ -107,12 +107,11 @@
             android:layout_height="0dp"
             android:visibility="invisible" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="2dp">
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/settingsButton"
@@ -120,32 +119,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stateListAnimator="@null"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:icon="@drawable/ic_settings"
                 android:text="@string/settings" />
 
-        <LinearLayout
-                android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteButton"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="horizontal">
+                android:stateListAnimator="@null"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:icon="@drawable/ic_delete_image"
+                android:text="@string/delete" />
 
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/cancelButton"
-                    style="@style/Widget.Material3.Button.TextButton.Dialog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:stateListAnimator="@null"
-                    android:text="@string/cancel" />
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/deleteButton"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:stateListAnimator="@null"
-                    android:layout_marginStart="8dp"
-                    app:icon="@drawable/ic_delete_image"
-                    android:text="@string/delete" />
-        </LinearLayout>
-    </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelButton"
+                style="@style/Widget.Material3.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stateListAnimator="@null"
+                app:layout_constraintEnd_toStartOf="@id/deleteButton"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/cancel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
