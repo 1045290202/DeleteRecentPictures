@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.piasy.biv.view.BigImageView
 import com.github.piasy.biv.view.GlideImageViewFactory
@@ -63,15 +62,21 @@ class MainActivityViewPagerAdapter :
         if (holder.imageInfo?.uri == null) {
             holder.checkBox.visibility = View.GONE
             holder.imageView.visibility = View.GONE
-            holder.imageView.cancel()
             holder.emptyView.visibility = View.VISIBLE
+            holder.imageView.cancel()
             return
         }
         holder.checkBox.visibility = View.VISIBLE
         holder.checkBox.isChecked = holder.isChecked
         holder.imageView.visibility = View.VISIBLE
-        holder.imageView.showImage(holder.imageInfo!!.uri)
         holder.emptyView.visibility = View.GONE
+        if (holder.imageInfo!!.mimeType == "image/avif") {
+            App.imageLoadManger.loadAvif(holder.imageInfo!!) { uri ->
+                holder.imageView.showImage(uri)
+            }
+        } else {
+            holder.imageView.showImage(holder.imageInfo!!.uri)
+        }
     }
     
     override fun getItemCount(): Int {

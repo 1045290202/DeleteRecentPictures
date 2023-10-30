@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.sjk.deleterecentpictures.bean.ImageDetailBean
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
+import com.sjk.deleterecentpictures.common.logD
 import java.io.File
 
 
@@ -49,8 +50,13 @@ object ImageScannerUtil {
             """.trimIndent()
         }
         
-        this.cursor = this.getQuery(context, realSelection, sortOrder)
-        this.cursor?.moveToFirst()
+        logD(TAG, "init: realSelection = $realSelection")
+        try {
+            this.cursor = this.getQuery(context, realSelection, sortOrder)
+            this.cursor?.moveToFirst()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     
     /**
@@ -66,6 +72,7 @@ object ImageScannerUtil {
                 MediaStore.MediaColumns.DATA,
                 MediaStore.MediaColumns.DATE_ADDED,
                 MediaStore.MediaColumns.DATE_MODIFIED,
+                MediaStore.MediaColumns.MIME_TYPE,
             ),
             realSelection,
             sortOrder,
@@ -116,7 +123,10 @@ object ImageScannerUtil {
                     it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
                 val dateModified = it.getLong(columnIndexDateModified)
                 
-                ImageInfoBean(imagePath, imageUri, imageId, dateAdded, dateModified)
+                val columnIndexMimeType: Int = it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)
+                val mimeType = it.getString(columnIndexMimeType)
+                
+                ImageInfoBean(imagePath, imageUri, imageId, dateAdded, dateModified, mimeType)
             } catch (e: CursorIndexOutOfBoundsException) {
                 null
             }

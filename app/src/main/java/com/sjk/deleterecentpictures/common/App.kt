@@ -87,6 +87,10 @@ class App : Application() {
             get() {
                 return TimeUtil
             }
+        val imageLoadManger: ImageLoadManger
+            get() {
+                return ImageLoadManger
+            }
         val newEvent: Event
             get() {
                 return Event()

@@ -9,7 +9,7 @@ import com.github.piasy.biv.view.GlideImageViewFactory
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
-import java.util.ArrayList
+
 
 class ImageActivityViewPagerAdapter :
     RecyclerView.Adapter<ViewPagerViewHolder>() {
@@ -27,7 +27,7 @@ class ImageActivityViewPagerAdapter :
     
     override fun onBindViewHolder(
         holder: ViewPagerViewHolder,
-        position: Int
+        position: Int,
     ) {
         holder.imageInfo = imageInfos[position]
     }
@@ -44,7 +44,14 @@ class ImageActivityViewPagerAdapter :
         if (holder.imageInfo?.uri == null) {
             return
         }
-        holder.imageView.showImage(holder.imageInfo!!.uri)
+        
+        if (holder.imageInfo!!.mimeType == "image/avif") {
+            App.imageLoadManger.loadAvif(holder.imageInfo!!) { uri ->
+                holder.imageView.showImage(uri)
+            }
+        } else {
+            holder.imageView.showImage(holder.imageInfo!!.uri)
+        }
     }
     
     override fun getItemCount(): Int {

@@ -8,4 +8,5 @@ data class ImageInfoBean(
     val id: Long? = null,
     val dateAdded: Long? = null,
     val dateModified: Long? = null,
+    val mimeType: String? = null,
 )
