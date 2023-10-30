@@ -15,8 +15,8 @@
             android:layout_height="42dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:title="@string/app_name" />
 
@@ -25,7 +25,7 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:paddingHorizontal="6dp">
+            android:paddingHorizontal="14dp">
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -105,7 +105,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="8dp"
+            android:paddingHorizontal="16dp"
             android:layout_marginTop="2dp">
 
         <com.google.android.material.button.MaterialButton
@@ -114,10 +114,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stateListAnimator="@null"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:icon="@drawable/ic_settings"
-                android:text="@string/settings" />
+                android:text="@string/settings"
+                tools:ignore="MissingConstraints" />
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteButton"

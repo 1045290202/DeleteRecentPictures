@@ -6,7 +6,6 @@ import android.widget.Button
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.Const
 import com.sjk.deleterecentpictures.common.logD
-import kotlinx.coroutines.channels.ticker
 import java.util.Timer
 import java.util.TimerTask
 
