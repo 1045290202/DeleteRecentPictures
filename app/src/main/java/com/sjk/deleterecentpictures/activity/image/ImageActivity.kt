@@ -22,12 +22,19 @@ class ImageActivity : BaseActivity() {
         this.setContentView(R.layout.activity_image)
         
         this.init()
+        
+        // this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+        //     override fun handleOnBackPressed() {
+        //         // 播放退出时的共享元素动画
+        //         val intent = Intent(this@ImageActivity, MainActivity::class.java)
+        //     }
+        // })
     }
 
     private fun init() {
 //        val imagePath: String? = this.getGlobalData("currentImagePath", null) as String?
         viewPagerAdapter.imageInfos = this.getDataSource().getRecentImageInfos()
-        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
+        val viewPager = this.findViewById<ViewPager2>(R.id.viewPager)
         viewPager.adapter = viewPagerAdapter
         viewPager.setCurrentItem(this.getDataSource().getCurrentImageInfoIndex(), false)
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -62,5 +69,4 @@ class ImageActivity : BaseActivity() {
         }
 
     }
-
 }

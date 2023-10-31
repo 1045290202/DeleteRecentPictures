@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
@@ -31,10 +32,10 @@ import com.sjk.deleterecentpictures.common.*
 import kotlin.math.max
 
 
-open class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity() {
     private var isLoaded = false
     private var viewPager: ViewPager2? = null
-    private val viewPagerAdapter = MainActivityViewPagerAdapter()
+    private val viewPagerAdapter = MainActivityViewPagerAdapter(this)
     private val event: Event = App.newEvent
     
     //    private var viewPagerCurrentPosition = 0
@@ -335,8 +336,9 @@ open class MainActivity : BaseActivity() {
         
         val settingsButton = this.findViewById<Button>(R.id.settingsButton)
         settingsButton.setOnClickListener {
+            // val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, settingsButton, "settings")
             val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-            this.startActivityForResult(intent, 1)
+            this.startActivityForResult(intent, 1/*, options.toBundle()*/)
         }
     }
     

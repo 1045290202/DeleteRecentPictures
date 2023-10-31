@@ -3,6 +3,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:transitionName="settings"
         android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
@@ -10,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/settings" />
-    
+
     <FrameLayout
             android:id="@+id/settings"
             android:layout_width="match_parent"

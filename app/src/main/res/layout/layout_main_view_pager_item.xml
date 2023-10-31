@@ -17,6 +17,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
+                android:transitionName="image"
                 app:failureImage="@drawable/ic_delete_image"
                 app:failureImageInitScaleType="center"
                 app:optimizeDisplay="false" />
