@@ -2,10 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="8dp"
+        android:fitsSystemWindows="true"
+        android:transitionName="main"
         tools:context=".activity.main.MainActivity"
         tools:ignore="UseCompoundDrawables">
 

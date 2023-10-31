@@ -8,12 +8,14 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
@@ -148,19 +150,19 @@ class MainActivity : BaseActivity() {
      */
     private fun initView() {
         val enableMultiWindowLayout = this.getDataSource().getSP().getBoolean("enableMultiWindowLayout", false)
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && enableMultiWindowLayout && this.isInMultiWindowMode) {
-            // 用于清除切换成弹窗主题时顶部出现色块的问题
-            this.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            this.window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
-            
             this.setTheme(R.style.MultiWindowTheme)
             this.setContentView(R.layout.activity_main_multi_window)
         } else {
-            this.window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            
             this.setTheme(R.style.DialogTheme)
             this.setContentView(R.layout.activity_main)
         }
+        
+        // 聚焦当前活动
+        this.window.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+        )
         
         // this.setContentView(R.layout.activity_main)
         this.setTitle(R.string.app_name)
