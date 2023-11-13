@@ -45,7 +45,7 @@
     <string name="number_of_pictures_dialog_message">The default is 10, leaving it blank or filling in 0 represents the default value.</string>
     <string name="sort_order_title">Sort order</string>
     <string name="customize_path_title">Custom path</string>
-    <string name="customize_path_dialog_message">You need to omit the external storage directory, such as: Pictures/. You can also search for pictures starting with a certain string in a certain directory, such as: DCIM/sc</string>
+    <string name="customize_path_dialog_message">You need to omit the external storage directory, such as: Pictures/.\nYou can also search for pictures starting with a certain string in a certain directory, such as: DCIM/sc\nSupports multiple directories, use "|" (vertical bar symbol, Unicode encoding U+007C) to separate different paths</string>
     <string name="path_title">Select path</string>
     <string name="customize_path_description_title">Custom path description</string>
     <string name="customize_path_description_summary">Click to view</string>

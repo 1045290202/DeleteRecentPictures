@@ -32,31 +32,36 @@ object DataSource {
         return numberOfPictures
     }
 
-    fun getSelection(): String? {
-        var selection: String? = null
+    fun getSelection(): MutableSet<String> {
+        val selectionList: MutableSet<String> = mutableSetOf()
         this.context.let {
             val strings = it.resources.getStringArray(R.array.path_values)
             //        Log.d(TAG, "read: " + sp.getString("path", strings[0]));
             when (this.getSP().getString("path", strings[0])) {
                 strings[0] -> {
-                    selection = null
                 }
                 strings[1] -> {
-                    selection = App.imageScannerUtil.screenshotsPath
+                    selectionList.add(App.imageScannerUtil.screenshotsPath)
                 }
                 strings[2] -> {
                     val externalFilesDir = Environment.getExternalStorageDirectory()
-
-                    selection = if (externalFilesDir != null) {
-                        "${externalFilesDir.absolutePath}/${this.getSP().getString("customizePath", "")}"
-                    } else {
+                    if (externalFilesDir == null) {
                         App.output.showToast(this.context.getString(R.string.use_default_selection_because_error))
-                        null
+                    } else {
+                        val paths = this.getSP().getString("customizePath", "")!!.split("|")
+                        for (path in paths) {
+                            if (path.isEmpty()) {
+                                continue
+                            }
+                            selectionList.add("${externalFilesDir.absolutePath}/$path")
+                        }
                     }
                 }
+                
+                else -> {}
             }
         }
-        return selection
+        return selectionList
     }
 
     fun getSimplifiedPathInExternalStorage(imageInfo: ImageInfoBean?): String? {

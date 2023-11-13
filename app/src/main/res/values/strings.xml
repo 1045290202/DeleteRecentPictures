@@ -34,7 +34,7 @@
     
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>
-    <string name="customize_path_dialog_message">需要省略外置存储目录，如：Pictures/ 也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc</string>
+    <string name="customize_path_dialog_message">需要省略外置存储目录，如：Pictures/\n也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc\n支持多目录，不同路径之间使用“|”（竖线符号，Unicode编码U+007C）分割</string>
     <string name="path_title">选择路径</string>
     <string name="customize_path_description_title">自定义路径说明</string>
     <string name="customize_path_description_summary">点击查看</string>

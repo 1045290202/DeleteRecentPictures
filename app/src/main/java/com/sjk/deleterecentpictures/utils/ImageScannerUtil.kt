@@ -33,26 +33,29 @@ object ImageScannerUtil {
     
     fun init(
         context: Context,
-        selection: String?,
+        selection: MutableSet<String>,
         escape: Boolean = true,
-        sortOrder: String = this.DATE_MODIFIED
+        sortOrder: String = this.DATE_MODIFIED,
     ) {
-        var realSelection = selection
-        if (realSelection != null) {
-            realSelection = """
-                ${MediaStore.Files.FileColumns.DATA} like '$selection%'${
-                if (escape) {
-                    " escape '\\'"
-                } else {
-                    ""
+        if (selection.size == 0) {
+            selection.add("")
+        }
+        val realSelection = StringBuilder()
+        for (i in selection.indices) {
+            val selectionItem = selection.elementAt(i)
+            if (selectionItem != "") {
+                realSelection.append(
+                    "${MediaStore.Files.FileColumns.DATA} like '$selectionItem%'${if (escape) " escape '\\'" else ""}"
+                )
+                if (i < selection.size - 1) {
+                    realSelection.append(" or ")
                 }
             }
-            """.trimIndent()
         }
         
         logD(TAG, "init: realSelection = $realSelection")
         try {
-            this.cursor = this.getQuery(context, realSelection, sortOrder)
+            this.cursor = this.getQuery(context, realSelection.toString(), sortOrder)
             this.cursor?.moveToFirst()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -67,7 +70,8 @@ object ImageScannerUtil {
      */
     private fun getQuery(context: Context, realSelection: String?, sortOrder: String): Cursor? {
         return this.getQuery(
-            context, arrayOf(
+            context,
+            arrayOf(
                 MediaStore.MediaColumns._ID,
                 MediaStore.MediaColumns.DATA,
                 MediaStore.MediaColumns.DATE_ADDED,
@@ -90,7 +94,7 @@ object ImageScannerUtil {
         context: Context,
         projection: Array<String>,
         realSelection: String?,
-        sortOrder: String
+        sortOrder: String,
     ): Cursor? {
         return context.contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -200,33 +204,33 @@ object ImageScannerUtil {
             if (it.moveToFirst()) {
                 val columnIndexData: Int = it.getColumnIndex(MediaStore.MediaColumns.DATA)
                 val imagePath = it.getString(columnIndexData)
-
+                
                 val columnIndexDateAdded: Int =
                     it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
                 val dateAdded = it.getLong(columnIndexDateAdded)
-
+                
                 val columnIndexDateModified: Int =
                     it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
                 val dateModified = it.getLong(columnIndexDateModified)
-
+                
                 val columnIndexDisplayName: Int =
                     it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
                 val displayName = it.getString(columnIndexDisplayName)
-
+                
                 val columnIndexMimeType: Int = it.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)
                 val mimeType = it.getString(columnIndexMimeType)
-
+                
                 val columnIndexSize: Int = it.getColumnIndex(MediaStore.MediaColumns.SIZE)
                 val size = it.getLong(columnIndexSize)
-
+                
                 val columnIndexWidth: Int = it.getColumnIndex(MediaStore.MediaColumns.WIDTH)
                 val width = it.getInt(columnIndexWidth)
-
+                
                 val columnIndexHeight: Int = it.getColumnIndex(MediaStore.MediaColumns.HEIGHT)
                 val height = it.getInt(columnIndexHeight)
                 
                 it.close()
-
+                
                 return ImageDetailBean(
                     imagePath,
                     dateAdded,
