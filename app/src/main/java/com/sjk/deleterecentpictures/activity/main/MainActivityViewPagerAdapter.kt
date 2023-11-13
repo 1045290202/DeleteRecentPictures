@@ -1,14 +1,14 @@
 package com.sjk.deleterecentpictures.activity.main
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.CompoundButton
-import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.github.piasy.biv.view.BigImageView
 import com.github.piasy.biv.view.GlideImageViewFactory
@@ -62,23 +62,19 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
         
+        holder.imageView.cancel()
         if (holder.imageInfo?.uri == null) {
             holder.checkBox.visibility = View.GONE
             holder.imageView.visibility = View.GONE
             holder.emptyView.visibility = View.VISIBLE
-            holder.imageView.cancel()
             return
         }
         holder.checkBox.visibility = View.VISIBLE
         holder.checkBox.isChecked = holder.isChecked
         holder.imageView.visibility = View.VISIBLE
         holder.emptyView.visibility = View.GONE
-        if (holder.imageInfo!!.mimeType == "image/avif") {
-            App.imageLoadManger.loadAvif(holder.imageInfo!!) { uri ->
-                holder.imageView.showImage(uri)
-            }
-        } else {
-            holder.imageView.showImage(holder.imageInfo!!.uri)
+        App.imageLoadManger.loadImage(App.activityManager.currentActivity!!, holder.imageInfo!!) { uri ->
+            holder.imageView.showImage(uri)
         }
     }
     

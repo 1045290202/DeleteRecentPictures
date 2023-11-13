@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.github.piasy.biv.view.BigImageView
 import com.github.piasy.biv.view.GlideImageViewFactory
 import com.sjk.deleterecentpictures.R
@@ -42,16 +41,12 @@ class ImageActivityViewPagerAdapter :
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
         
+        holder.imageView.cancel()
         if (holder.imageInfo?.uri == null) {
             return
         }
-        
-        if (holder.imageInfo!!.mimeType == "image/avif") {
-            App.imageLoadManger.loadAvif(holder.imageInfo!!) { uri ->
-                holder.imageView.showImage(uri)
-            }
-        } else {
-            holder.imageView.showImage(holder.imageInfo!!.uri)
+        App.imageLoadManger.loadImage(App.activityManager.currentActivity!!, holder.imageInfo!!) { uri ->
+            holder.imageView.showImage(uri)
         }
     }
     
