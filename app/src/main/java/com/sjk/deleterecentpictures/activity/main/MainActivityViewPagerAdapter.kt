@@ -111,13 +111,13 @@ class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) : Recy
             if (this.imageInfo?.uri == null) {
                 return@setOnClickListener
             }
-            /*val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this.mainActivity,
-                this.mainActivity.findViewById(R.id.viewPager),
+                this.mainActivity.findViewById(R.id.imageAnimationView),
                 "image"
-            )*/
+            )
             val intent = Intent(itemView.context, ImageActivity::class.java)
-            itemView.context.startActivity(intent/*, options.toBundle()*/)
+            itemView.context.startActivity(intent, options.toBundle())
         }
         this.openImageActivityButton.setOnLongClickListener {
             if (this.imageInfo?.uri == null) {

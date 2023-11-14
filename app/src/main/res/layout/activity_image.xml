@@ -5,13 +5,13 @@
         android:layout_height="match_parent"
         android:background="@android:color/black"
         tools:context=".activity.image.ImageActivity">
-    
+
     <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:transitionName="image" />
-    
+
     <!--<Button
             android:id="@+id/deleteButton"
             style="@style/Theme.MaterialComponents.DayNight"

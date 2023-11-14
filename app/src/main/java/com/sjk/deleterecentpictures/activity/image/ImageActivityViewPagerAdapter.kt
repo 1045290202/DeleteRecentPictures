@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import com.github.panpf.zoomimage.zoom.GestureType
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
@@ -59,31 +59,34 @@ class ImageActivityViewPagerAdapter :
         return this.imageInfos.size
     }
     
-    // fun resetImageScaleWithAnimation(viewPager: ViewPager2) {
-    //     // this.viewPagerViewHolders[viewPager.currentItem].imageView.zoomable.scale(1f,
-    //     //     IntOffsetCompat.Zero, true
-    //     // )
-    //     this.viewPagerViewHolders.forEach {
-    //         it.imageView.zoomable.scale(1f, IntOffsetCompat.Zero, true,
-    //             ZoomAnimationSpec.None
-    //         )
-    //     }
-    // }
+    fun resetImageScaleWithAnimation(viewPager: ViewPager2) {
+        this.viewPagerViewHolders.forEach {
+            it.imageView.zoomable.scale(
+                1f, IntOffsetCompat.Zero, false,
+                // ZoomAnimationSpec(40)
+            )
+        }
+    }
     
 }
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
+    val longClickView: View = itemView.findViewById(R.id.longClickView)
     val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
     val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
     var imageInfo: ImageInfoBean? = null
     
     init {
         this.imageView.scrollBar = null
+        this.imageView.zoomable.disabledGestureTypeState.value = GestureType.ONE_FINGER_SCALE
         this.imageView.setOnLongClickListener {
             App.output.showImageLongClickDialog(this.imageInfo!!.path)
-            
+
             return@setOnLongClickListener true
+        }
+        this.imageView.setOnClickListener {
+            (this.itemView.context as ImageActivity).onBackPressedDispatcher.onBackPressed()
         }
         // this.preventClickLeftView.setOnClickListener {
         //

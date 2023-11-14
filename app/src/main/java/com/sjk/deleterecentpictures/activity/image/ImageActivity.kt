@@ -25,12 +25,12 @@ class ImageActivity : BaseActivity() {
         
         this.init()
         
-        // this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-        //     override fun handleOnBackPressed() {
-        //         this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation(this@ImageActivity.viewPager)
-        //         this@ImageActivity.supportFinishAfterTransition()
-        //     }
-        // })
+        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation(this@ImageActivity.viewPager)
+                this@ImageActivity.supportFinishAfterTransition()
+            }
+        })
     }
 
     private fun init() {

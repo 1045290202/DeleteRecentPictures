@@ -66,6 +66,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+            <View
+                    android:id="@+id/imageAnimationView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:transitionName="image" />
+
             <!-- 图片的ViewPager -->
             <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewPager"
