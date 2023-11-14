@@ -1,6 +1,5 @@
 package com.sjk.deleterecentpictures.common
 
-import android.annotation.SuppressLint
 import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*

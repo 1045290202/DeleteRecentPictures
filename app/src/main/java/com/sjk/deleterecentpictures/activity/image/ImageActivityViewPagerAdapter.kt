@@ -7,7 +7,6 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean

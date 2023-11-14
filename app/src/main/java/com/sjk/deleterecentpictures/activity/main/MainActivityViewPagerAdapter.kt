@@ -15,7 +15,6 @@ import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.Event
-import java.util.ArrayList
 
 class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
     RecyclerView.Adapter<ViewPagerViewHolder>() {

@@ -3,7 +3,6 @@ package com.sjk.deleterecentpictures.activity.settings
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,12 +11,9 @@ import android.text.Html
 import android.text.InputType
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat

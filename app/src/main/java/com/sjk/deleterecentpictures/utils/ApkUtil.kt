@@ -6,14 +6,14 @@ import android.os.Build
 import android.text.TextUtils
 
 object ApkUtil {
-    fun checkApkExist(context: Context?, ApkPackageName: String?): Boolean {
-        return if (TextUtils.isEmpty(ApkPackageName)) {
+    fun checkApkExist(context: Context?, apkPackageName: String?): Boolean {
+        return if (TextUtils.isEmpty(apkPackageName)) {
             false
         } else try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                context?.packageManager?.getApplicationInfo(ApkPackageName!!, PackageManager.MATCH_UNINSTALLED_PACKAGES)
+                context?.packageManager?.getApplicationInfo(apkPackageName!!, PackageManager.MATCH_UNINSTALLED_PACKAGES)
             } else {
-                context?.packageManager?.getApplicationInfo(ApkPackageName!!, PackageManager.GET_UNINSTALLED_PACKAGES)
+                context?.packageManager?.getApplicationInfo(apkPackageName!!, PackageManager.GET_UNINSTALLED_PACKAGES)
             }
             true
         } catch (e: PackageManager.NameNotFoundException) {
