@@ -1,17 +1,14 @@
 package com.sjk.deleterecentpictures.activity.main
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.github.piasy.biv.view.BigImageView
-import com.github.piasy.biv.view.GlideImageViewFactory
+import com.github.panpf.zoomimage.ZoomImageView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.image.ImageActivity
@@ -56,13 +53,12 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
         
-        holder.imageView.cancel()
+        App.imageLoadManger.clearImageView(App.applicationContext, holder.imageView)
     }
     
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
         
-        holder.imageView.cancel()
         if (holder.imageInfo?.uri == null) {
             holder.checkBox.visibility = View.GONE
             holder.imageView.visibility = View.GONE
@@ -73,9 +69,11 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
         holder.checkBox.isChecked = holder.isChecked
         holder.imageView.visibility = View.VISIBLE
         holder.emptyView.visibility = View.GONE
-        App.imageLoadManger.loadImage(App.activityManager.currentActivity!!, holder.imageInfo!!) { uri ->
-            holder.imageView.showImage(uri)
-        }
+        App.imageLoadManger.loadImageToImageView(
+            App.applicationContext,
+            holder.imageInfo!!,
+            holder.imageView,
+        )
     }
     
     override fun getItemCount(): Int {
@@ -99,7 +97,7 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
 
 class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) : RecyclerView.ViewHolder(itemView) {
     val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
-    val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
     val emptyView: View = itemView.findViewById(R.id.emptyView)
     val detailsButton: Button = itemView.findViewById(R.id.imageDetailsButton)
     private val openImageActivityButton =
@@ -108,32 +106,16 @@ class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) : Recy
     var isChecked: Boolean = false
     
     init {
-        this.imageView.setImageViewFactory(GlideImageViewFactory())
-        // 反射，拿到mSSIV，并且监听是否变化
-        this.imageView.javaClass.getDeclaredField("mSSIV").apply {
-            this.isAccessible = true
-            // var ssivValueBefore = this.get(this@ViewPagerViewHolder.imageView)
-            val ssivChangeListener =
-                View.OnLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-                    val ssivValueAfter = this.get(this@ViewPagerViewHolder.imageView) as SubsamplingScaleImageView? // 获取mSSIV的新值
-                    // 布局变化是阻止图片缩放
-                    ssivValueAfter?.resetScaleAndCenter()
-                    
-                    // 更新ssivValueBefore为最新的值
-                    // ssivValueBefore = ssivValueAfter
-                }
-            
-            this@ViewPagerViewHolder.imageView.addOnLayoutChangeListener(ssivChangeListener)
-        }
+        this.imageView.scrollBar = null
         this.openImageActivityButton.setOnClickListener {
             if (this.imageInfo?.uri == null) {
                 return@setOnClickListener
             }
-            // val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            //     this.mainActivity,
-            //     this.mainActivity.findViewById(R.id.viewPager),
-            //     "image"
-            // )
+            /*val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this.mainActivity,
+                this.mainActivity.findViewById(R.id.viewPager),
+                "image"
+            )*/
             val intent = Intent(itemView.context, ImageActivity::class.java)
             itemView.context.startActivity(intent/*, options.toBundle()*/)
         }

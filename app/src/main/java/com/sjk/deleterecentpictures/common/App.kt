@@ -3,8 +3,6 @@ package com.sjk.deleterecentpictures.common
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
-import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.google.android.material.color.DynamicColors
 import com.sjk.deleterecentpictures.utils.*
 
@@ -87,9 +85,9 @@ class App : Application() {
             get() {
                 return TimeUtil
             }
-        val imageLoadManger: ImageLoadManger
+        val imageLoadManger: ImageLoadManager
             get() {
-                return ImageLoadManger
+                return ImageLoadManager
             }
         val newEvent: Event
             get() {
@@ -104,7 +102,6 @@ class App : Application() {
         
         DynamicColors.applyToActivitiesIfAvailable(this)
         recycleBinManager.clearRecycleBin()
-        BigImageViewer.initialize(GlideImageLoader.with(applicationContext))
     }
     
 }

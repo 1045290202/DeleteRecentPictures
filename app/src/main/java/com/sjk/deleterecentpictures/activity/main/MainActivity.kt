@@ -114,6 +114,9 @@ class MainActivity : BaseActivity() {
         App.recentImages.clearImagePaths()
         App.recentImages.clearImageChecks()
         App.imageScannerUtil.close()
+        // Thread {
+        //     App.fileUtil.clearCacheFolder()
+        // }.start()
     }
     
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

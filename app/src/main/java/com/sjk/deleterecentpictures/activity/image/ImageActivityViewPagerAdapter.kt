@@ -3,9 +3,12 @@ package com.sjk.deleterecentpictures.activity.image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
-import com.github.piasy.biv.view.BigImageView
-import com.github.piasy.biv.view.GlideImageViewFactory
+import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
@@ -35,35 +38,48 @@ class ImageActivityViewPagerAdapter :
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
         
-        holder.imageView.cancel()
+        App.imageLoadManger.clearImageView(App.applicationContext, holder.imageView)
     }
     
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
         
-        holder.imageView.cancel()
         if (holder.imageInfo?.uri == null) {
             return
         }
-        App.imageLoadManger.loadImage(App.activityManager.currentActivity!!, holder.imageInfo!!) { uri ->
-            holder.imageView.showImage(uri)
-        }
+        App.imageLoadManger.loadImageToImageView(
+            App.applicationContext,
+            holder.imageInfo!!,
+            holder.imageView,
+        )
+        // holder.imageView.setImageURI(holder.imageInfo?.uri)
     }
     
     override fun getItemCount(): Int {
         return this.imageInfos.size
     }
     
+    // fun resetImageScaleWithAnimation(viewPager: ViewPager2) {
+    //     // this.viewPagerViewHolders[viewPager.currentItem].imageView.zoomable.scale(1f,
+    //     //     IntOffsetCompat.Zero, true
+    //     // )
+    //     this.viewPagerViewHolders.forEach {
+    //         it.imageView.zoomable.scale(1f, IntOffsetCompat.Zero, true,
+    //             ZoomAnimationSpec.None
+    //         )
+    //     }
+    // }
+    
 }
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val imageView: BigImageView = itemView.findViewById(R.id.imageView)
+    val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
     val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
     val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
     var imageInfo: ImageInfoBean? = null
     
     init {
-        this.imageView.setImageViewFactory(GlideImageViewFactory())
+        this.imageView.scrollBar = null
         this.imageView.setOnLongClickListener {
             App.output.showImageLongClickDialog(this.imageInfo!!.path)
             

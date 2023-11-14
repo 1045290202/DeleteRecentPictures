@@ -105,7 +105,11 @@ object FileUtil {
             if (excludes != null && excludes.contains(file.name)) {
                 continue
             }
-            file.delete()
+            if (file.isDirectory) {
+                this.clearFolder(file.absolutePath)
+            } else {
+                file.delete()
+            }
         }
         return true
     }
@@ -150,6 +154,10 @@ object FileUtil {
                 false
             }
         }
+    }
+    
+    fun clearCacheFolder(): Boolean {
+        return this.clearFolder(App.applicationContext.cacheDir.absolutePath)
     }
     
 }
