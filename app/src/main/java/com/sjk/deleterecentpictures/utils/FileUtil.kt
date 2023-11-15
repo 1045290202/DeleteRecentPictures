@@ -88,6 +88,7 @@ object FileUtil {
     }
     
     fun clearFolder(folderPath: String?, excludes: Set<String>? = null): Boolean {
+        
         if (folderPath == null) {
             return false
         }
@@ -97,16 +98,23 @@ object FileUtil {
             return true
         }
         
-        return try {
-            FileUtils.cleanDirectory(folder)
-            true
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-            false
-        } catch (e: IOException) {
-            e.printStackTrace()
-            false
+        if (!folder.isDirectory) {
+            return false
         }
+        
+        val files = folder.listFiles() ?: return true
+        
+        for (file in files) {
+            if (excludes != null && excludes.contains(file.name)) {
+                continue
+            }
+            if (file.isDirectory) {
+                this.clearFolder(file.absolutePath)
+            } else {
+                file.delete()
+            }
+        }
+        return true
     }
     
     /**
