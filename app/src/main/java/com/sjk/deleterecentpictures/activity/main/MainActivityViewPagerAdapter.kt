@@ -72,6 +72,7 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
             App.applicationContext,
             holder.imageInfo!!,
             holder.imageView,
+            false,
         )
     }
     
