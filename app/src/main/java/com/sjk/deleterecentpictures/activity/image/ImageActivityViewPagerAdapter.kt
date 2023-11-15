@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.zoom.GestureType
+import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
+import com.github.panpf.zoomimage.zoom.vibration
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
@@ -71,14 +73,13 @@ class ImageActivityViewPagerAdapter :
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
-    val longClickView: View = itemView.findViewById(R.id.longClickView)
     val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
     val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
     var imageInfo: ImageInfoBean? = null
     
     init {
         this.imageView.scrollBar = null
-        this.imageView.zoomable.disabledGestureTypeState.value = GestureType.ONE_FINGER_SCALE
+        this.imageView.zoomable.oneFingerScaleSpecState.value = OneFingerScaleSpec.vibration(imageView.context)
         this.imageView.setOnLongClickListener {
             App.output.showImageLongClickDialog(this.imageInfo!!.path)
 

@@ -9,11 +9,6 @@
             android:layout_height="match_parent" />
 
     <View
-            android:id="@+id/longClickView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    <View
             android:id="@+id/preventClickLeftView"
             android:layout_alignParentStart="true"
             android:layout_width="16dp"
