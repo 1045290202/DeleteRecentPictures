@@ -4,6 +4,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import android.widget.AdapterView
 import android.view.View
+import androidx.annotation.IdRes
 
 object AlertDialogUtil {
     
@@ -12,7 +13,7 @@ object AlertDialogUtil {
      */
     fun enableMessageSelection(
         alertDialog: AlertDialog,
-        messageTextViewId: Int = android.R.id.message
+        @IdRes messageTextViewId: Int = android.R.id.message,
     ) {
         alertDialog.window?.findViewById<TextView>(messageTextViewId)?.setTextIsSelectable(true)
     }
@@ -22,7 +23,7 @@ object AlertDialogUtil {
      */
     fun disableMessageSelection(
         alertDialog: AlertDialog,
-        messageTextViewId: Int = android.R.id.message
+        @IdRes messageTextViewId: Int = android.R.id.message,
     ) {
         alertDialog.window?.findViewById<TextView>(messageTextViewId)?.setTextIsSelectable(false)
     }
@@ -32,7 +33,7 @@ object AlertDialogUtil {
      */
     fun disableAutoDismissWhenItemClick(
         alertDialog: AlertDialog,
-        onItemClickListener: ((adapterView: AdapterView<*>, view: View, i: Int, l: Long) -> Unit)?
+        onItemClickListener: ((adapterView: AdapterView<*>, view: View, i: Int, l: Long) -> Unit)?,
     ) {
         alertDialog.listView.setOnItemClickListener { adapterView, view, i, l ->
             onItemClickListener?.invoke(adapterView, view, i, l)
