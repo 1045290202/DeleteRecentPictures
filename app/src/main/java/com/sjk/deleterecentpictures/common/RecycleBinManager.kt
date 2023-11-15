@@ -102,8 +102,7 @@ object RecycleBinManager {
         if (!App.fileUtil.existsFile(oldFile)) {
             return false
         }
-        val moved = oldFile.renameTo(newFile)
-        if (!moved) {
+        if (!App.fileUtil.moveFile(oldFile, newFile)) {
             return false
         }
         this.deletedImageInfo = DeletedImageInfoBean(oldFile, newFile, imageInfo)
@@ -127,8 +126,7 @@ object RecycleBinManager {
             onFailed?.invoke()
             return
         }
-        val moved = newFile.renameTo(oldFile)
-        if (!moved) {
+        if (!App.fileUtil.moveFile(newFile, oldFile)) {
             onFailed?.invoke()
             return
         }

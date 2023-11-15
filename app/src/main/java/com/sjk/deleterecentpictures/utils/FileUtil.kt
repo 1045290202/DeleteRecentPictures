@@ -5,7 +5,9 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
+import org.apache.commons.io.FileUtils
 import java.io.File
+import java.io.IOException
 
 
 object FileUtil {
@@ -95,23 +97,16 @@ object FileUtil {
             return true
         }
         
-        if (!folder.isDirectory) {
-            return false
+        return try {
+            FileUtils.cleanDirectory(folder)
+            true
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
         }
-        
-        val files = folder.listFiles() ?: return true
-        
-        for (file in files) {
-            if (excludes != null && excludes.contains(file.name)) {
-                continue
-            }
-            if (file.isDirectory) {
-                this.clearFolder(file.absolutePath)
-            } else {
-                file.delete()
-            }
-        }
-        return true
     }
     
     /**
@@ -158,6 +153,18 @@ object FileUtil {
     
     fun clearCacheFolder(): Boolean {
         return this.clearFolder(App.applicationContext.cacheDir.absolutePath)
+    }
+    
+    /**
+     * 移动文件
+     */
+    fun moveFile(srcFile: File, destFile: File): Boolean {
+        return try {
+            FileUtils.moveFile(srcFile, destFile)
+            true
+        } catch (e: IOException) {
+            false
+        }
     }
     
 }

@@ -69,4 +69,6 @@ dependencies {
     implementation "dev.rikka.rikkax.material:material-preference:2.0.0"
 
     implementation "io.github.panpf.zoomimage:zoomimage-view-glide:1.0.0-beta06"
+
+    implementation 'commons-io:commons-io:2.15.0'
 }

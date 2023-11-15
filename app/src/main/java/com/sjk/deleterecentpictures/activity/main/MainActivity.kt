@@ -489,7 +489,7 @@ class MainActivity : BaseActivity() {
         } else {
             deleted = App.fileUtil.deleteImage(App.dataSource.getCurrentImageInfo())
         }
-        return deleted;
+        return deleted
     }
     
     private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: (() -> Unit)?) {
