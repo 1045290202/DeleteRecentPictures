@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.viewpager2.widget.ViewPager2
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.BaseActivity
+import com.sjk.deleterecentpictures.common.logD
 
 class ImageActivity : BaseActivity() {
     private val viewPagerAdapter = ImageActivityViewPagerAdapter()
@@ -27,7 +28,7 @@ class ImageActivity : BaseActivity() {
         
         this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation(this@ImageActivity.viewPager)
+                this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation()
                 this@ImageActivity.supportFinishAfterTransition()
             }
         })

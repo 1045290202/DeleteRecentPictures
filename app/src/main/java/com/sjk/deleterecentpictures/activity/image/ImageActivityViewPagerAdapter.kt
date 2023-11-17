@@ -7,9 +7,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
-import com.github.panpf.zoomimage.zoom.vibration
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
@@ -17,7 +15,8 @@ import com.sjk.deleterecentpictures.common.App
 
 class ImageActivityViewPagerAdapter :
     RecyclerView.Adapter<ViewPagerViewHolder>() {
-    private var viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
+    private val viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
+    private val attachedViewHolders: MutableSet<ViewPagerViewHolder> = mutableSetOf()
     var imageInfos: List<ImageInfoBean?> = ArrayList()
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
@@ -39,12 +38,14 @@ class ImageActivityViewPagerAdapter :
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
         
+        this.attachedViewHolders.remove(holder)
         App.imageLoadManger.clearImageView(App.applicationContext, holder.imageView)
     }
     
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
         
+        this.attachedViewHolders.add(holder)
         if (holder.imageInfo?.uri == null) {
             return
         }
@@ -60,8 +61,8 @@ class ImageActivityViewPagerAdapter :
         return this.imageInfos.size
     }
     
-    fun resetImageScaleWithAnimation(viewPager: ViewPager2) {
-        this.viewPagerViewHolders.forEach {
+    fun resetImageScaleWithAnimation() {
+        this.attachedViewHolders.forEach {
             it.imageView.zoomable.scale(
                 1f, IntOffsetCompat.Zero, false,
                 // ZoomAnimationSpec(40)
@@ -79,7 +80,6 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     
     init {
         this.imageView.scrollBar = null
-        this.imageView.zoomable.oneFingerScaleSpecState.value = OneFingerScaleSpec.vibration(imageView.context)
         this.imageView.setOnLongClickListener {
             App.output.showImageLongClickDialog(this.imageInfo!!.path)
 
