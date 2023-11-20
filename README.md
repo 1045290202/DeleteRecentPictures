@@ -21,10 +21,10 @@ Android 6.0（SdkVersion 23）及以上
 + 【实验性】支持临时的撤销删除功能
 
 ### 预览图
-![1.png](docs/images/previews/1.png)
-![2.png](docs/images/previews/2.png)
-![3.png](docs/images/previews/3.png)
-![4.png](docs/images/previews/4.png)
+<img src="docs/images/previews/1.png" width="350" alt="1.png" align="center" />
+<img src="docs/images/previews/2.png" width="350" alt="2.png" align="center" />
+<img src="docs/images/previews/3.png" width="350" alt="3.png" align="center" />
+<img src="docs/images/previews/4.png" width="350" alt="4.png" align="center" />
  
 ### 下载
 [https://github.com/1045290202/DeleteRecentPictures/releases/latest](https://github.com/1045290202/DeleteRecentPictures/releases/latest)
