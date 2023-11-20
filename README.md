@@ -1,4 +1,4 @@
-# DeleteRecentPictures
+# 删除最近图片
 删除手机里最近的图片，包括但不限于截图、照片等，只要图片被系统媒体扫描后就能显示。解决不小心保存图片、截屏、拍照等问题。建议配合悬浮球、侧边栏等类型的APP使用，或者利用状态栏中的快速磁贴打开。
 
 ### 支持系统
@@ -19,9 +19,21 @@ Android 6.0（SdkVersion 23）及以上
 + 支持在最近运行任务中隐藏
 + 【实验性】支持多窗口模式（小窗和分屏等）下特有的布局
 + 【实验性】支持临时的撤销删除功能
+
+### 预览图
+![1.png](docs/images/previews/1.png)
+![2.png](docs/images/previews/2.png)
+![3.png](docs/images/previews/3.png)
+![4.png](docs/images/previews/4.png)
  
-### 下载链接
+### 下载
 [https://github.com/1045290202/DeleteRecentPictures/releases/latest](https://github.com/1045290202/DeleteRecentPictures/releases/latest)
+
+### 开源库
++ [ZoomImage](https://github.com/panpf/zoomimage)
++ [ZXing](https://github.com/zxing/zxing)
++ [RikkaX](https://github.com/RikkaApps/RikkaX)
++ [Apache Commons IO](https://github.com/apache/commons-io)
 
 -------
 
