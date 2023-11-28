@@ -13,15 +13,15 @@
     <string name="determine">确定</string>
     <string name="prompt">提示</string>
     <string name="copied">已复制</string>
-    
+
     <!-- region -->
-    
+
     <!-- Preference Titles -->
     <string name="general_settings_header">一般设置</string>
     <string name="path_header">查询图片的路径</string>
     <string name="permission_header">权限设置</string>
     <string name="about_header">关于</string>
-    
+
     <!-- General Settings Preferences -->
     <string name="close_app_title">删除图片后是否关闭本应用</string>
     <string name="close_app_summary">如不关闭可以继续删除图片</string>
@@ -31,27 +31,27 @@
     <string name="number_of_pictures_summary">单次搜索最近图片的数量</string>
     <string name="number_of_pictures_dialog_message">默认为10，不填写或填0都代表默认值</string>
     <string name="sort_order_title">排序方式</string>
-    
+
     <!-- Path Preferences -->
     <string name="customize_path_title">自定义路径</string>
     <string name="customize_path_dialog_message">需要省略外置存储目录，如：Pictures/\n也可以搜索某一目录下以某字符串打头的图片，如：DCIM/sc\n支持多目录，不同路径之间使用“|”（竖线符号，Unicode编码U+007C）分割</string>
     <string name="path_title">选择路径</string>
     <string name="customize_path_description_title">自定义路径说明</string>
     <string name="customize_path_description_summary">点击查看</string>
-    
+
     <!-- Permission Preferences -->
     <string name="all_files_permission_title">所有文件访问权限</string>
     <string name="all_files_permission_summary">仅Android 11及以上需要开启这个权限</string>
-    
+
     <!-- About Preferences -->
     <string name="author_title">开发者</string>
     <string name="github_title">在Github上访问此仓库</string>
     <string name="github_url" translatable="false">https://github.com/1045290202/DeleteRecentPictures</string>
     <string name="user_agreement">用户协议</string>
     <string name="privacy_policy">隐私政策</string>
-    
+
     <!-- endregion -->
-    
+
     <string name="privacy_policy_content"><![CDATA[《删除最近图片》是一款专门用于查看和删除Android设备（以下简称为设备）内最近存储图片的应用程序，帮助用户方便地删除设备内不再需要的最近的图片文件。为了保障用户的图片数据安全，本应用不会接入互联网。本隐私政策属于本应用不可或缺的一部分。\n\n1.信息说明：\n本应用不接入互联网且不会收集任何用户的任何隐私信息。本应用不会破坏设备的数据安全，也不会主动删除或分享图片。\n\n2.权限说明：\n本应用仅使用读取外部存储、写入外部存储和管理外部存储的权限。如果应用没有获取到上述权限，将无法提供任何服务。\n\n3.隐私政策的变更：\n我们保留修改本政策的权利，如果我们需要调整此隐私政策，我们会跟随新版本《删除最近图片》应用发布新的隐私政策。\n\n4.开源说明：\n本应用已开源，如果您有需要，可以在 设置 -> 关于 -> 在github上访问此项目 找到本应用的源代码。]]></string>
     <string name="custom_path_explanation"><![CDATA[<p>自定义路径需要省略外置存储目录，无需填写完整路径，如：<strong>Pictures/</strong></p><p>同时兼容了SQL语句中的通配符：<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>_</strong>&nbsp;——&nbsp;仅替代一个字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>%</strong>&nbsp;——&nbsp;替代一个或多个字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>[charlist]</strong>&nbsp;——&nbsp;替代字符列中的任何单一字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>[^charlist]</strong>或<strong>[!charlist]</strong>&nbsp;——&nbsp;替代不在字符列中的任何单一字符；<br>如果需要匹配_和%，可以在他们前面添加反斜杠（\\），如果需要匹配\\，则需要输入\\\\</p><a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>]]></string>
     <string name="current_image_path">当前图片路径</string>
@@ -104,5 +104,8 @@
     <string name="no_more">没有更多了</string>
     <string name="enable_multi_window_layout_summary">可能会出现一些显示上的问题</string>
     <string name="enable_multi_window_layout_title">多窗口模式下使用专属的布局</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 
 </resources>

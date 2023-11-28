@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/Widget.DeleteRecentPictures.AppWidget.Container"
+        android:theme="@style/AppTheme.AppWidgetContainer"
+        android:id="@android:id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_centerInParent="true"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:importantForAccessibility="no" />
+
+        <ImageView
+                android:visibility="gone"
+                android:id="@+id/imageEmptyView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_image"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:scaleType="center"
+                android:importantForAccessibility="no" />
+
+<!--        <Button-->
+<!--                style="@android:style/Widget.Material.Button.Borderless.Colored"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_centerInParent="true"-->
+<!--                android:alpha="0.8" />-->
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/refreshButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:drawableLeft="@drawable/ic_refresh"
+                android:drawableTint="?android:attr/colorControlNormal"
+                android:drawablePadding="0dp"
+                android:backgroundTint="?android:attr/colorButtonNormal"
+                style="@android:style/Widget.Material.Button.Borderless.Small" />
+
+        <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:drawableLeft="@drawable/ic_delete_image"
+                android:drawableTint="?android:attr/colorControlNormal"
+                android:backgroundTint="?android:attr/colorButtonNormal"
+                android:text="@string/delete"
+                style="@android:style/Widget.Material.Button.Small"
+                tools:ignore="RelativeOverlap" />
+    </RelativeLayout>
+</LinearLayout>

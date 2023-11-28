@@ -5,35 +5,40 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
             android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-            tools:ignore="ScopedStorage" />
-    <!--    <uses-permission-->
-    <!--            android:name="android.permission.WRITE_MEDIA_STORAGE"-->
-    <!--            tools:ignore="ProtectedPermissions" />-->
+            tools:ignore="ScopedStorage" /> <!-- <uses-permission -->
+    <!-- android:name="android.permission.WRITE_MEDIA_STORAGE" -->
+    <!-- tools:ignore="ProtectedPermissions" /> -->
     <uses-permission
             android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
             tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
             android:name=".common.App"
             android:allowBackup="true"
+            android:dataExtractionRules="@xml/data_extraction_rules"
+            android:enableOnBackInvokedCallback="false"
             android:fullBackupContent="false"
             android:icon="@mipmap/ic_launcher"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:label="@string/app_name"
+            android:largeHeap="true"
             android:requestLegacyExternalStorage="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="false"
             android:theme="@style/AppTheme"
-            android:largeHeap="true"
-            android:enableOnBackInvokedCallback="false"
-            tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
-            android:dataExtractionRules="@xml/data_extraction_rules">
-
+            tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        <service
+                android:name=".service.ImageWidgetService"
+                android:enabled="true"
+                android:exported="true"
+                android:foregroundServiceType="shortService"
+                android:permission="android.permission.FOREGROUND_SERVICE" />
         <service
                 android:name=".service.QuickSettingOpenService"
+                android:exported="true"
                 android:icon="@drawable/ic_delete_image"
                 android:label="@string/app_name"
-                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-                android:exported="true">
+                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
@@ -41,24 +46,24 @@
 
         <activity
                 android:name=".activity.settings.SettingsActivity"
+                android:configChanges="orientation|screenSize"
                 android:excludeFromRecents="false"
-                android:screenOrientation="user"
-                android:theme="@style/SettingsActivityTheme"
                 android:resizeableActivity="true"
-                android:configChanges="orientation|screenSize" />
+                android:screenOrientation="user"
+                android:theme="@style/SettingsActivityTheme" />
         <activity
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="false"
-                android:screenOrientation="user"
                 android:resizeableActivity="true"
+                android:screenOrientation="user"
                 android:theme="@style/ImageActivityTheme" />
         <activity
                 android:name=".activity.main.MainActivity"
+                android:enableOnBackInvokedCallback="true"
                 android:excludeFromRecents="true"
                 android:exported="true"
-                android:screenOrientation="behind"
-                android:enableOnBackInvokedCallback="true"
                 android:resizeableActivity="true"
+                android:screenOrientation="behind"
                 android:theme="@style/DialogTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,6 +71,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        <receiver-->
+<!--                android:name=".widget.ImageWidget"-->
+<!--                android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--            </intent-filter>-->
+
+<!--            <meta-data-->
+<!--                    android:name="android.appwidget.provider"-->
+<!--                    android:resource="@xml/image_widget_info" />-->
+<!--        </receiver>-->
 
         <provider
                 android:name="androidx.core.content.FileProvider"

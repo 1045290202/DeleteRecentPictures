@@ -1,11 +1,11 @@
 <resources>
-    
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="iconTint">?android:attr/colorPrimary</item>
         <item name="snackbarStyle">@style/SnakebarTheme</item>
     </style>
-    
+
     <style name="DialogTheme" parent="Theme.Material3.DayNight.Dialog.MinWidth">
         <item name="snackbarStyle">@style/SnakebarTheme</item>
         <item name="android:windowBackground">@drawable/activity_main_background</item>
@@ -29,7 +29,7 @@
         <item name="android:windowIsTranslucent">true</item>
 
     </style>
-    
+
     <style name="ImageActivityTheme" parent="AppTheme">
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowFullscreen">true</item>
@@ -39,7 +39,7 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
-    
+
     <style name="SettingsActivityTheme" parent="AppTheme">
         <item name="windowNoTitle">true</item>
         <!--        <item name="android:statusBarColor">@color/colorPrimary</item>-->
@@ -51,36 +51,46 @@
         </item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
-    
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
-    
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
-    
+
     <style name="ImageBorder" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">8dp</item>
     </style>
-    
+
     <style name="AlertDialogTheme" parent="ThemeOverlay.Material3.Dialog">
         <item name="windowMinWidthMajor">@dimen/abc_dialog_min_width_major</item>
         <item name="windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog_background</item>
     </style>
-    
+
     <style name="SnakebarTheme" parent="Widget.Material3.Snackbar">
         <!--<item name="android:background">@drawable/dialog_background</item>-->
     </style>
-    
+
     <style name="SnakebarTheme.Button" parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="colorOnContainer">?attr/colorPrimaryInverse</item>
         <item name="android:textColor">?attr/colorPrimaryInverse</item>
         <item name="android:layout_marginLeft">0dp</item>
         <item name="android:layout_marginStart">0dp</item>
         <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="Widget.DeleteRecentPictures.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.DeleteRecentPictures.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
 </resources>

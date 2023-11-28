@@ -16,6 +16,7 @@ object ImageScannerUtil {
     private const val TAG = "ImageScannerUtil"
     
     private var cursor: Cursor? = null
+    private var realSelection: String? = null
     
     const val DATE_MODIFIED = MediaStore.Files.FileColumns.DATE_MODIFIED
     const val DATE_ADDED = MediaStore.Files.FileColumns.DATE_ADDED
@@ -33,33 +34,48 @@ object ImageScannerUtil {
     
     fun init(
         context: Context,
-        selection: MutableSet<String>,
+        selections: MutableSet<String>,
         escape: Boolean = true,
         sortOrder: String = this.DATE_MODIFIED,
     ) {
-        if (selection.size == 0) {
-            selection.add("")
-        }
-        val realSelection = StringBuilder()
-        for (i in selection.indices) {
-            val selectionItem = selection.elementAt(i)
-            if (selectionItem != "") {
-                realSelection.append(
-                    "${MediaStore.Files.FileColumns.DATA} like '$selectionItem%'${if (escape) " escape '\\'" else ""}"
-                )
-                if (i < selection.size - 1) {
-                    realSelection.append(" or ")
-                }
-            }
-        }
+        val realSelection = this.realSelectionBuilder(selections, escape)
         
         logD(TAG, "init: realSelection = $realSelection")
         try {
-            this.cursor = this.getQuery(context, realSelection.toString(), sortOrder)
+            this.cursor = this.getQuery(context, realSelection, sortOrder)
             this.cursor?.moveToFirst()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+    
+    /**
+     * 构建查询条件
+     */
+    private fun realSelectionBuilder(
+        selections: MutableSet<String>,
+        escape: Boolean,
+    ): String {
+        if (this.realSelection != null) {
+            return this.realSelection!!
+        }
+        
+        if (selections.size == 0) {
+            selections.add("")
+        }
+        val realSelection = StringBuilder()
+        for (i in selections.indices) {
+            val selectionItem = selections.elementAt(i)
+            if (selectionItem != "") {
+                realSelection.append(
+                    "${MediaStore.Files.FileColumns.DATA} like '$selectionItem%'${if (escape) " escape '\\'" else ""}"
+                )
+                if (i < selections.size - 1) {
+                    realSelection.append(" or ")
+                }
+            }
+        }
+        return realSelection.toString()
     }
     
     /**
@@ -105,7 +121,7 @@ object ImageScannerUtil {
         )
     }
     
-    fun getCurrent(): ImageInfoBean? {
+    fun getCurrent(cursor: Cursor? = this.cursor): ImageInfoBean? {
         var imageInfo: ImageInfoBean? = null
         cursor?.let {
             imageInfo = try {
@@ -140,7 +156,7 @@ object ImageScannerUtil {
     }
     
     fun getNext(): ImageInfoBean? {
-        cursor?.let {
+        this.cursor?.let {
             if (it.isLast) {
                 return null
             }
@@ -150,7 +166,7 @@ object ImageScannerUtil {
     }
     
     fun getPrevious(): ImageInfoBean? {
-        cursor?.let {
+        this.cursor?.let {
             if (it.isFirst) {
                 return null
             }
@@ -160,7 +176,7 @@ object ImageScannerUtil {
     }
     
     fun isEnd(): Boolean {
-        cursor?.let {
+        this.cursor?.let {
             return it.isLast
         }
         return true
@@ -244,6 +260,21 @@ object ImageScannerUtil {
             }
         }
         return null
+    }
+    
+    /**
+     * 获取最新的一张图片
+     */
+    fun getLatest(
+        context: Context,
+        selection: MutableSet<String>,
+        escape: Boolean = true,
+        sortOrder: String = this.DATE_MODIFIED,
+    ): ImageInfoBean? {
+        val realSelection = this.realSelectionBuilder(selection, escape)
+        val cursor = this.getQuery(context, realSelection, sortOrder)
+        cursor?.moveToFirst()
+        return this.getCurrent(cursor)
     }
     
 }

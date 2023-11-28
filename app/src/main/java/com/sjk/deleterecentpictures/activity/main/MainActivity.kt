@@ -499,16 +499,15 @@ class MainActivity : BaseActivity() {
             return
         }
         
-        val deleteButton: Button = findViewById(R.id.deleteButton)
+        val deleteButton: Button = this.findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
         
         Thread {
             val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
             // 删除图片并判断
-            val deleted: Boolean = deleteImage(undelete)
+            val deleted: Boolean = this.deleteImage(undelete)
             this.runOnUiThread {
                 if (!deleted) {
-                    App.output.showToast(this.getString(R.string.picture_cannot_be_deleted))
                     deleteButton.isEnabled = true
                     return@runOnUiThread
                 }
@@ -557,7 +556,7 @@ class MainActivity : BaseActivity() {
             App.imageScannerUtil.init(
                 this,
                 this.getDataSource().getSelection(),
-                sortOrder = App.dataSource.getSortOrder()
+                sortOrder = this.getDataSource().getSortOrder(),
             )
 //        App.recentImages.resetCurrentImagePathIndex()
             App.recentImages.clearImagePaths()

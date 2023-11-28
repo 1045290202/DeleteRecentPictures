@@ -1,5 +1,6 @@
 package com.sjk.deleterecentpictures.utils
 
+import android.content.Context
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
@@ -28,13 +29,34 @@ object FileUtil {
      * 删除图片
      */
     fun deleteImage(imageInfo: ImageInfoBean?): Boolean {
-        if (imageInfo?.id == null) {
+        return this.deleteImage(imageInfo?.id)
+    }
+    
+    /**
+     * 用id删除图片
+     */
+    fun deleteImage(imageId: Long?, context: Context = App.applicationContext): Boolean {
+        if (imageId == null) {
             return false
         }
-        return App.applicationContext.contentResolver.delete(
+        return context.contentResolver.delete(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             "${MediaStore.Images.Media._ID} = ?",
-            arrayOf(imageInfo.id.toString())
+            arrayOf(imageId.toString())
+        ) > 0
+    }
+    
+    /**
+     * 用路径删除图片
+     */
+    fun deleteImage(imagePath: String?, context: Context = App.applicationContext): Boolean {
+        if (imagePath == null) {
+            return false
+        }
+        return context.contentResolver.delete(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            "${MediaStore.Images.Media.DATA} = ?",
+            arrayOf(imagePath)
         ) > 0
     }
     
