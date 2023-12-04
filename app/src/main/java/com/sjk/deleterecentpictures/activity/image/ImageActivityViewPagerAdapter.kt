@@ -7,10 +7,14 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class ImageActivityViewPagerAdapter :
@@ -61,12 +65,17 @@ class ImageActivityViewPagerAdapter :
         return this.imageInfos.size
     }
     
+    @OptIn(DelicateCoroutinesApi::class)
     fun resetImageScaleWithAnimation() {
-        this.attachedViewHolders.forEach {
-            it.imageView.zoomable.scale(
-                1f, IntOffsetCompat.Zero, false,
-                // ZoomAnimationSpec(40)
-            )
+        GlobalScope.launch {
+            this@ImageActivityViewPagerAdapter.attachedViewHolders.forEach {
+                it.imageView.zoomable.scale(
+                    1f,
+                    IntOffsetCompat.Zero,
+                    false,
+                    // ZoomAnimationSpec(400),
+                )
+            }
         }
     }
     
