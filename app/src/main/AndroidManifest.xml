@@ -49,14 +49,16 @@
                 android:configChanges="orientation|screenSize"
                 android:excludeFromRecents="false"
                 android:resizeableActivity="true"
-                android:screenOrientation="user"
-                android:theme="@style/SettingsActivityTheme" />
+                android:screenOrientation="behind"
+                android:theme="@style/SettingsActivityTheme"
+                tools:ignore="DiscouragedApi" />
         <activity
                 android:name=".activity.image.ImageActivity"
                 android:excludeFromRecents="false"
                 android:resizeableActivity="true"
-                android:screenOrientation="user"
-                android:theme="@style/ImageActivityTheme" />
+                android:screenOrientation="behind"
+                android:theme="@style/ImageActivityTheme"
+                tools:ignore="DiscouragedApi" />
         <activity
                 android:name=".activity.main.MainActivity"
                 android:enableOnBackInvokedCallback="true"
@@ -64,7 +66,8 @@
                 android:exported="true"
                 android:resizeableActivity="true"
                 android:screenOrientation="behind"
-                android:theme="@style/DialogTheme">
+                android:theme="@style/DialogTheme"
+                tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
