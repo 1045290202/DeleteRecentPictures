@@ -28,8 +28,11 @@ class ImageActivity : BaseActivity() {
         
         this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (this@ImageActivity.viewPagerAdapter.isCurrentScaleOne()) {
+                    this@ImageActivity.supportFinishAfterTransition()
+                    return
+                }
                 this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation()
-                this@ImageActivity.supportFinishAfterTransition()
             }
         })
     }

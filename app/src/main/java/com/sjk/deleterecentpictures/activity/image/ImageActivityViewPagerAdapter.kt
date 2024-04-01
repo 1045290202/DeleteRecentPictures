@@ -3,12 +3,9 @@ package com.sjk.deleterecentpictures.activity.image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
@@ -65,6 +62,16 @@ class ImageActivityViewPagerAdapter :
         return this.imageInfos.size
     }
     
+    fun isCurrentScaleOne(): Boolean {
+        for (it in this@ImageActivityViewPagerAdapter.attachedViewHolders) {
+            // 判断x就行了，暂时没有xy缩放不一致的情况
+            if (it.imageView.zoomable.transformState.value.scaleX != 1f) {
+                return false
+            }
+        }
+        return true
+    }
+    
     @OptIn(DelicateCoroutinesApi::class)
     fun resetImageScaleWithAnimation() {
         GlobalScope.launch {
@@ -72,7 +79,7 @@ class ImageActivityViewPagerAdapter :
                 it.imageView.zoomable.scale(
                     1f,
                     IntOffsetCompat.Zero,
-                    false,
+                    true,
                     // ZoomAnimationSpec(400),
                 )
             }
