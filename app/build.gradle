@@ -8,8 +8,8 @@ android {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 48
-        versionName "3.2.3"
+        versionCode 49
+        versionName "3.2.4"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -59,11 +59,12 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.annotation:annotation-jvm:1.7.0"
+    //noinspection GradleDependency
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //    implementation "com.zxy.android:tiny:1.1.0"
 //    implementation "com.davemorrissey.labs:subsampling-scale-image-view:3.10.0"
 //    implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.22"
-    implementation "com.google.zxing:core:3.5.2"
+    implementation "com.google.zxing:core:3.5.3"
 //    implementation "com.github.piasy:BigImageViewer:1.8.1"
 //    implementation "com.github.piasy:GlideImageLoader:1.8.1"
 //    implementation "com.github.piasy:GlideImageViewFactory:1.8.1"
@@ -71,7 +72,7 @@ dependencies {
     implementation "dev.rikka.rikkax.appcompat:appcompat:1.6.1"
     implementation "dev.rikka.rikkax.material:material-preference:2.0.0"
 
-    implementation "io.github.panpf.zoomimage:zoomimage-view-glide:1.0.0-beta10"
+    implementation "io.github.panpf.zoomimage:zoomimage-view-glide:1.0.2"
 
-    implementation "commons-io:commons-io:2.15.0"
+    implementation "commons-io:commons-io:2.16.0"
 }
