@@ -7,13 +7,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.Html
 import android.text.InputType
-import android.text.method.LinkMovementMethod
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.text.HtmlCompat
+import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -194,39 +193,25 @@ class SettingsActivity : BaseActivity() {
                     if (App.activityManager.currentActivity == null) {
                         return super.onPreferenceTreeClick(preference)
                     }
-                    val alertDialog = MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
-                        .setTitle(resources.getString(R.string.customize_path_description_title))
-                        .create()
-
-                    alertDialog.window?.let {
-                        it.setBackgroundDrawableResource(R.drawable.dialog_background)
-                        val inflater = it.layoutInflater
-                        val view =
-                            inflater.inflate(R.layout.layout_customize_path_description, null)
-                        val textView = view.findViewById<TextView>(R.id.text)
-                        textView.movementMethod = LinkMovementMethod.getInstance()
-                        val text = this.getString(R.string.custom_path_explanation)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            textView.text = Html.fromHtml(
-                                text,
-                                Html.FROM_HTML_MODE_COMPACT
+                    MaterialAlertDialogBuilder(App.activityManager.currentActivity!!)
+                        .setTitle(getString(R.string.customize_path_description_title))
+                        .setMessage(
+                            HtmlCompat.fromHtml(
+                                getString(R.string.custom_path_explanation),
+                                HtmlCompat.FROM_HTML_MODE_COMPACT
                             )
-                        } else {
-                            textView.text = Html.fromHtml(
-                                text,
-                            )
+                        )
+                        .setPositiveButton(R.string.ok, null)
+                        .show()
+                        .apply {
+                            window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+                            findViewById<TextView>(android.R.id.message)!!.apply {
+                                setTextIsSelectable(true)
+                                movementMethod = LinkMovementMethodCompat.getInstance()
+                            }
                         }
-                        alertDialog.setView(view)
-
-                        val positiveButton = view.findViewById<Button>(R.id.positiveButton)
-                        positiveButton.setOnClickListener { alertDialog.dismiss() }
-                    }
-
-
-                    alertDialog.show()
-                    App.alertDialogUtil.enableMessageSelection(alertDialog, R.id.text)
                 }
-                
+
                 "privacyPolicy" -> {
                     App.output.showPrivacyPolicyDialog()
                 }
