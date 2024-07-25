@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.InputType
 import android.view.MenuItem
 import android.widget.TextView
@@ -22,6 +21,7 @@ import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.ApkUtil
+import com.sjk.deleterecentpictures.utils.PermissionUtil.requestPermissionV30
 
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,13 +131,10 @@ class SettingsActivity : BaseActivity() {
             val allFilesPermissionPreference = this.findPreference<Preference>("allFilesPermission")
             allFilesPermissionPreference?.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
             allFilesPermissionPreference?.onPreferenceClickListener =
-                Preference.OnPreferenceClickListener { preference: Preference ->
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                        return@OnPreferenceClickListener true
+                Preference.OnPreferenceClickListener { _ ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        requireActivity().requestPermissionV30()
                     }
-                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = Uri.parse("package:${App.applicationContext.packageName}")
-                    this.startActivity(intent)
                     true
                 }
             
