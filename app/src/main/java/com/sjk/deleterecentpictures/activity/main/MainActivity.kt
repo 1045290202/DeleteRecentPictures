@@ -1,16 +1,14 @@
 package com.sjk.deleterecentpictures.activity.main
 
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.*
-import android.provider.Settings
+import android.os.Build
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -19,14 +17,20 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.bean.ImageInfoBean
-import com.sjk.deleterecentpictures.common.*
+import com.sjk.deleterecentpictures.common.App
+import com.sjk.deleterecentpictures.common.BaseActivity
+import com.sjk.deleterecentpictures.common.Event
+import com.sjk.deleterecentpictures.common.logD
+import com.sjk.deleterecentpictures.common.logW
+import com.sjk.deleterecentpictures.utils.PermissionUtil.checkPermissionGranted
+import com.sjk.deleterecentpictures.utils.PermissionUtil.requestPermission
 import kotlin.math.max
 
 
@@ -35,34 +39,25 @@ class MainActivity : BaseActivity() {
     private var viewPager: ViewPager2? = null
     private val viewPagerAdapter = MainActivityViewPagerAdapter(this)
     private val event: Event = App.newEvent
-    
+
     //    private var viewPagerCurrentPosition = 0
-    private var hasAllFilesAccessPermission = true
-    
+    /**
+     * API 30+ 情况下，是否正跳转至所有文件授权
+     */
+    private var jumpedForAllFilesPermission = false
+
     // 菜单配置
     private val menuConfig = mapOf<Int, () -> Any>(
         R.id.action_refresh to { this.onMenuItemActionRefreshClick() },
         R.id.action_details to { this.getOutput().showImageDetailsDialog(this.getDataSource().getCurrentImageInfo()) },
     )
-    
+
     companion object {
         private const val TAG = "MainActivity"
-        
+
         //    public static Bitmap theLatestImage;
-        private val PERMISSIONS_STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            arrayOf(
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-            )
-        } else {
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            )
-        }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.getOutput().tryShowPrivacyPolicyDialog {
@@ -72,7 +67,7 @@ class MainActivity : BaseActivity() {
             this.requestWritePermission()
         }
     }
-    
+
     override fun onRestart() {
         super.onRestart()
         if (viewPager == null) {
@@ -81,9 +76,10 @@ class MainActivity : BaseActivity() {
         if (this.viewPager?.currentItem != App.dataSource.getCurrentImageInfoIndex()) {
             this.viewPager?.setCurrentItem(App.dataSource.getCurrentImageInfoIndex(), false)
         }
-        if (!this.hasAllFilesAccessPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                this.hasAllFilesAccessPermission = true
+        // API 30+ 授权后检查
+        if (jumpedForAllFilesPermission) {
+            if (checkPermissionGranted()) {
+                this.jumpedForAllFilesPermission = false
                 this.refreshAll()
             } else {
                 this.getOutput()
@@ -92,19 +88,19 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         App.recycleBinManager.deleteOldImageInRecycleBin()
     }
-    
+
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         }
         this.recreate()
     }
-    
+
     override fun finish() {
         super.finish()
         App.recentImages.clearImagePaths()
@@ -114,19 +110,19 @@ class MainActivity : BaseActivity() {
         //     App.fileUtil.clearCacheFolder()
         // }.start()
     }
-    
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         this.menuInflater.inflate(R.menu.menu_main_activity, menu)
         return true
     }
-    
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (!this.menuConfig.containsKey(item.itemId)) {
             return super.onOptionsItemSelected(item)
         }
         return this.menuConfig[item.itemId]?.invoke() != false
     }
-    
+
     private fun onMenuItemActionRefreshClick() {
         this.refreshAll {
             App.input.setAllImageChecksFalse()
@@ -134,7 +130,7 @@ class MainActivity : BaseActivity() {
             App.output.showToast(this.getString(R.string.refresh_successful))
         }
     }
-    
+
     private fun onMenuItemActionRefreshLongClick() {
         this.refreshAll {
             App.input.setAllImageChecksFalse()
@@ -143,13 +139,13 @@ class MainActivity : BaseActivity() {
             App.output.showToast(this.getString(R.string.refresh_successful_and_go_back))
         }
     }
-    
+
     /**
      * 初始化视图
      */
     private fun initView() {
         val enableMultiWindowLayout = this.getDataSource().getSP().getBoolean("enableMultiWindowLayout", false)
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && enableMultiWindowLayout && this.isInMultiWindowMode) {
             this.setTheme(R.style.MultiWindowTheme)
             this.setContentView(R.layout.activity_main_multi_window)
@@ -157,18 +153,18 @@ class MainActivity : BaseActivity() {
             this.setTheme(R.style.DialogTheme)
             this.setContentView(R.layout.activity_main)
         }
-        
+
         // 聚焦当前活动
         this.window.clearFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
         )
-        
+
         // this.setContentView(R.layout.activity_main)
         this.setTitle(R.string.app_name)
         this.setSupportActionBar(this.findViewById(R.id.toolbar))
         this.buttonClickEventBind()
         ScrollButtonManager.init(this)
-        
+
         this.viewPager = this.findViewById(R.id.viewPager)
         this.viewPager!!.adapter = this.viewPagerAdapter
         this.viewPagerAdapter.imageInfos = App.dataSource.getRecentImageInfos()
@@ -176,34 +172,34 @@ class MainActivity : BaseActivity() {
         this.viewPager!!.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                
+
                 App.input.setCurrentImagePathIndex(position)
-                
+
                 if (App.dataSource.getRecentImageInfos().size == 0) {
                     App.input.setCurrentImagePathIndex(0)
                     return
                 }
-                
+
                 this@MainActivity.refreshCurrentImagePath()
             }
         })
     }
-    
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (this.isLoaded) {
             return
         }
-        
+
         isLoaded = true
     }
-    
+
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         this.finish()
     }
-    
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         logD(TAG, "onActivityResult: $requestCode $requestCode $data")
@@ -219,13 +215,14 @@ class MainActivity : BaseActivity() {
         }*/
         super.onActivityResult(requestCode, resultCode, data)
     }
-    
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // API 29- 授权后检查
         if (requestCode == 0) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 this.getOutput().showToast(this.getString(R.string.storage_permission_missing))
@@ -234,35 +231,29 @@ class MainActivity : BaseActivity() {
                 return
             }
         }
-        
-        this.refreshAll()
-    }
-    
-    private fun requestWritePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                this.hasAllFilesAccessPermission = false
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.parse("package:$packageName")
-                // startActivityForResult(intent, 2)
-                startActivity(intent)
-            }
-        }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        PERMISSIONS_STORAGE.iterator().forEach {
-            if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 0)
-                return
-            }
-        }
-//            this.refreshAll()
-//            return
-//        }
-        
         this.refreshAll()
     }
-    
+
+    private fun requestWritePermission() {
+        if (!checkPermissionGranted()) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.permission_request_title))
+                .setMessage(getString(R.string.permission_request_hint))
+                .setPositiveButton(R.string.ok) {_,_->
+                    // API 30+ 的授权流程需要此flag
+                    jumpedForAllFilesPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                    requestPermission()
+                }
+                .setNegativeButton(R.string.cancel) {_,_->
+                    App.activityManager.finishAll()
+                }
+                .show()
+        } else {
+            this.refreshAll()
+        }
+    }
+
     private fun buttonClickEventBind() {
         val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
         currentPicturePathButton.setOnClickListener {
@@ -272,7 +263,7 @@ class MainActivity : BaseActivity() {
             App.input.copyCurrentImageName()
             true
         }
-        
+
         val refreshButton = this.findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener {
             this.refreshAll {
@@ -290,10 +281,10 @@ class MainActivity : BaseActivity() {
             }
             true
         }
-        
+
         val cancelButton = this.findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { this.finish() }
-        
+
         // 删除按钮
         val deleteButton = this.findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
@@ -306,7 +297,7 @@ class MainActivity : BaseActivity() {
                 })
                 return@setOnClickListener
             }
-            
+
             val deleteDirectly = this.getDataSource().getSP().getBoolean("deleteDirectly", false)
             if (deleteDirectly) {
                 this.deleteCurrentImage {
@@ -334,7 +325,7 @@ class MainActivity : BaseActivity() {
             }
             true
         }
-        
+
         val settingsButton = this.findViewById<Button>(R.id.settingsButton)
         settingsButton.setOnClickListener {
             // val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, settingsButton, "settings")
@@ -342,18 +333,18 @@ class MainActivity : BaseActivity() {
             this.startActivityForResult(intent, 1/*, options.toBundle()*/)
         }
     }
-    
+
     private fun hasPicturesChecked(): Boolean {
         return App.dataSource.getAllCheckedImageInfos().size != 0
     }
-    
+
     private fun deleteCheckedImages(
         needToRefresh: Boolean = true,
         callback: () -> Unit = fun() {},
     ) {
         val deleteButton: Button = findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
-        
+
         Thread {
             var allDeleted = true
             var someDeleted = false
@@ -371,35 +362,35 @@ class MainActivity : BaseActivity() {
                     allDeleted -> {
                         App.output.showToast(this.getString(R.string.all_deleted))
                     }
-                    
+
                     someDeleted -> {
                         App.output.showToast(this.getString(R.string.partial_deletion_failed))
                     }
-                    
+
                     else -> {
                         App.output.showToast(this.getString(R.string.failed_to_delete_all))
                     }
                 }
-                
+
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
                     deleteButton.isEnabled = true
                     callback()
                     this.finish()
                     return@runOnUiThread
                 }
-                
+
                 if (needToRefresh) {
                     this.refreshAll {
                         this.refreshCurrentImagePath()
                     }
                 }
-                
+
                 deleteButton.isEnabled = true
                 callback()
             }
         }.start()
     }
-    
+
     /**
      * 显示已删除的Toast
      */
@@ -411,7 +402,7 @@ class MainActivity : BaseActivity() {
             )
         )
     }
-    
+
     /**
      * 显示已删除的SnackBar
      */
@@ -428,7 +419,7 @@ class MainActivity : BaseActivity() {
         ) {
             val sb = it
             it.setAnchorView(this.findViewById(R.id.viewPagerOverlay))
-            
+
             val snackbarTextView =
                 it.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
             snackbarTextView.isSingleLine = true
@@ -441,7 +432,7 @@ class MainActivity : BaseActivity() {
             snackbarTextView.setOnClickListener {
                 this@MainActivity.getOutput().showToast("${App.recycleBinManager.deletedImageInfo?.info?.path}")
             }
-            
+
             val snackbarContentLayout = it.view as Snackbar.SnackbarLayout
             val viewGroup = snackbarContentLayout.getChildAt(0) as ViewGroup
             val customView = this@MainActivity.layoutInflater.inflate(
@@ -449,7 +440,7 @@ class MainActivity : BaseActivity() {
                 null
             )
             viewGroup.addView(customView)
-            
+
             val closeButton = customView.findViewById<Button>(R.id.closeButton)
             closeButton.setOnClickListener {
                 Thread {
@@ -459,7 +450,7 @@ class MainActivity : BaseActivity() {
                     }
                 }.start()
             }
-            
+
             val revokeButton = customView.findViewById<Button>(R.id.revokeButton)
             revokeButton.setOnClickListener {
                 // 撤回操作
@@ -474,7 +465,7 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-    
+
     /**
      * 删除图片，返回成功或者失败
      */
@@ -491,17 +482,17 @@ class MainActivity : BaseActivity() {
         }
         return deleted
     }
-    
+
     private fun deleteCurrentImage(needToRefresh: Boolean = true, callback: (() -> Unit)?) {
         if (this.getDataSource().getCurrentImageInfo()?.uri == null) {
             this.getOutput()
                 .showToast(this.getString(R.string.delete_failed_because_no_information))
             return
         }
-        
+
         val deleteButton: Button = this.findViewById(R.id.deleteButton)
         deleteButton.isEnabled = false
-        
+
         Thread {
             val undelete = this.getDataSource().getSP().getBoolean("undelete", false)
             // 删除图片并判断
@@ -511,11 +502,11 @@ class MainActivity : BaseActivity() {
                     deleteButton.isEnabled = true
                     return@runOnUiThread
                 }
-                
+
                 if (!undelete) {
                     showDeletedToast()
                 }
-                
+
                 if (App.dataSource.getSP().getBoolean("closeApp", true)) {
                     deleteButton.isEnabled = true
                     callback?.invoke()
@@ -526,7 +517,7 @@ class MainActivity : BaseActivity() {
                     this.refreshAll {
                         this.refreshCurrentImagePath()
                     }
-                    
+
                     if (undelete) {
                         showDeletedSnackBar()
                     }
@@ -536,18 +527,18 @@ class MainActivity : BaseActivity() {
             }
         }.start()
     }
-    
+
     private fun refreshAll(callback: () -> Unit = fun() {}) {
         this.refreshImages(callback)
     }
-    
+
     private fun refreshCurrentImagePath() {
         val currentPicturePathButton = findViewById<Button>(R.id.currentPicturePathButton)
         currentPicturePathButton.text =
             this.getDataSource().getFileNameByPath(this.getDataSource().getCurrentImageInfo())
                 ?: this.getText(R.string.no_path)
     }
-    
+
     /**
      * 刷新图片
      */
@@ -560,7 +551,7 @@ class MainActivity : BaseActivity() {
             )
 //        App.recentImages.resetCurrentImagePathIndex()
             App.recentImages.clearImagePaths()
-            
+
             var i = this.getDataSource().getNumberOfPictures()
             val maxI = i
             while (i > 0) {
@@ -572,7 +563,7 @@ class MainActivity : BaseActivity() {
             for (index in this.viewPagerAdapter.imageInfos.indices) {
                 this.viewPagerAdapter.imageChecks.add(false)
             }
-            
+
             this.runOnUiThread {
                 this.viewPagerAdapter.notifyDataSetChanged()
                 val currentIndex = this.getDataSource().getCurrentImageInfoIndex()
@@ -584,13 +575,13 @@ class MainActivity : BaseActivity() {
             }
         }.start()
     }
-    
+
     fun jumpToNextImage() {
         this.viewPager?.setCurrentItem(this.viewPager?.currentItem?.plus(1) ?: 0, true)
     }
-    
+
     fun jumpToPreviousImage() {
         this.viewPager?.setCurrentItem(this.viewPager?.currentItem?.minus(1) ?: 0, true)
     }
-    
+
 }
