@@ -19,7 +19,7 @@ class ImageActivityViewPagerAdapter :
     private val viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
     private val attachedViewHolders: MutableSet<ViewPagerViewHolder> = mutableSetOf()
     var imageInfos: List<ImageInfoBean?> = ArrayList()
-    
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         val viewPagerViewHolder = ViewPagerViewHolder(
             LayoutInflater.from(parent.context)
@@ -28,24 +28,24 @@ class ImageActivityViewPagerAdapter :
         viewPagerViewHolders.add(viewPagerViewHolder)
         return viewPagerViewHolder
     }
-    
+
     override fun onBindViewHolder(
         holder: ViewPagerViewHolder,
         position: Int,
     ) {
         holder.imageInfo = imageInfos[position]
     }
-    
+
     override fun onViewDetachedFromWindow(holder: ViewPagerViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        
+
         this.attachedViewHolders.remove(holder)
         App.imageLoadManger.clearImageView(App.applicationContext, holder.imageView)
     }
-    
+
     override fun onViewAttachedToWindow(holder: ViewPagerViewHolder) {
         super.onViewAttachedToWindow(holder)
-        
+
         this.attachedViewHolders.add(holder)
         if (holder.imageInfo?.uri == null) {
             return
@@ -57,11 +57,11 @@ class ImageActivityViewPagerAdapter :
         )
         // holder.imageView.setImageURI(holder.imageInfo?.uri)
     }
-    
+
     override fun getItemCount(): Int {
         return this.imageInfos.size
     }
-    
+
     fun isCurrentScaleOne(): Boolean {
         for (it in this@ImageActivityViewPagerAdapter.attachedViewHolders) {
             // 判断x就行了，暂时没有xy缩放不一致的情况
@@ -71,7 +71,7 @@ class ImageActivityViewPagerAdapter :
         }
         return true
     }
-    
+
     @OptIn(DelicateCoroutinesApi::class)
     fun resetImageScaleWithAnimation() {
         GlobalScope.launch {
@@ -85,7 +85,7 @@ class ImageActivityViewPagerAdapter :
             }
         }
     }
-    
+
 }
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -93,7 +93,7 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
     val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
     var imageInfo: ImageInfoBean? = null
-    
+
     init {
         this.imageView.scrollBar = null
         this.imageView.setOnLongClickListener {
@@ -116,6 +116,50 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         this.preventClickRightView.setOnLongClickListener {
             return@setOnLongClickListener true
         }
+//
+//        val gestureDetector =
+//            GestureDetector(itemView.context, object : GestureDetector.SimpleOnGestureListener() {
+////                override fun onFling(
+////                    e1: MotionEvent?,
+////                    e2: MotionEvent,
+////                    velocityX: Float,
+////                    velocityY: Float
+////                ): Boolean {
+////                    App.output.showToast("onFling$velocityY")
+////                    imageView.post {
+////                        if (velocityX > 0) {
+////                            (itemView.context as ImageActivity).onBackPressedDispatcher.onBackPressed()
+////                        }
+////                    }
+////                    return super.onFling(e1, e2, velocityX, velocityY)
+////                }
+//
+//                override fun onScroll(
+//                    e1: MotionEvent?,
+//                    e2: MotionEvent,
+//                    distanceX: Float,
+//                    distanceY: Float
+//                ): Boolean {
+//                    if (imageView.zoomable.transformState.value.scaleX != 1f) {
+//                        return super.onScroll(e1, e2, distanceX, distanceY)
+//                    }
+//                    // 判断是不是双指
+//                    if (e1!!.pointerCount >= 2) {
+//                        return super.onScroll(e1, e2, distanceX, distanceY)
+//                    }
+//                    App.output.showToast("滑动$distanceY")
+//                    imageView.post {
+//                        if (distanceY > 0) {
+//                            (itemView.context as ImageActivity).onBackPressedDispatcher.onBackPressed()
+//                        }
+//                    }
+//                    return true
+//                }
+//            })
+//
+//        this.imageView.setOnTouchListener { _, event ->
+//            gestureDetector.onTouchEvent(event)
+//            false
+//        }
     }
-    
 }

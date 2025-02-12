@@ -8,7 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.viewpager2.widget.ViewPager2
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.BaseActivity
-import com.sjk.deleterecentpictures.common.logD
 
 class ImageActivity : BaseActivity() {
     private val viewPagerAdapter = ImageActivityViewPagerAdapter()
@@ -17,15 +16,15 @@ class ImageActivity : BaseActivity() {
     companion object {
         private const val TAG = "ImageActivity"
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         this.setFullScreen()
         this.setContentView(R.layout.activity_image)
-        
+
         this.init()
-        
+
         this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (this@ImageActivity.viewPagerAdapter.isCurrentScaleOne()) {
