@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
@@ -418,7 +419,7 @@ class MainActivity : BaseActivity() {
             ) + "  ",
         ) {
             val sb = it
-            it.setAnchorView(this.findViewById(R.id.viewPagerOverlay))
+            it.setAnchorView(this.findViewById<View>(R.id.viewPagerOverlay))
 
             val snackbarTextView =
                 it.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
@@ -542,6 +543,7 @@ class MainActivity : BaseActivity() {
     /**
      * 刷新图片
      */
+    @SuppressLint("NotifyDataSetChanged")
     private fun refreshImages(callback: () -> Unit = fun() {}) {
         Thread {
             App.imageScannerUtil.init(
