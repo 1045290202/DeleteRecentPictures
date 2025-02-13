@@ -1,4 +1,11 @@
 # 删除最近图片
+
+![GitHub](https://img.shields.io/github/license/1045290202/DeleteRecentPictures)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/1045290202/DeleteRecentPictures)
+![GitHub latest downloads](https://img.shields.io/github/downloads/1045290202/DeleteRecentPictures/latest/total)
+![GitHub all downloads](https://img.shields.io/github/downloads/1045290202/DeleteRecentPictures/total)
+![GitHub stars](https://img.shields.io/github/stars/1045290202/DeleteRecentPictures?style=social)
+
 删除手机里最近的图片，包括但不限于截图、照片等，只要图片被系统媒体扫描后就能显示。解决不小心保存图片、截屏、拍照等问题。建议配合悬浮球、侧边栏等类型的APP使用，或者利用状态栏中的快速磁贴打开。
 
 ### 支持系统
