@@ -30,14 +30,14 @@ android {
     buildscript {
 
     }
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
     namespace "com.sjk.deleterecentpictures"
     buildFeatures {
         viewBinding true
         buildConfig true
+    }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 
