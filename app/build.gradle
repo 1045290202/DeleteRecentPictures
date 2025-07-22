@@ -2,11 +2,11 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdk 35
+    compileSdk 36
     defaultConfig {
         applicationId "com.sjk.deleterecentpictures"
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdk 36
         versionCode 51
         versionName "3.2.6"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -33,7 +33,7 @@ android {
     namespace "com.sjk.deleterecentpictures"
     buildFeatures {
         viewBinding true
-        buildConfig true
+        buildConfig false
     }
     lint {
         abortOnError false

@@ -14,7 +14,6 @@ import android.text.TextUtils
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.sjk.deleterecentpictures.R
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.logD
 
@@ -22,16 +21,16 @@ class ImageWidgetService : Service() {
     companion object {
         private const val TAG = "ImageWidgetService"
     }
-    
+
     private var receiver: BroadcastReceiver? = null
-    
+
     override fun onCreate() {
         super.onCreate()
-        
+
         logD(TAG, "onCreate")
-        
+
         this.startForeground(1, this.createNotification())
-        
+
         // this.receiver = object : BroadcastReceiver() {
         //     override fun onReceive(context: Context?, intent: Intent?) {
         //         if (context == null || intent == null) {
@@ -49,22 +48,22 @@ class ImageWidgetService : Service() {
         // intentFilter.addAction("${this.applicationContext.packageName}.deleteImage")
         // this.registerReceiver(this.receiver, intentFilter)
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         // this.unregisterReceiver(this.receiver)
     }
-    
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
-    
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         logD(TAG, "onStartCommand: $intent")
         if (intent == null) {
             return START_STICKY
         }
-        
+
         val imageId = intent.getStringExtra("imageId")
         logD(TAG, "imageId: $imageId")
         // val imagePath = intent.getStringExtra("imagePath")
@@ -84,13 +83,13 @@ class ImageWidgetService : Service() {
         val views = RemoteViews(this.packageName, R.layout.image_widget)
         val appWidgetManager = AppWidgetManager.getInstance(this)
         appWidgetManager.updateAppWidget(appWidgetIds, views)
-        
+
         // 结束自己
         this.stopSelf()
-        
+
         return START_STICKY
     }
-    
+
     /**
      * 删除图片，返回成功或者失败
      */
@@ -100,7 +99,7 @@ class ImageWidgetService : Service() {
         }
         return App.fileUtil.deleteImage(imageId, context)
     }
-    
+
     /**
      * 删除图片，返回成功或者失败
      */
@@ -110,7 +109,7 @@ class ImageWidgetService : Service() {
         }
         return App.fileUtil.deleteImage(imagePath, context)
     }
-    
+
     private fun deleteImages(context: Context, imageIds: LongArray?) {
         if (imageIds == null) {
             return
@@ -119,11 +118,11 @@ class ImageWidgetService : Service() {
             this.deleteImage(context, imageId)
         }
     }
-    
+
     private fun createNotification(): Notification {
         val channelId = "ForegroundServiceChannel"
         val channelName = "Foreground Service Channel"
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -134,7 +133,7 @@ class ImageWidgetService : Service() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-        
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Foreground Service")
             .setContentText("Service is running in the foreground")
@@ -142,8 +141,8 @@ class ImageWidgetService : Service() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setOngoing(true)
-        
+
         return notificationBuilder.build()
     }
-    
+
 }

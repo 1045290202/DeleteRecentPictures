@@ -4,7 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager.LayoutParams
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.viewpager2.widget.ViewPager2
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.BaseActivity
@@ -25,22 +25,20 @@ class ImageActivity : BaseActivity() {
 
         this.init()
 
-        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (this@ImageActivity.viewPagerAdapter.isCurrentScaleOne()) {
-                    this@ImageActivity.supportFinishAfterTransition()
-                    return
-                }
-                this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation()
+        this.onBackPressedDispatcher.addCallback {
+            if (this@ImageActivity.viewPagerAdapter.isCurrentScaleOne()) {
+                this@ImageActivity.supportFinishAfterTransition()
+                return@addCallback
             }
-        })
+            this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation()
+        }
     }
 
     private fun init() {
 //        val imagePath: String? = this.getGlobalData("currentImagePath", null) as String?
         this.viewPagerAdapter.imageInfos = this.getDataSource().getRecentImageInfos()
         this.viewPager = this.findViewById(R.id.viewPager)
-        this.viewPager.adapter = viewPagerAdapter
+        this.viewPager.adapter = this.viewPagerAdapter
         this.viewPager.setCurrentItem(this.getDataSource().getCurrentImageInfoIndex(), false)
         this.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

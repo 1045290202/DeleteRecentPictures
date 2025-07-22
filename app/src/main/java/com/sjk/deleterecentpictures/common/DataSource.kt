@@ -20,7 +20,8 @@ object DataSource {
     }
 
     fun getNumberOfPictures(): Int {
-        val str = this.getSP().getString("numberOfPictures", App.const.DEFAULT_NUMBER_OF_PICTURES.toString())
+        val str = this.getSP()
+            .getString("numberOfPictures", App.const.DEFAULT_NUMBER_OF_PICTURES.toString())
         var numberOfPictures: Int = try {
             if (str == null || str == "") App.const.DEFAULT_NUMBER_OF_PICTURES else str.toInt()
         } catch (e: NumberFormatException) {
@@ -40,9 +41,11 @@ object DataSource {
             when (this.getSP().getString("path", strings[0])) {
                 strings[0] -> {
                 }
+
                 strings[1] -> {
                     selectionList.add(App.imageScannerUtil.screenshotsPath)
                 }
+
                 strings[2] -> {
                     val externalFilesDir = Environment.getExternalStorageDirectory()
                     if (externalFilesDir == null) {
@@ -57,7 +60,7 @@ object DataSource {
                         }
                     }
                 }
-                
+
                 else -> {}
             }
         }
@@ -67,11 +70,11 @@ object DataSource {
     fun getSimplifiedPathInExternalStorage(imageInfo: ImageInfoBean?): String? {
         return App.fileUtil.getSimplifiedPathInExternalStorage(imageInfo?.path)
     }
-    
+
     fun getFileNameByPath(imageInfo: ImageInfoBean?): String? {
         return App.fileUtil.getFileNameByPath(imageInfo?.path)
     }
-    
+
     fun getFileNameByPath(path: String?): String? {
         return App.fileUtil.getFileNameByPath(path)
     }
@@ -106,11 +109,6 @@ object DataSource {
         return checkedImagePaths
     }
 
-    fun getNavigationBarHeight(): Int {
-        val resourceId: Int = this.context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        return this.context.resources.getDimensionPixelSize(resourceId)
-    }
-
     fun getSortOrder(): String {
         var sorterOrderType: String = App.imageScannerUtil.DATE_MODIFIED
 
@@ -120,6 +118,7 @@ object DataSource {
                 strings[0] -> {
                     sorterOrderType = App.imageScannerUtil.DATE_MODIFIED
                 }
+
                 strings[1] -> {
                     sorterOrderType = App.imageScannerUtil.DATE_ADDED
                 }
@@ -135,7 +134,7 @@ object DataSource {
     fun getCurrentScreenOrientation(): Int {
         return App.resources.configuration.orientation
     }
-    
+
     /**
      * 获取图片的详细信息
      */

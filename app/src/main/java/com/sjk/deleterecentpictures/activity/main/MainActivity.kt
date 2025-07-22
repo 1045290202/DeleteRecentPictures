@@ -50,7 +50,9 @@ class MainActivity : BaseActivity() {
     // 菜单配置
     private val menuConfig = mapOf<Int, () -> Any>(
         R.id.action_refresh to { this.onMenuItemActionRefreshClick() },
-        R.id.action_details to { this.getOutput().showImageDetailsDialog(this.getDataSource().getCurrentImageInfo()) },
+        R.id.action_details to {
+            this.getOutput().showImageDetailsDialog(this.getDataSource().getCurrentImageInfo())
+        },
     )
 
     companion object {
@@ -145,7 +147,8 @@ class MainActivity : BaseActivity() {
      * 初始化视图
      */
     private fun initView() {
-        val enableMultiWindowLayout = this.getDataSource().getSP().getBoolean("enableMultiWindowLayout", false)
+        val enableMultiWindowLayout =
+            this.getDataSource().getSP().getBoolean("enableMultiWindowLayout", false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && enableMultiWindowLayout && this.isInMultiWindowMode) {
             this.setTheme(R.style.MultiWindowTheme)
@@ -241,12 +244,12 @@ class MainActivity : BaseActivity() {
             MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.permission_request_title))
                 .setMessage(getString(R.string.permission_request_hint))
-                .setPositiveButton(R.string.ok) {_,_->
+                .setPositiveButton(R.string.ok) { _, _ ->
                     // API 30+ 的授权流程需要此flag
                     jumpedForAllFilesPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
                     requestPermission()
                 }
-                .setNegativeButton(R.string.cancel) {_,_->
+                .setNegativeButton(R.string.cancel) { _, _ ->
                     App.activityManager.finishAll()
                 }
                 .show()
@@ -290,7 +293,7 @@ class MainActivity : BaseActivity() {
         val deleteButton = this.findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
             if (this.hasPicturesChecked()) {
-                App.output.showDeleteCheckedImagesDialog(positiveCallback = { dialogInterface: DialogInterface?, witch: Int ->
+                App.output.showDeleteCheckedImagesDialog(positiveCallback = { _: DialogInterface?, _: Int ->
                     this.deleteCheckedImages {
                         App.input.setAllImageChecksFalse()
                         this.viewPagerAdapter.setAllHolderChecked(false)
@@ -306,7 +309,7 @@ class MainActivity : BaseActivity() {
                     this.viewPagerAdapter.setAllHolderChecked(false)
                 }
             } else {
-                App.output.showDeleteCurrentImageDialog(positiveCallback = { dialogInterface: DialogInterface?, witch: Int ->
+                App.output.showDeleteCurrentImageDialog(positiveCallback = { _: DialogInterface?, _: Int ->
                     this.deleteCurrentImage {
                         App.input.setAllImageChecksFalse()
                         this.viewPagerAdapter.setAllHolderChecked(false)
@@ -431,7 +434,8 @@ class MainActivity : BaseActivity() {
                 (this as LinearLayout.LayoutParams).weight = 1f
             }
             snackbarTextView.setOnClickListener {
-                this@MainActivity.getOutput().showToast("${App.recycleBinManager.deletedImageInfo?.info?.path}")
+                this@MainActivity.getOutput()
+                    .showToast("${App.recycleBinManager.deletedImageInfo?.info?.path}")
             }
 
             val snackbarContentLayout = it.view as Snackbar.SnackbarLayout
@@ -558,7 +562,8 @@ class MainActivity : BaseActivity() {
             val maxI = i
             while (i > 0) {
                 val imageInfo: ImageInfoBean =
-                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext()) ?: break
+                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
+                        ?: break
                 this.getDataSource().getRecentImageInfos().add(imageInfo)
                 i--
             }

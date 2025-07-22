@@ -4,13 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import com.sjk.deleterecentpictures.BuildConfig
+import androidx.core.net.toUri
+import com.sjk.deleterecentpictures.common.App
 
 object PermissionUtil {
     private val PERMISSIONS_STORAGE_V29 = arrayOf(
@@ -51,7 +51,7 @@ object PermissionUtil {
     @RequiresApi(Build.VERSION_CODES.R)
     fun Activity.requestPermissionV30() {
         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-        intent.data = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+        intent.data = "package:${App.applicationContext.packageName}".toUri()
         startActivity(intent)
     }
 

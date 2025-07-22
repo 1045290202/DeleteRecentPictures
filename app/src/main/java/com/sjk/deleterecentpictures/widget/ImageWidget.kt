@@ -18,47 +18,50 @@ import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.logD
 import com.sjk.deleterecentpictures.service.ImageWidgetService
-import java.io.File
 
 class ImageWidget : AppWidgetProvider() {
-    
+
     companion object {
         private const val TAG = "ImageWidget"
     }
-    
+
     private val appWidgetSet: MutableSet<Int> = mutableSetOf()
-    
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         appWidgetIds.forEach {
             this.appWidgetSet.add(it)
             updateAppWidget(context, appWidgetManager, it)
         }
     }
-    
+
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         logD(TAG, "onEnabled")
     }
-    
+
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         context.stopService(Intent(context, ImageWidgetService::class.java))
     }
-    
+
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
         super.onDeleted(context, appWidgetIds)
         appWidgetIds?.forEach {
             this.appWidgetSet.remove(it)
         }
     }
-    
+
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
-        
+
         if (context == null || intent == null) {
             return
         }
-        
+
         when (intent.action) {
             AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                 val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -67,13 +70,13 @@ class ImageWidget : AppWidgetProvider() {
                     updateAppWidget(context, appWidgetManager, it)
                 }
             }
-            
+
             "OPEN" -> {
                 val mainActivityIntent = Intent(context, MainActivity::class.java)
                 mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(mainActivityIntent)
             }
-            
+
             "DELETE" -> {
                 val appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
                 val imageId = intent.getStringExtra("imageId")
@@ -93,7 +96,7 @@ class ImageWidget : AppWidgetProvider() {
                 // deleteIntent.putExtra("imageId", imageId)
                 // deleteIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
                 // context.sendBroadcast(deleteIntent)
-                
+
                 // val imagePath = intent.getStringExtra("imagePath")
                 // Thread {
                 //     val deleted = this.deleteImage(context, imageId)
@@ -114,16 +117,16 @@ class ImageWidget : AppWidgetProvider() {
                 //     }
                 // }.start()
             }
-            
+
             else -> {
             }
         }
     }
-    
+
     override fun onRestored(context: Context?, oldWidgetIds: IntArray?, newWidgetIds: IntArray?) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
     }
-    
+
     override fun onAppWidgetOptionsChanged(
         context: Context?,
         appWidgetManager: AppWidgetManager?,
@@ -131,13 +134,16 @@ class ImageWidget : AppWidgetProvider() {
         newOptions: Bundle?,
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        logD(TAG, "onAppWidgetOptionsChanged: $context, $appWidgetManager, $appWidgetId, $newOptions")
+        logD(
+            TAG,
+            "onAppWidgetOptionsChanged: $context, $appWidgetManager, $appWidgetId, $newOptions"
+        )
         if (context == null || appWidgetManager == null) {
             return
         }
         updateAppWidget(context, appWidgetManager, appWidgetId)
     }
-    
+
     fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         logD(TAG, "updateAppWidget appWidgetId: $appWidgetId")
         val imageInfoBean: ImageInfoBean? = App.imageScannerUtil.getLatest(
@@ -145,9 +151,9 @@ class ImageWidget : AppWidgetProvider() {
             App.dataSource.getSelection(),
             sortOrder = App.dataSource.getSortOrder(),
         )
-        
+
         val views = RemoteViews(context.packageName, R.layout.image_widget)
-        
+
         val refreshIntent = Intent(context, ImageWidget::class.java)
         refreshIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
@@ -160,7 +166,7 @@ class ImageWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_MUTABLE,
             )
         )
-        
+
         val openIntent = Intent(context, ImageWidget::class.java)
         openIntent.action = "OPEN"
         openIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
@@ -173,7 +179,7 @@ class ImageWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_MUTABLE,
             )
         )
-        
+
         val deleteIntent = Intent(context, ImageWidget::class.java)
         deleteIntent.action = "DELETE"
         deleteIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
@@ -188,15 +194,15 @@ class ImageWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_MUTABLE,
             )
         )
-        
+
         if (imageInfoBean == null) {
             appWidgetManager.updateAppWidget(appWidgetId, views)
             return
         }
-        
+
         views.setImageViewUri(R.id.imageView, null)
         appWidgetManager.updateAppWidget(appWidgetId, views)
-        
+
         Thread {
             // val appWidgetImageViewTarget = AppWidgetTarget(context, R.id.imageView, views, appWidgetId)
             Glide.with(context)
@@ -211,7 +217,7 @@ class ImageWidget : AppWidgetProvider() {
                         views.setImageViewBitmap(R.id.imageView, resource)
                         appWidgetManager.updateAppWidget(appWidgetId, views)
                     }
-                    
+
                     override fun onLoadCleared(placeholder: Drawable?) {
                     }
                 })

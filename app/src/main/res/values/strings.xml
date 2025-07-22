@@ -104,9 +104,6 @@
     <string name="no_more">没有更多了</string>
     <string name="enable_multi_window_layout_summary">可能会出现一些显示上的问题</string>
     <string name="enable_multi_window_layout_title">多窗口模式下使用专属的布局</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">This is an app widget description</string>
     <string name="permission_request_title">授权提示</string>
     <string name="permission_request_hint">本软件需要您授权文件与存储的权限，以读取和管理图片。</string>
 

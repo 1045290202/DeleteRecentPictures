@@ -3,13 +3,14 @@ package com.sjk.deleterecentpictures.activity.settings
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.preference.EditTextPreference
@@ -38,12 +39,27 @@ class SettingsActivity : BaseActivity() {
         this.setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         this.bindSharedPreferenceEvent()
+
+        this.onBackPressedDispatcher.addCallback {
+            this@SettingsActivity.back()
+        }
+    }
+
+
+    /**
+     * 返回
+     */
+    fun back() {
+        val intent = Intent()
+        intent.putExtra("preferenceChanged", preferenceChanged)
+        this.setResult(Activity.RESULT_OK, intent)
+        this.finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                this.onBackPressed()
+                this.back()
             }
 
             else -> {
@@ -93,14 +109,6 @@ class SettingsActivity : BaseActivity() {
             }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        val intent = Intent()
-        intent.putExtra("preferenceChanged", preferenceChanged)
-        this.setResult(Activity.RESULT_OK, intent)
-        super.onBackPressed()
-    }
-
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             this.setPreferencesFromResource(R.xml.root_preferences, rootKey)
@@ -121,7 +129,8 @@ class SettingsActivity : BaseActivity() {
                 }
             }*/
 
-            val numberOfPicturesPreference = this.findPreference<EditTextPreference>("numberOfPictures")
+            val numberOfPicturesPreference =
+                this.findPreference<EditTextPreference>("numberOfPictures")
             numberOfPicturesPreference?.apply {
                 this.setOnBindEditTextListener {
                     it.inputType = InputType.TYPE_CLASS_NUMBER
@@ -137,9 +146,11 @@ class SettingsActivity : BaseActivity() {
                     }
                     true
                 }
-            
-            val enableMultiWindowLayoutPreference = this.findPreference<Preference>("enableMultiWindowLayout")
-            enableMultiWindowLayoutPreference?.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+
+            val enableMultiWindowLayoutPreference =
+                this.findPreference<Preference>("enableMultiWindowLayout")
+            enableMultiWindowLayoutPreference?.isEnabled =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
             /*EditTextPreference customizePathPreference = findPreference("customizePath");
             if (customizePathPreference != null) {
@@ -167,12 +178,12 @@ class SettingsActivity : BaseActivity() {
                 "author" -> {
                     val intent: Intent
                     if (ApkUtil.checkApkExist(context, COOLAPK_PACKAGE_NAME)) {
-                        intent = Intent(Intent.ACTION_VIEW, Uri.parse("coolmarket://u/458995"))
+                        intent = Intent(Intent.ACTION_VIEW, "coolmarket://u/458995".toUri())
                         intent.setPackage(COOLAPK_PACKAGE_NAME)
                     } else {
                         intent = Intent(
                             Intent.ACTION_VIEW,
-                            Uri.parse("https://www.coolapk.com/u/458995")
+                            "https://www.coolapk.com/u/458995".toUri()
                         )
                     }
                     this.startActivity(intent)
@@ -181,7 +192,7 @@ class SettingsActivity : BaseActivity() {
                 "github" -> {
                     val intent = Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse(resources.getString(R.string.github_url))
+                        resources.getString(R.string.github_url).toUri()
                     )
                     this.startActivity(intent)
                 }

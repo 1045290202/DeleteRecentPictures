@@ -2,7 +2,8 @@ package com.sjk.deleterecentpictures.common
 
 import android.util.Log
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 fun logV(tag: String, msg: String) {
     Logger.v(tag, msg)
@@ -30,16 +31,16 @@ fun log(vararg msgs: Any?) {
 
 private object Logger {
     var df: SimpleDateFormat = SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]", Locale.getDefault())
-    
+
     private fun getLogTime(): String {
         if (!App.switch.ENABLE_LOG_TIME) {
             return ""
         }
-        
+
         return this.df.format(Date())
     }
-    
-    
+
+
     fun v(tag: String, msg: String) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -49,7 +50,7 @@ private object Logger {
         }
         Log.v("v ${this.getLogTime()}$tag", msg)
     }
-    
+
     fun d(tag: String, msg: String) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -59,7 +60,7 @@ private object Logger {
         }
         Log.d("d ${this.getLogTime()}$tag", msg)
     }
-    
+
     fun i(tag: String, msg: String) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -69,7 +70,7 @@ private object Logger {
         }
         Log.i("i ${this.getLogTime()}$tag", msg)
     }
-    
+
     fun w(tag: String, msg: String) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -79,7 +80,7 @@ private object Logger {
         }
         Log.w("w ${this.getLogTime()}$tag", msg)
     }
-    
+
     fun e(tag: String, msg: String) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -89,7 +90,7 @@ private object Logger {
         }
         Log.e("e ${this.getLogTime()}$tag", msg)
     }
-    
+
     fun log(vararg msgs: Any?) {
         if (!App.switch.ENABLE_LOG) {
             return
@@ -99,7 +100,7 @@ private object Logger {
         }
         val stringBuilder = StringBuilder()
         for ((index, msg) in msgs.withIndex()) {
-            if (index != 0){
+            if (index != 0) {
                 stringBuilder.append(" ")
             }
             stringBuilder.append(msg.toString())
@@ -115,10 +116,10 @@ enum class LoggerLevelEnum(val index: Int) {
     WARN(4),
     ERROR(5),
     LOG(6);
-    
+
     companion object {
         fun getEnumByValue(what: Int): LoggerLevelEnum? {
-            for (value in values()) {
+            for (value in entries) {
                 if (value.index == what) {
                     return value
                 }
@@ -126,5 +127,5 @@ enum class LoggerLevelEnum(val index: Int) {
             return null
         }
     }
-    
+
 }

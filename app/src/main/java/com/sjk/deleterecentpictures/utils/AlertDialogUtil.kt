@@ -1,13 +1,13 @@
 package com.sjk.deleterecentpictures.utils
 
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import android.widget.AdapterView
 import android.view.View
+import android.widget.AdapterView
+import android.widget.TextView
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AlertDialog
 
 object AlertDialogUtil {
-    
+
     /**
      * 允许弹窗文本选择
      */
@@ -17,7 +17,7 @@ object AlertDialogUtil {
     ) {
         alertDialog.window?.findViewById<TextView>(messageTextViewId)?.setTextIsSelectable(true)
     }
-    
+
     /**
      * 禁止弹窗文本选择
      */
@@ -27,7 +27,7 @@ object AlertDialogUtil {
     ) {
         alertDialog.window?.findViewById<TextView>(messageTextViewId)?.setTextIsSelectable(false)
     }
-    
+
     /**
      * 禁止点击弹窗列表项时自动关闭弹窗，同时覆盖默认的点击事件
      */
@@ -39,16 +39,16 @@ object AlertDialogUtil {
             onItemClickListener?.invoke(adapterView, view, i, l)
         }
     }
-    
+
     /**
      * 禁止点击弹窗列表项时自动关闭弹窗，同时覆盖默认的点击事件
      */
     fun disableAutoDismissWhenItemClick(
         alertDialog: AlertDialog,
     ) {
-        alertDialog.listView.setOnItemClickListener { adapterView, view, i, l ->
-        
+        alertDialog.listView.setOnItemClickListener { _, _, _, _ ->
+
         }
     }
-    
+
 }
