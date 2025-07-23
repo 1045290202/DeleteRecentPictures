@@ -1,6 +1,6 @@
-package com.sjk.deleterecentpictures.bean
+package com.sjk.deleterecentpictures.entity
 
-data class ImageDetailBean(
+data class ImageDetailEntity(
     val data: String,
     val dateAdded: Long,
     val dateModified: Long,

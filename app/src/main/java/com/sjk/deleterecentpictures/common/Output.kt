@@ -1,5 +1,6 @@
 package com.sjk.deleterecentpictures.common
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -16,7 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 import java.io.File
 
 
@@ -144,6 +145,10 @@ object Output {
 
     fun showImageLongClickDialog(filePath: String?) {
         ImageLongClickDialog.build(filePath = filePath)?.show()
+    }
+
+    fun showImageLongClickDialog(context: Activity?, filePath: String?) {
+        ImageLongClickDialog.build(context, filePath)?.show()
     }
 
     fun showDeleteCurrentImageDialog(positiveCallback: (dialogInterface: DialogInterface?, witch: Int) -> Unit) {
@@ -280,7 +285,7 @@ object Output {
     /**
      * 显示图片详情弹窗
      */
-    fun showImageDetailsDialog(imageInfo: ImageInfoBean?) {
+    fun showImageDetailsDialog(imageInfo: ImageInfoEntity?) {
         Thread {
             val imageDetails = this.dataSource.getImageDetails(imageInfo) ?: return@Thread
 

@@ -1,26 +1,26 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
         xmlns:app="http://schemas.android.com/apk/res-auto">
-    
+
     <PreferenceCategory app:title="@string/general_settings_header">
-        
+
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="true"
                 app:key="closeApp"
                 app:summary="@string/close_app_summary"
                 app:title="@string/close_app_title" />
-        
+
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="false"
                 app:key="deleteDirectly"
                 app:summary="@string/delete_directly_summary"
                 app:title="@string/delete_directly_title" />
-        
+
         <!--        <SwitchPreference-->
         <!--                app:defaultValue="false"-->
         <!--                app:key="useRMCommand"-->
         <!--                app:summary="当删除图片被系统拦截时，可打开此选项，程序将尝试使用&quot;rm -r&quot;指令删除图片，同时媒体扫描方式可能需要切换成ContentResolver"-->
         <!--                app:title="@string/use_rm_command_title" />-->
-        
+
         <!--        <SeekBarPreference-->
         <!--                android:max="1024"-->
         <!--                app:defaultValue="512"-->
@@ -29,14 +29,14 @@
         <!--                app:summary="主界面缩略图的大小（越大的图片耗内存越多，仅Android Q及以上生效）"-->
         <!--                app:title="@string/thumbnail_size_title"-->
         <!--                app:useSimpleSummaryProvider="true" />-->
-        
+
         <EditTextPreference
                 app:defaultValue="10"
                 app:key="numberOfPictures"
                 app:dialogMessage="@string/number_of_pictures_dialog_message"
                 app:summary="@string/number_of_pictures_summary"
                 app:title="@string/number_of_pictures_title" />
-        
+
         <!--        <ListPreference-->
         <!--                app:defaultValue="1"-->
         <!--                app:entries="@array/scan_type_name"-->
@@ -46,7 +46,7 @@
         <!--                app:title="@string/scan_type_title"-->
         <!--                app:summary="如果删除图片以后数据库刷新不及时，可以尝试切换该选项"-->
         <!--                app:useSimpleSummaryProvider="false" />-->
-        
+
         <rikka.preference.SimpleMenuPreference
                 app:defaultValue="1"
                 app:entries="@array/sort_order_name"
@@ -56,9 +56,9 @@
                 app:title="@string/sort_order_title"
                 app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="@string/path_header">
-        
+
         <rikka.preference.SimpleMenuPreference
                 app:defaultValue="sdCard"
                 app:entries="@array/path_entries"
@@ -67,20 +67,20 @@
                 app:singleLineTitle="true"
                 app:title="@string/path_title"
                 app:useSimpleSummaryProvider="true" />
-        
+
         <EditTextPreference
                 app:dialogMessage="@string/customize_path_dialog_message"
                 app:key="customizePath"
                 app:title="@string/customize_path_title"
                 app:useSimpleSummaryProvider="true" />
-        
+
         <Preference
                 app:key="customizePathDescription"
                 app:summary="@string/customize_path_description_summary"
                 app:title="@string/customize_path_description_title" />
-    
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="@string/experimental_settings">
         <rikka.material.preference.MaterialSwitchPreference
                 app:defaultValue="false"
@@ -93,52 +93,57 @@
                 app:key="enableMultiWindowLayout"
                 app:summary="@string/enable_multi_window_layout_summary"
                 app:title="@string/enable_multi_window_layout_title" />
+
+        <rikka.material.preference.MaterialSwitchPreference
+                app:defaultValue="false"
+                app:key="enableNewLargerViewer"
+                app:title="@string/enable_new_larger_viewer_title" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="@string/permission_header">
-        
+
         <Preference
                 app:key="allFilesPermission"
                 app:singleLineTitle="true"
                 app:summary="@string/all_files_permission_summary"
                 app:title="@string/all_files_permission_title" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="@string/about_header">
-        
+
         <Preference
                 app:enableCopying="true"
                 app:key="author"
                 app:singleLineTitle="true"
                 app:summary="@string/author"
                 app:title="@string/author_title" />
-        
+
         <Preference
                 app:enableCopying="true"
                 app:key="github"
                 app:singleLineTitle="true"
                 app:summary="@string/github_url"
                 app:title="@string/github_title" />
-        
+
         <Preference
                 app:key="privacyPolicy"
                 app:singleLineTitle="true"
                 app:title="@string/privacy_policy" />
     </PreferenceCategory>
-    
+
     <!--<PreferenceCategory app:title="@string/sync_header">
-        
+
         <SwitchPreferenceCompat
                 app:key="sync"
                 app:title="@string/sync_title" />
-        
+
         <SwitchPreferenceCompat
                 app:dependency="sync"
                 app:key="attachment"
                 app:summaryOff="@string/attachment_summary_off"
                 app:summaryOn="@string/attachment_summary_on"
                 app:title="@string/attachment_title" />
-    
+
     </PreferenceCategory>-->
 
 </PreferenceScreen>

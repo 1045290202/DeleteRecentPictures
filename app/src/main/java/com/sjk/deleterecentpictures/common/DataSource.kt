@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.sjk.deleterecentpictures.R
-import com.sjk.deleterecentpictures.bean.ImageDetailBean
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
+import com.sjk.deleterecentpictures.entity.ImageDetailEntity
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 
 object DataSource {
 
@@ -67,11 +67,11 @@ object DataSource {
         return selectionList
     }
 
-    fun getSimplifiedPathInExternalStorage(imageInfo: ImageInfoBean?): String? {
+    fun getSimplifiedPathInExternalStorage(imageInfo: ImageInfoEntity?): String? {
         return App.fileUtil.getSimplifiedPathInExternalStorage(imageInfo?.path)
     }
 
-    fun getFileNameByPath(imageInfo: ImageInfoBean?): String? {
+    fun getFileNameByPath(imageInfo: ImageInfoEntity?): String? {
         return App.fileUtil.getFileNameByPath(imageInfo?.path)
     }
 
@@ -82,11 +82,11 @@ object DataSource {
     /**
      * 获取最近图片的信息
      */
-    fun getRecentImageInfos(): MutableList<ImageInfoBean?> {
+    fun getRecentImageInfos(): MutableList<ImageInfoEntity?> {
         return App.recentImages.imageInfos
     }
 
-    fun getCurrentImageInfo(): ImageInfoBean? {
+    fun getCurrentImageInfo(): ImageInfoEntity? {
         return App.recentImages.currentImageInfo
     }
 
@@ -98,8 +98,8 @@ object DataSource {
         return App.recentImages.imageChecks
     }
 
-    fun getAllCheckedImageInfos(): MutableList<ImageInfoBean?> {
-        val checkedImagePaths: MutableList<ImageInfoBean?> = ArrayList()
+    fun getAllCheckedImageInfos(): MutableList<ImageInfoEntity?> {
+        val checkedImagePaths: MutableList<ImageInfoEntity?> = ArrayList()
         for ((index, imageCheck) in this.getImageChecks().withIndex()) {
             if (!imageCheck) {
                 continue
@@ -138,7 +138,7 @@ object DataSource {
     /**
      * 获取图片的详细信息
      */
-    fun getImageDetails(imageInfoBean: ImageInfoBean?): ImageDetailBean? {
+    fun getImageDetails(imageInfoBean: ImageInfoEntity?): ImageDetailEntity? {
         if (imageInfoBean?.id == null) {
             return null
         }

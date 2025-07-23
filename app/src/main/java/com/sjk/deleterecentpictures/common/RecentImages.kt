@@ -1,12 +1,12 @@
 package com.sjk.deleterecentpictures.common
 
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 
 object RecentImages {
-    val imageInfos: MutableList<ImageInfoBean?> = ArrayList()
+    val imageInfos: MutableList<ImageInfoEntity?> = ArrayList()
     var currentImageInfoIndex: Int = 0
 
-    val currentImageInfo: ImageInfoBean?
+    val currentImageInfo: ImageInfoEntity?
         get() {
             if (this.currentImageInfoIndex >= this.imageInfos.size || this.currentImageInfoIndex < 0) {
                 return null

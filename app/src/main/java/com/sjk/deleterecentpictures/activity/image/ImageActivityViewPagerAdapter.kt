@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.sjk.deleterecentpictures.R
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ class ImageActivityViewPagerAdapter :
     RecyclerView.Adapter<ViewPagerViewHolder>() {
     private val viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
     private val attachedViewHolders: MutableSet<ViewPagerViewHolder> = mutableSetOf()
-    var imageInfos: List<ImageInfoBean?> = ArrayList()
+    var imageInfos: List<ImageInfoEntity?> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
         val viewPagerViewHolder = ViewPagerViewHolder(
@@ -92,7 +92,7 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
     val preventClickLeftView: View = itemView.findViewById(R.id.preventClickLeftView)
     val preventClickRightView: View = itemView.findViewById(R.id.preventClickRightView)
-    var imageInfo: ImageInfoBean? = null
+    var imageInfo: ImageInfoEntity? = null
 
     init {
         this.imageView.scrollBar = null

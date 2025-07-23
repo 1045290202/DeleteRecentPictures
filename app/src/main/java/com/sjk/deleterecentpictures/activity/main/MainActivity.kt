@@ -16,20 +16,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.app.ActivityOptionsCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
+import com.flyjingfish.openimagelib.OpenImage
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.common.Event
 import com.sjk.deleterecentpictures.common.logD
 import com.sjk.deleterecentpictures.common.logW
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 import com.sjk.deleterecentpictures.utils.PermissionUtil.checkPermissionGranted
 import com.sjk.deleterecentpictures.utils.PermissionUtil.requestPermission
 import kotlin.math.max
@@ -38,7 +42,7 @@ import kotlin.math.max
 class MainActivity : BaseActivity() {
     private var isLoaded = false
     private var viewPager: ViewPager2? = null
-    private val viewPagerAdapter = MainActivityViewPagerAdapter(this)
+    private val viewPagerAdapter = MainActivityViewPagerAdapter()
     private val event: Event = App.newEvent
 
     //    private var viewPagerCurrentPosition = 0
@@ -69,6 +73,7 @@ class MainActivity : BaseActivity() {
             this.initView()
             this.requestWritePermission()
         }
+        this.viewPagerAdapter.setOnPageClick(this::onViewPagerPageClick)
     }
 
     override fun onRestart() {
@@ -561,7 +566,7 @@ class MainActivity : BaseActivity() {
             var i = this.getDataSource().getNumberOfPictures()
             val maxI = i
             while (i > 0) {
-                val imageInfo: ImageInfoBean =
+                val imageInfo: ImageInfoEntity =
                     (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
                         ?: break
                 this.getDataSource().getRecentImageInfos().add(imageInfo)
@@ -591,4 +596,34 @@ class MainActivity : BaseActivity() {
         this.viewPager?.setCurrentItem(this.viewPager?.currentItem?.minus(1) ?: 0, true)
     }
 
+    fun onViewPagerPageClick(position: Int) {
+        val enableMultiWindowLayout =
+            this.getDataSource().getSP().getBoolean("enableNewLargerViewer", false)
+        if (!enableMultiWindowLayout) {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                this.findViewById(R.id.imageAnimationView),
+                "image"
+            )
+            val intent = Intent(this, ImageActivity::class.java)
+            this.startActivity(intent, options.toBundle())
+            return
+        }
+
+        OpenImage.with(this)
+            .setClickViewPager2(this.viewPager) { _, _ ->
+                return@setClickViewPager2 R.id.imageView
+            }
+            .setSrcImageViewScaleType(ImageView.ScaleType.FIT_CENTER, true)
+            .setImageUrlList(App.dataSource.getRecentImageInfos())
+            .setAutoScrollScanPosition(true)
+            .setClickPosition(position)
+//            .setOnItemLongClickListener { baseInnerFragment, openImageUrl, _ ->
+//                App.output.showImageLongClickDialog(
+//                    baseInnerFragment.activity,
+//                    openImageUrl.imageUrl
+//                )
+//            }
+            .show()
+    }
 }

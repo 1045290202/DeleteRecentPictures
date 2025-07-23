@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.main.MainActivity
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.logD
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 import com.sjk.deleterecentpictures.service.ImageWidgetService
 
 class ImageWidget : AppWidgetProvider() {
@@ -146,7 +146,7 @@ class ImageWidget : AppWidgetProvider() {
 
     fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         logD(TAG, "updateAppWidget appWidgetId: $appWidgetId")
-        val imageInfoBean: ImageInfoBean? = App.imageScannerUtil.getLatest(
+        val imageInfoBean: ImageInfoEntity? = App.imageScannerUtil.getLatest(
             context,
             App.dataSource.getSelection(),
             sortOrder = App.dataSource.getSortOrder(),

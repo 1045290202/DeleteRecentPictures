@@ -1,44 +1,42 @@
 package com.sjk.deleterecentpictures.activity.main
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CompoundButton
-import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.sjk.deleterecentpictures.R
-import com.sjk.deleterecentpictures.activity.image.ImageActivity
-import com.sjk.deleterecentpictures.bean.ImageInfoBean
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.Event
+import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 
-class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
+class MainActivityViewPagerAdapter :
     RecyclerView.Adapter<ViewPagerViewHolder>() {
 
     companion object {
         private const val TAG = "MainActivityViewPagerAdapter"
-        lateinit var instance: MainActivityViewPagerAdapter
     }
 
     private var viewPagerViewHolders: MutableList<ViewPagerViewHolder> = ArrayList()
-    var imageInfos: MutableList<ImageInfoBean?> = ArrayList()
+    var imageInfos: MutableList<ImageInfoEntity?> = ArrayList()
     var imageChecks: MutableList<Boolean> = ArrayList()
     val event: Event = App.newEvent
 
+    internal var onPageClick: ((position: Int) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerViewHolder {
-        instance = this
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_main_view_pager_item, parent, false)
-        val viewPagerViewHolder = ViewPagerViewHolder(this.mainActivity, view)
+        val viewPagerViewHolder = ViewPagerViewHolder(this, view)
         viewPagerViewHolders.add(viewPagerViewHolder)
         return viewPagerViewHolder
     }
 
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
+        holder.index = position
         if (this.imageChecks.size > 0) {
             holder.isChecked =
                 if (position < this.imageInfos.size) this.imageChecks[position] else false
@@ -94,9 +92,19 @@ class MainActivityViewPagerAdapter(val mainActivity: MainActivity) :
         }
     }
 
+    /**
+     * 设置页面点击事件
+     */
+    fun setOnPageClick(onPageClick: (position: Int) -> Unit) {
+        this.onPageClick = onPageClick
+    }
+
 }
 
-class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) :
+class ViewPagerViewHolder(
+    val adapter: MainActivityViewPagerAdapter,
+    itemView: View,
+) :
     RecyclerView.ViewHolder(itemView) {
     val checkBox: MaterialCheckBox = itemView.findViewById(R.id.checkbox)
     val imageView: ZoomImageView = itemView.findViewById(R.id.imageView)
@@ -104,22 +112,14 @@ class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) :
     val detailsButton: Button = itemView.findViewById(R.id.imageDetailsButton)
     private val openImageActivityButton =
         itemView.findViewById<Button>(R.id.openImageActivityButton)
-    var imageInfo: ImageInfoBean? = null
+    var imageInfo: ImageInfoEntity? = null
     var isChecked: Boolean = false
+    var index: Int = -1
 
     init {
         this.imageView.scrollBar = null
         this.openImageActivityButton.setOnClickListener {
-            if (this.imageInfo?.uri == null) {
-                return@setOnClickListener
-            }
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this.mainActivity,
-                this.mainActivity.findViewById(R.id.imageAnimationView),
-                "image"
-            )
-            val intent = Intent(itemView.context, ImageActivity::class.java)
-            itemView.context.startActivity(intent, options.toBundle())
+            adapter.onPageClick?.invoke(index)
         }
         this.openImageActivityButton.setOnLongClickListener {
             if (this.imageInfo?.uri == null) {
@@ -139,7 +139,7 @@ class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) :
                 return@setOnCheckedChangeListener
             }
             this.isChecked = isChecked
-            MainActivityViewPagerAdapter.instance.imageChecks[App.dataSource.getCurrentImageInfoIndex()] =
+            this.adapter.imageChecks[App.dataSource.getCurrentImageInfoIndex()] =
                 isChecked
         }
         this.checkBox.setOnLongClickListener {
@@ -147,7 +147,7 @@ class ViewPagerViewHolder(val mainActivity: MainActivity, itemView: View) :
                 return@setOnLongClickListener true
             }
 
-            MainActivityViewPagerAdapter.instance.setAllHolderChecked(false)
+            this.adapter.setAllHolderChecked(false)
             App.input.setAllImageChecksFalse()
             App.output.showToast(App.applicationContext.getString(R.string.all_selected_images_deselected))
             true

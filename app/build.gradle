@@ -9,7 +9,6 @@ android {
         targetSdk 36
         versionCode 51
         versionName "3.2.6"
-//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -74,11 +73,10 @@ dependencies {
 //    implementation "com.github.piasy:BigImageViewer:1.8.1"
 //    implementation "com.github.piasy:GlideImageLoader:1.8.1"
 //    implementation "com.github.piasy:GlideImageViewFactory:1.8.1"
-
     implementation "dev.rikka.rikkax.appcompat:appcompat:1.6.1"
     implementation "dev.rikka.rikkax.material:material-preference:2.0.0"
-
     implementation "io.github.panpf.zoomimage:zoomimage-view-glide:1.3.0"
-
+    implementation "io.github.flyjingfish:openimage-full:2.4.7"
     implementation "commons-io:commons-io:2.20.0"
+    implementation "com.github.bumptech.glide:glide:4.16.0"
 }

@@ -89,4 +89,5 @@
     <string name="enable_multi_window_layout_title">Use exclusive layouts in multi-window mode</string>
     <string name="permission_request_title">Grant permission</string>
     <string name="permission_request_hint">File and Storage permission is required to read and manage pictures.</string>
+    <string name="enable_new_larger_viewer_title">Enable the new large image viewer</string>
 </resources>

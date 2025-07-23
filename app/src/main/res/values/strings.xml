@@ -106,5 +106,6 @@
     <string name="enable_multi_window_layout_title">多窗口模式下使用专属的布局</string>
     <string name="permission_request_title">授权提示</string>
     <string name="permission_request_hint">本软件需要您授权文件与存储的权限，以读取和管理图片。</string>
+    <string name="enable_new_larger_viewer_title">启用新的大图查看器</string>
 
 </resources>
