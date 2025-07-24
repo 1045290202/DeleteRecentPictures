@@ -30,7 +30,7 @@ class ImageActivity : BaseActivity() {
                 this@ImageActivity.supportFinishAfterTransition()
                 return@addCallback
             }
-            this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation()
+            this@ImageActivity.viewPagerAdapter.resetImageScaleWithAnimation(this@ImageActivity)
         }
     }
 
@@ -45,7 +45,7 @@ class ImageActivity : BaseActivity() {
                 super.onPageSelected(position)
                 this@ImageActivity.getInput().setCurrentImagePathIndex(position)
 
-                if (this@ImageActivity.getDataSource().getRecentImageInfos().size == 0) {
+                if (this@ImageActivity.getDataSource().getRecentImageInfos().isEmpty()) {
                     this@ImageActivity.getInput().setCurrentImagePathIndex(0)
                     return
                 }

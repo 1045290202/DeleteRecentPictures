@@ -3,14 +3,14 @@ package com.sjk.deleterecentpictures.activity.image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.entity.ImageInfoEntity
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -72,9 +72,11 @@ class ImageActivityViewPagerAdapter :
         return true
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun resetImageScaleWithAnimation() {
-        GlobalScope.launch {
+    /**
+     * 重置图片缩放
+     */
+    fun resetImageScaleWithAnimation(lifecycleOwner: ComponentActivity) {
+        lifecycleOwner.lifecycleScope.launch {
             this@ImageActivityViewPagerAdapter.attachedViewHolders.forEach {
                 it.imageView.zoomable.scale(
                     1f,
