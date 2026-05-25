@@ -1,0 +1,30 @@
+[versions]
+annotationJvm = "1.10.0"
+appcompat = "1.6.1"
+commonsIo = "2.22.0"
+core = "3.5.4"
+coreKtx = "1.18.0"
+glide = "5.0.7"
+gradle = "9.2.1"
+kotlin = "2.3.21"
+materialPreference = "2.0.0"
+okhttp = "5.3.2"
+openimageFull = "2.5.0"
+preferenceKtx = "1.2.1"
+zoomimageViewGlide = "1.4.0"
+
+[libraries]
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
+appcompat = { group = "dev.rikka.rikkax.appcompat", name = "appcompat", version.ref = "appcompat" }
+commons-io = { group = "commons-io", name = "commons-io", version.ref = "commonsIo" }
+core = { group = "com.google.zxing", name = "core", version.ref = "core" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+material-preference = { group = "dev.rikka.rikkax.material", name = "material-preference", version.ref = "materialPreference" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+openimage-full = { group = "io.github.flyjingfish", name = "openimage-full", version.ref = "openimageFull" }
+zoomimage-view-glide = { group = "io.github.panpf.zoomimage", name = "zoomimage-view-glide", version.ref = "zoomimageViewGlide" }
