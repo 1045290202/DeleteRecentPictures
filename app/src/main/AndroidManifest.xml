@@ -75,7 +75,7 @@
                 android:name=".activity.image.CustomOpenImageActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:exported="true"
-                android:theme="@style/Theme.OpenImageTheme"
+                android:theme="@style/CustomOpenImageActivityTheme"
                 tools:ignore="DiscouragedApi">
             <meta-data
                     android:name="notch.config"

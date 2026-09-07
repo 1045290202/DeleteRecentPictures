@@ -29,6 +29,11 @@ open class CustomOpenImageActivity : OpenImageActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.activityManager.push(this)
+
+        // 长按图片弹出操作对话框（与 ImageActivityViewPagerAdapter 中的长按功能一致）
+        this.addOnItemLongClickListener { _, openImageUrl, _ ->
+            App.output.showImageLongClickDialog(openImageUrl.imageUrl)
+        }
     }
 
     override fun onDestroy() {
