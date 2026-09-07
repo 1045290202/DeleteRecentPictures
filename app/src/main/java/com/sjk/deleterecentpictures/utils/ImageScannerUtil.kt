@@ -42,8 +42,10 @@ object ImageScannerUtil {
 
         logD(TAG, "init: realSelection = $realSelection")
         try {
-            this.cursor = this.getQuery(context, realSelection, sortOrder)
-            this.cursor?.moveToFirst()
+            synchronized(this) {
+                this.cursor?.close()
+                this.cursor = this.getQuery(context, realSelection, sortOrder)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -155,36 +157,39 @@ object ImageScannerUtil {
         return imageInfo
     }
 
-    fun getNext(): ImageInfoEntity? {
-        this.cursor?.let {
-            if (it.isLast) {
-                return null
-            }
-            it.moveToNext()
+    /**
+     * 获取查询结果的图片总数
+     */
+    fun getCount(): Int {
+        this.cursor ?: return 0
+        synchronized(this) {
+            return this.cursor?.count ?: 0
         }
-        return getCurrent()
     }
 
-    fun getPrevious(): ImageInfoEntity? {
-        this.cursor?.let {
-            if (it.isFirst) {
+    /**
+     * 按位置懒读取一张图片的信息，仅在需要时读取该行数据
+     * @param position 图片在查询结果中的位置
+     */
+    fun getAt(position: Int): ImageInfoEntity? {
+        this.cursor ?: return null
+        synchronized(this) {
+            val cursor = this.cursor ?: return null
+            if (position < 0 || position >= cursor.count) {
                 return null
             }
-            it.moveToPrevious()
+            if (!cursor.moveToPosition(position)) {
+                return null
+            }
+            return this.getCurrent(cursor)
         }
-        return getCurrent()
-    }
-
-    fun isEnd(): Boolean {
-        this.cursor?.let {
-            return it.isLast
-        }
-        return true
     }
 
     fun close() {
-        this.cursor?.close()
-        this.cursor = null
+        synchronized(this) {
+            this.cursor?.close()
+            this.cursor = null
+        }
     }
 
     /**

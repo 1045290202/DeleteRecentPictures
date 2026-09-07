@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.widget.Button
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.common.App
-import com.sjk.deleterecentpictures.entity.ImageInfoEntity
 import kotlin.math.max
 
 
@@ -61,22 +60,10 @@ class MainRefreshDelegate(private val activity: MainActivity) {
                 App.dataSource.getSelection(),
                 sortOrder = App.dataSource.getSortOrder(),
             )
-//        App.recentImages.resetCurrentImagePathIndex()
-            App.recentImages.clearImagePaths()
-
-            var i = App.dataSource.getNumberOfPictures()
-            val maxI = i
-            while (i > 0) {
-                val imageInfo: ImageInfoEntity =
-                    (if (maxI == i) App.imageScannerUtil.getCurrent() else App.imageScannerUtil.getNext())
-                        ?: break
-                App.dataSource.getRecentImageInfos().add(imageInfo)
-                i--
-            }
-            // 为每张扫描到的图片补一个默认“未勾选”状态，使勾选列表与图片列表长度一致
-            repeat(this.activity.viewPagerAdapter.imageInfos.size) {
-                this.activity.viewPagerAdapter.imageChecks.add(false)
-            }
+            // 懒加载：列表仅持有游标视图，翻到哪一页才查询哪一张，不再一次性物化所有图片
+            App.recentImages.resetImageInfos(App.dataSource.getNumberOfPictures())
+            App.recentImages.resetImageChecks(App.dataSource.getRecentImageInfos().size)
+            this.activity.viewPagerAdapter.imageInfos = App.dataSource.getRecentImageInfos()
 
             this.activity.runOnUiThread {
                 this.activity.viewPagerAdapter.notifyDataSetChanged()
