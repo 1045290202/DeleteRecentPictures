@@ -148,7 +148,7 @@ class MainDeleteDelegate(private val activity: MainActivity) {
             ) + "  ",
         ) {
             val sb = it
-            it.setAnchorView(this.activity.findViewById<View>(R.id.viewPagerOverlay))
+            it.anchorView = this.activity.findViewById<View>(R.id.viewPagerOverlay)
 
             val snackbarTextView =
                 it.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)

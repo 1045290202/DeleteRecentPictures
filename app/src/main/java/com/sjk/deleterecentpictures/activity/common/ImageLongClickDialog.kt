@@ -76,7 +76,7 @@ class ImageLongClickDialog(context: Activity, filePath: String?) {
                         }
                         val alertDialog = MaterialAlertDialogBuilder(this.context)
                             .setTitle(App.resources.getString(R.string.recognized_content))
-                            .setMessage("$content")
+                            .setMessage(content)
                             .setNegativeButton(App.resources.getString(R.string.cancel)) { dialogInterface: DialogInterface, i: Int ->
                                 dialogInterface.cancel()
                             }
