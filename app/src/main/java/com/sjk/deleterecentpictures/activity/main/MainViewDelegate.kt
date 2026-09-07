@@ -10,6 +10,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.flyjingfish.openimagelib.OpenImage
 import com.sjk.deleterecentpictures.R
+import com.sjk.deleterecentpictures.activity.image.CustomOpenImageActivity
 import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.common.App
@@ -142,6 +143,7 @@ class MainViewDelegate(private val activity: MainActivity) {
             .setImageUrlList(App.dataSource.getRecentImageInfos())
             .setAutoScrollScanPosition(true)
             .setClickPosition(position)
+            .setOpenImageActivityCls(CustomOpenImageActivity::class.java)
 //            .setOnItemLongClickListener { baseInnerFragment, openImageUrl, _ ->
 //                App.output.showImageLongClickDialog(
 //                    baseInnerFragment.activity,

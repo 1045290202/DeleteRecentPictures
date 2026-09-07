@@ -72,6 +72,22 @@
                 android:theme="@style/ImageActivityTheme"
                 tools:ignore="DiscouragedApi" />
         <activity
+                android:name=".activity.image.CustomOpenImageActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:exported="true"
+                android:theme="@style/Theme.OpenImageTheme"
+                tools:ignore="DiscouragedApi">
+            <meta-data
+                    android:name="notch.config"
+                    android:value="portrait|landscape" />
+            <meta-data
+                    android:name="android.notch_support"
+                    android:value="true" />
+            <meta-data
+                    android:name="android.max_aspect"
+                    android:value="2.2" />
+        </activity>
+        <activity
                 android:name=".activity.main.MainActivity"
                 android:enableOnBackInvokedCallback="true"
                 android:excludeFromRecents="true"
