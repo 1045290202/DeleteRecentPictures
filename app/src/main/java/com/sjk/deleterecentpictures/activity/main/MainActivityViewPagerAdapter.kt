@@ -119,6 +119,9 @@ class ViewPagerViewHolder(
     init {
         this.imageView.scrollBar = null
         this.openImageActivityButton.setOnClickListener {
+            if (this.imageInfo?.uri == null) {
+                return@setOnClickListener
+            }
             adapter.onPageClick?.invoke(index)
         }
         this.openImageActivityButton.setOnLongClickListener {

@@ -38,7 +38,7 @@ object ScrollButtonManager {
         this.autoScrollTimer!!.schedule(object : TimerTask() {
             override fun run() {
                 this@ScrollButtonManager.mainActivity.runOnUiThread {
-                    this@ScrollButtonManager.mainActivity.jumpToNextImage()
+                    this@ScrollButtonManager.mainActivity.viewDelegate.jumpToNextImage()
                 }
             }
         }, Const.AUTO_SCROLL_DELAY, Const.AUTO_SCROLL_INTERVAL)
@@ -54,7 +54,7 @@ object ScrollButtonManager {
         this.autoScrollTimer!!.schedule(object : TimerTask() {
             override fun run() {
                 this@ScrollButtonManager.mainActivity.runOnUiThread {
-                    this@ScrollButtonManager.mainActivity.jumpToPreviousImage()
+                    this@ScrollButtonManager.mainActivity.viewDelegate.jumpToPreviousImage()
                 }
             }
         }, Const.AUTO_SCROLL_DELAY, Const.AUTO_SCROLL_INTERVAL)
@@ -80,7 +80,7 @@ object ScrollButtonManager {
                     -> {
                     this.stopAutoScroll()
                     if (System.currentTimeMillis() - startTime < Const.AUTO_SCROLL_DELAY) {
-                        this.mainActivity.jumpToNextImage()
+                        this.mainActivity.viewDelegate.jumpToNextImage()
                     }
                     startTime = System.currentTimeMillis()
                 }
@@ -112,7 +112,7 @@ object ScrollButtonManager {
                     -> {
                     this.stopAutoScroll()
                     if (System.currentTimeMillis() - startTime < Const.AUTO_SCROLL_DELAY) {
-                        this.mainActivity.jumpToPreviousImage()
+                        this.mainActivity.viewDelegate.jumpToPreviousImage()
                     }
                     startTime = System.currentTimeMillis()
                 }
