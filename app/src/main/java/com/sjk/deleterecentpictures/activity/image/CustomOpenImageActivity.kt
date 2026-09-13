@@ -13,8 +13,7 @@ import com.sjk.deleterecentpictures.common.Input
 import com.sjk.deleterecentpictures.common.Output
 
 /**
- * 自定义的 OpenImage 查看器活动，功能与 OpenImage 默认活动类
- * （StandardOpenImageActivity）保持一致，可直接通过
+ * 大图查看器。基于 OpenImage 实现，通过
  * OpenImage.with(...).setOpenImageActivityCls(...) 启用。
  *
  * OpenImage 要求活动类必须继承 OpenImageActivity，受 Java 单继承限制无法
@@ -30,10 +29,19 @@ open class CustomOpenImageActivity : OpenImageActivity() {
         super.onCreate(savedInstanceState)
         App.activityManager.push(this)
 
-        // 长按图片弹出操作对话框（与 ImageActivityViewPagerAdapter 中的长按功能一致）
+        // 长按图片弹出操作对话框
         this.addOnItemLongClickListener { _, openImageUrl, _ ->
             App.output.showImageLongClickDialog(openImageUrl.imageUrl)
         }
+
+        // 同步翻页后的当前图片下标，保证返回主界面后删除/详情等操作指向正确图片
+        this.viewPager2.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                App.input.setCurrentImagePathIndex(position)
+            }
+        })
     }
 
     override fun onDestroy() {

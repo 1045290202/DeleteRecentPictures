@@ -93,11 +93,6 @@
                 app:key="enableMultiWindowLayout"
                 app:summary="@string/enable_multi_window_layout_summary"
                 app:title="@string/enable_multi_window_layout_title" />
-
-        <rikka.material.preference.MaterialSwitchPreference
-                app:defaultValue="false"
-                app:key="enableNewLargerViewer"
-                app:title="@string/enable_new_larger_viewer_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/permission_header">

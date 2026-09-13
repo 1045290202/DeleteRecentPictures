@@ -65,13 +65,6 @@
                 android:theme="@style/SettingsActivityTheme"
                 tools:ignore="DiscouragedApi" />
         <activity
-                android:name=".activity.image.ImageActivity"
-                android:excludeFromRecents="false"
-                android:resizeableActivity="true"
-                android:screenOrientation="behind"
-                android:theme="@style/ImageActivityTheme"
-                tools:ignore="DiscouragedApi" />
-        <activity
                 android:name=".activity.image.CustomOpenImageActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:exported="true"

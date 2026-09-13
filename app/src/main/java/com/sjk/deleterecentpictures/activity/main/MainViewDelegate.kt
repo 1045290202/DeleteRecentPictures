@@ -6,12 +6,10 @@ import android.os.Build
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
-import androidx.core.app.ActivityOptionsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.flyjingfish.openimagelib.OpenImage
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.image.CustomOpenImageActivity
-import com.sjk.deleterecentpictures.activity.image.ImageActivity
 import com.sjk.deleterecentpictures.activity.settings.SettingsActivity
 import com.sjk.deleterecentpictures.common.App
 
@@ -122,18 +120,6 @@ class MainViewDelegate(private val activity: MainActivity) {
         if (position >= App.dataSource.getRecentImageInfos().size) {
             return
         }
-        val enableNewLargerViewer =
-            App.dataSource.getSP().getBoolean("enableNewLargerViewer", false)
-        if (!enableNewLargerViewer) {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this.activity,
-                this.activity.findViewById(R.id.imageAnimationView),
-                "image"
-            )
-            val intent = Intent(this.activity, ImageActivity::class.java)
-            this.activity.startActivity(intent, options.toBundle())
-            return
-        }
 
         OpenImage.with(this.activity)
             .setClickViewPager2(this.activity.viewPager) { _, _ ->
@@ -144,12 +130,6 @@ class MainViewDelegate(private val activity: MainActivity) {
             .setAutoScrollScanPosition(true)
             .setClickPosition(position)
             .setOpenImageActivityCls(CustomOpenImageActivity::class.java)
-//            .setOnItemLongClickListener { baseInnerFragment, openImageUrl, _ ->
-//                App.output.showImageLongClickDialog(
-//                    baseInnerFragment.activity,
-//                    openImageUrl.imageUrl
-//                )
-//            }
             .show()
     }
 }

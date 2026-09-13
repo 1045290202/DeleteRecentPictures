@@ -30,17 +30,7 @@
 
     </style>
 
-    <style name="ImageActivityTheme" parent="AppTheme">
-        <item name="android:windowBackground">#000000</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:navigationBarColor">#44000000</item>
-        <!--        <item name="android:windowIsTranslucent">true</item>-->
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-
-    <!-- CustomOpenImageActivity 专用：继承 AppTheme（Material3）以保证 Material 组件可用，
+    <!-- 大图查看器：继承 AppTheme（Material3）以保证 Material 组件可用，
          同时保持与 OpenImage 库默认主题（Theme.OpenImageTheme）一致的半透明窗口特性 -->
     <style name="CustomOpenImageActivityTheme" parent="AppTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
