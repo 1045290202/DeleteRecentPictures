@@ -47,6 +47,10 @@ repositories {
 
 configurations.configureEach {
     exclude group: "androidx.appcompat", module: "appcompat"
+    // openimage-full → gsyvideoplayer → media3-datasource-rtmp → io.antmedia:rtmp-client
+    // 该 native 库未按 16KB 页对齐，且本应用只看图片，不需要 RTMP
+    exclude group: "androidx.media3", module: "media3-datasource-rtmp"
+    exclude group: "io.antmedia", module: "rtmp-client"
 }
 
 dependencies {
