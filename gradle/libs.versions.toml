@@ -13,6 +13,7 @@ openimageFull = "2.5.2"
 preferenceKtx = "1.2.1"
 zoomimageViewGlide = "1.6.0"
 desugarJdkLibs = "2.1.5"
+junit = "4.13.2"
 
 [libraries]
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
@@ -30,3 +31,4 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 openimage-full = { group = "io.github.flyjingfish", name = "openimage-full", version.ref = "openimageFull" }
 zoomimage-view-glide = { group = "io.github.panpf.zoomimage", name = "zoomimage-view-glide", version.ref = "zoomimageViewGlide" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }

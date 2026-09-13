@@ -49,10 +49,32 @@
     <string name="github_url" translatable="false">https://github.com/1045290202/DeleteRecentPictures</string>
     <string name="user_agreement">用户协议</string>
     <string name="privacy_policy">隐私政策</string>
+    <string name="check_update_title">检查更新</string>
+    <string name="check_update_summary">当前版本 %1$s</string>
 
     <!-- endregion -->
 
-    <string name="privacy_policy_content"><![CDATA[《删除最近图片》是一款专门用于查看和删除Android设备（以下简称为设备）内最近存储图片的应用程序，帮助用户方便地删除设备内不再需要的最近的图片文件。为了保障用户的图片数据安全，本应用不会接入互联网。本隐私政策属于本应用不可或缺的一部分。\n\n1.信息说明：\n本应用不接入互联网且不会收集任何用户的任何隐私信息。本应用不会破坏设备的数据安全，也不会主动删除或分享图片。\n\n2.权限说明：\n本应用仅使用读取外部存储、写入外部存储和管理外部存储的权限。如果应用没有获取到上述权限，将无法提供任何服务。\n\n3.隐私政策的变更：\n我们保留修改本政策的权利，如果我们需要调整此隐私政策，我们会跟随新版本《删除最近图片》应用发布新的隐私政策。\n\n4.开源说明：\n本应用已开源，如果您有需要，可以在 设置 -> 关于 -> 在github上访问此项目 找到本应用的源代码。]]></string>
+    <!-- Update -->
+    <string name="update_available_title">发现新版本</string>
+    <string name="update_available_message">最新版本：%1$s\n当前版本：%2$s</string>
+    <string name="update_apk_size">安装包大小：%1$s</string>
+    <string name="update_download">下载安装</string>
+    <string name="update_open_release_page">查看更新说明</string>
+    <string name="later">稍后</string>
+    <string name="downloading_update_title">正在下载更新</string>
+    <string name="downloading_update">正在下载…</string>
+    <string name="downloading_update_progress">正在下载… %1$d%%</string>
+    <string name="update_download_failed">下载失败，请稍后重试</string>
+    <string name="update_download_failed_title">下载失败</string>
+    <string name="update_download_failed_message">应用内下载安装包失败。可以尝试在浏览器中打开发布页下载最新安装包。</string>
+    <string name="update_download_in_browser">去浏览器下载</string>
+    <string name="update_need_install_permission">请先允许安装未知应用</string>
+    <string name="update_install_failed">无法启动安装</string>
+    <string name="checking_update">正在检查更新…</string>
+    <string name="already_up_to_date">已是最新版本（%1$s）</string>
+    <string name="check_update_failed">检查更新失败，请检查网络后重试</string>
+
+    <string name="privacy_policy_content"><![CDATA[《删除最近图片》是一款专门用于查看和删除Android设备（以下简称为设备）内最近存储图片的应用程序，帮助用户方便地删除设备内不再需要的最近的图片文件。本隐私政策属于本应用不可或缺的一部分。\n\n1.信息说明：\n本应用不会收集任何用户的任何隐私信息。本应用不会破坏设备的数据安全，也不会主动删除或分享图片。\n\n2.网络使用说明：\n本应用仅在您主动检查更新或应用启动时静默检查更新时访问网络，请求 GitHub 上的版本信息并可选下载官方发布的安装包。除此之外，本应用不会将任何数据上传至服务器。\n\n3.权限说明：\n本应用仅使用读取外部存储、写入外部存储、管理外部存储、网络访问和安装应用的权限。如果应用没有获取到存储相关权限，将无法提供图片查看与删除服务。\n\n4.隐私政策的变更：\n我们保留修改本政策的权利，如果我们需要调整此隐私政策，我们会跟随新版本《删除最近图片》应用发布新的隐私政策。\n\n5.开源说明：\n本应用已开源，如果您有需要，可以在 设置 -> 关于 -> 在github上访问此项目 找到本应用的源代码。]]></string>
     <string name="custom_path_explanation"><![CDATA[<p>自定义路径需要省略外置存储目录，无需填写完整路径，如：<strong>Pictures/</strong></p><p>同时兼容了SQL语句中的通配符：<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>_</strong>&nbsp;——&nbsp;仅替代一个字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>%</strong>&nbsp;——&nbsp;替代一个或多个字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>[charlist]</strong>&nbsp;——&nbsp;替代字符列中的任何单一字符；<br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>[^charlist]</strong>或<strong>[!charlist]</strong>&nbsp;——&nbsp;替代不在字符列中的任何单一字符；<br>如果需要匹配_和%，可以在他们前面添加反斜杠（\\），如果需要匹配\\，则需要输入\\\\</p><a href=\"https://www.w3school.com.cn/sql/sql_wildcards.asp\">点此查看更详细的教程</a>]]></string>
     <string name="current_image_path">当前图片路径</string>
     <string name="image_path_is_empty">图片路径为空</string>

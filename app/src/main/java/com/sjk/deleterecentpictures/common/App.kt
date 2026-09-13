@@ -15,6 +15,7 @@ import com.sjk.deleterecentpictures.utils.ImageScannerUtil
 import com.sjk.deleterecentpictures.utils.QRCodeUtil
 import com.sjk.deleterecentpictures.utils.ShellUtil
 import com.sjk.deleterecentpictures.utils.TimeUtil
+import com.sjk.deleterecentpictures.utils.UpdateManager
 
 
 class App : Application() {
@@ -94,6 +95,10 @@ class App : Application() {
         val timeUtil: TimeUtil
             get() {
                 return TimeUtil
+            }
+        val updateManager: UpdateManager
+            get() {
+                return UpdateManager
             }
         val imageLoadManger: ImageLoadManager
             get() {

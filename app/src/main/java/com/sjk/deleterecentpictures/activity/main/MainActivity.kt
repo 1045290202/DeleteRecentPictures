@@ -15,10 +15,12 @@ import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.common.Event
 import com.sjk.deleterecentpictures.common.logD
+import com.sjk.deleterecentpictures.utils.UpdateManager
 
 
 class MainActivity : BaseActivity() {
     private var isLoaded = false
+    private var silentUpdateChecked = false
     internal var viewPager: ViewPager2? = null
     internal val viewPagerAdapter = MainActivityViewPagerAdapter()
     private val event: Event = App.newEvent
@@ -147,5 +149,16 @@ class MainActivity : BaseActivity() {
         currentPicturePathButton.text =
             this.getDataSource().getFileNameByPath(this.getDataSource().getCurrentImageInfo())
                 ?: this.getText(R.string.no_path)
+    }
+
+    /**
+     * 存储权限已就绪后，再静默检查更新（每个 Activity 实例只触发一次）
+     */
+    internal fun maybeSilentCheckUpdate() {
+        if (this.silentUpdateChecked) {
+            return
+        }
+        this.silentUpdateChecked = true
+        UpdateManager.silentCheckOnStart(this)
     }
 }

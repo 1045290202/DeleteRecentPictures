@@ -68,4 +68,7 @@ dependencies {
     implementation libs.glide
     implementation libs.okhttp
     coreLibraryDesugaring libs.desugar.jdk.libs
+    testImplementation libs.junit
+    // 单元测试中替换 android.jar 内被 mock 的 org.json
+    testImplementation "org.json:json:20240303"
 }

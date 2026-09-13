@@ -42,6 +42,7 @@ class MainPermissionDelegate(private val activity: MainActivity) {
                 .show()
         } else {
             this.activity.refreshDelegate.refreshAll()
+            this.activity.maybeSilentCheckUpdate()
         }
     }
 
@@ -59,6 +60,7 @@ class MainPermissionDelegate(private val activity: MainActivity) {
         }
 
         this.activity.refreshDelegate.refreshAll()
+        this.activity.maybeSilentCheckUpdate()
     }
 
     /**
@@ -71,6 +73,7 @@ class MainPermissionDelegate(private val activity: MainActivity) {
         if (this.activity.checkPermissionGranted()) {
             this.jumpedForAllFilesPermission = false
             this.activity.refreshDelegate.refreshAll()
+            this.activity.maybeSilentCheckUpdate()
         } else {
             App.output
                 .showToast(this.activity.getString(R.string.not_getting_manage_external_storage_permission))

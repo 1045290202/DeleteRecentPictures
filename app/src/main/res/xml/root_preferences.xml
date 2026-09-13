@@ -107,6 +107,11 @@
     <PreferenceCategory app:title="@string/about_header">
 
         <Preference
+                app:key="checkUpdate"
+                app:singleLineTitle="true"
+                app:title="@string/check_update_title" />
+
+        <Preference
                 app:enableCopying="true"
                 app:key="author"
                 app:singleLineTitle="true"

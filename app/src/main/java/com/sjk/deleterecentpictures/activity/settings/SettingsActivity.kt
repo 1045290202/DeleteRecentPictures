@@ -23,6 +23,7 @@ import com.sjk.deleterecentpictures.common.App
 import com.sjk.deleterecentpictures.common.BaseActivity
 import com.sjk.deleterecentpictures.utils.ApkUtil
 import com.sjk.deleterecentpictures.utils.PermissionUtil.requestPermissionV30
+import com.sjk.deleterecentpictures.utils.UpdateManager
 
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -152,6 +153,9 @@ class SettingsActivity : BaseActivity() {
             enableMultiWindowLayoutPreference?.isEnabled =
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
+            this.findPreference<Preference>("checkUpdate")?.summary =
+                this.getString(R.string.check_update_summary, UpdateManager.getCurrentVersionName())
+
             /*EditTextPreference customizePathPreference = findPreference("customizePath");
             if (customizePathPreference != null) {
 //                MaterialTextView customizePathTextView =
@@ -222,6 +226,10 @@ class SettingsActivity : BaseActivity() {
 
                 "privacyPolicy" -> {
                     App.output.showPrivacyPolicyDialog()
+                }
+
+                "checkUpdate" -> {
+                    App.output.checkUpdateManually()
                 }
 
                 else -> {

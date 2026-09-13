@@ -8,7 +8,10 @@ import android.os.Build
 import android.text.Html
 import android.text.format.Formatter
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -18,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.sjk.deleterecentpictures.R
 import com.sjk.deleterecentpictures.activity.common.ImageLongClickDialog
 import com.sjk.deleterecentpictures.entity.ImageInfoEntity
+import com.sjk.deleterecentpictures.utils.UpdateInfo
+import com.sjk.deleterecentpictures.utils.UpdateManager
 import java.io.File
 
 
@@ -280,6 +285,167 @@ object Output {
             return
         }
         this.showPrivacyPolicyDialog(callback)
+    }
+
+    /**
+     * 显示发现新版本弹窗
+     */
+    fun showUpdateDialog(updateInfo: UpdateInfo) {
+        val activity = App.activityManager.currentActivity ?: return
+        if (activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        val versionLine = App.resources.getString(
+            R.string.update_available_message,
+            updateInfo.versionName,
+            UpdateManager.getCurrentVersionName()
+        )
+        val sizeLine = if (updateInfo.apkSize > 0) {
+            "\n" + App.resources.getString(
+                R.string.update_apk_size,
+                Formatter.formatFileSize(activity, updateInfo.apkSize)
+            )
+        } else {
+            ""
+        }
+        val notes = updateInfo.releaseNotes
+            .substringBefore("Full Changelog:")
+            .trim()
+        val notesLine = if (notes.isNotBlank()) {
+            "\n\n$notes"
+        } else {
+            ""
+        }
+        MaterialAlertDialogBuilder(activity)
+            .setTitle(App.resources.getString(R.string.update_available_title))
+            .setMessage("$versionLine$sizeLine$notesLine")
+            .setPositiveButton(App.resources.getString(R.string.update_download)) { _, _ ->
+                this.showUpdateDownloadDialog(updateInfo)
+            }
+            .setNeutralButton(App.resources.getString(R.string.update_open_release_page)) { _, _ ->
+                try {
+                    activity.startActivity(
+                        Intent(Intent.ACTION_VIEW, updateInfo.htmlUrl.toUri())
+                    )
+                } catch (e: Exception) {
+                    this.showToast(App.resources.getString(R.string.failed_to_invoke_open_method))
+                }
+            }
+            .setNegativeButton(App.resources.getString(R.string.later), null)
+            .create()
+            .apply {
+                window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+                show()
+                App.alertDialogUtil.enableMessageSelection(this)
+            }
+    }
+
+    /**
+     * 显示下载进度弹窗，下载完成后拉起安装
+     */
+    fun showUpdateDownloadDialog(updateInfo: UpdateInfo) {
+        val activity = App.activityManager.currentActivity ?: return
+        if (activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        val contentView = LayoutInflater.from(activity)
+            .inflate(R.layout.layout_update_download, null, false)
+        val progressBar = contentView.findViewById<ProgressBar>(R.id.progressBar)
+        val progressText = contentView.findViewById<TextView>(R.id.progressText)
+        val alertDialog = MaterialAlertDialogBuilder(activity)
+            .setTitle(App.resources.getString(R.string.downloading_update_title))
+            .setView(contentView)
+            .setNegativeButton(App.resources.getString(R.string.cancel), null)
+            .create()
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        alertDialog.show()
+        App.alertDialogUtil.disableMessageSelection(alertDialog)
+
+        UpdateManager.downloadAndInstall(
+            activity,
+            updateInfo,
+            onProgress = { percent ->
+                progressBar.progress = percent
+                progressText.text =
+                    App.resources.getString(R.string.downloading_update_progress, percent)
+            },
+            onDone = { file, errorMessage ->
+                if (alertDialog.isShowing) {
+                    alertDialog.dismiss()
+                }
+                if (file == null) {
+                    // 用户重复点击下载等场景不弹窗
+                    if (errorMessage != "downloading") {
+                        this.showUpdateDownloadFailedDialog(updateInfo)
+                    }
+                    return@downloadAndInstall
+                }
+                if (!UpdateManager.canInstallPackages()) {
+                    this.showToast(App.resources.getString(R.string.update_need_install_permission))
+                    UpdateManager.openUnknownSourcesSettings()
+                    return@downloadAndInstall
+                }
+                if (!UpdateManager.installApk(activity, file)) {
+                    this.showToast(App.resources.getString(R.string.update_install_failed))
+                }
+            }
+        )
+    }
+
+    /**
+     * 下载失败弹窗，引导用户去浏览器下载
+     */
+    private fun showUpdateDownloadFailedDialog(updateInfo: UpdateInfo) {
+        val activity = App.activityManager.currentActivity ?: return
+        if (activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        val pageUrl = updateInfo.htmlUrl.ifBlank {
+            App.resources.getString(R.string.github_url)
+        }
+        MaterialAlertDialogBuilder(activity)
+            .setTitle(App.resources.getString(R.string.update_download_failed_title))
+            .setMessage(App.resources.getString(R.string.update_download_failed_message))
+            .setPositiveButton(App.resources.getString(R.string.update_download_in_browser)) { _, _ ->
+                try {
+                    activity.startActivity(Intent(Intent.ACTION_VIEW, pageUrl.toUri()))
+                } catch (e: Exception) {
+                    this.showToast(App.resources.getString(R.string.failed_to_invoke_open_method))
+                }
+            }
+            .setNegativeButton(App.resources.getString(R.string.cancel), null)
+            .create()
+            .apply {
+                window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+                show()
+            }
+    }
+
+    /**
+     * 手动检查更新的结果反馈
+     */
+    fun checkUpdateManually() {
+        this.showToast(App.resources.getString(R.string.checking_update))
+        UpdateManager.checkUpdate { result ->
+            when (result) {
+                is UpdateManager.CheckResult.Available -> {
+                    this.showUpdateDialog(result.updateInfo)
+                }
+
+                is UpdateManager.CheckResult.UpToDate -> {
+                    this.showToast(
+                        App.resources.getString(
+                            R.string.already_up_to_date,
+                            UpdateManager.getCurrentVersionName()
+                        )
+                    )
+                }
+
+                is UpdateManager.CheckResult.Failed -> {
+                    this.showToast(App.resources.getString(R.string.check_update_failed))
+                }
+            }
+        }
     }
 
     /**
